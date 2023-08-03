@@ -9,7 +9,7 @@
 /coverage
 /index.js
 /package.json
-database
+/database
 /commands
 
 # production
