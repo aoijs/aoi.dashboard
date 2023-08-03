@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=data.username %> | Dashboard</title>
+    <style>
+      body {
+        font-family: "Quicksand", sans-serif;
+        background-color: #424549;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: #36393e;
+        color: white;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .avatar-container-sidebar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .avatar-sidebar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .avatar-text-sidebar {
+        font-weight: 700;
+        font-size: 18px;
+      }
+
+      .sidebar-links {
+        margin-top: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      .sidebar-link {
+        display: block;
+        color: white;
+        text-decoration: none;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar-link:hover {
+        background-color: #5a68a5;
+      }
+
+      .content {
+        flex: 1;
+        padding: 20px;
+      }
+
+      .avatar-text {
+        font-weight: 700;
+        color: white;
+        text-align: center;
+      }
+
+      .login-button {
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: auto;
+        margin-bottom: 10px;
+      }
+
+      .login-button:hover {
+        background-color: #5a68a5;
+      }
+
+      .login-button:focus {
+        outline: none;
+      }
+
+      .login-button {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+        transition: color 0.3s;
+      }
+
+      .credits-logout {
+        color: #b0b0b0;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .credits-logout:hover {
+        color: #d0d0d0;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      ul.guild-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0;
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+      }
+
+      .guild-container {
+        border-radius: 8px;
+        padding: 8px;
+        background-color: #36393e;
+        flex: 1;
+      }
+
+      li img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+      }
+
+      li h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="avatar-container-sidebar">
+        <img class="avatar-sidebar" src="<%=data.avatar %>" alt="Avatar" />
+        <div class="avatar-text-sidebar"><%=data.username %></div>
+      </div>
+      <div class="sidebar-links">
+        <% for (const item of sidebar) { %> <% const { title, to, href } = item;
+        %> <% if (href) { %>
+        <a class="sidebar-link" href="<%= href %>"><%= title %></a>
+        <% } else { %>
+        <a class="sidebar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
+          ><%= title %></a
+        >
+        <% } %> <% } %>
+      </div>
+      <div class="credits-logout">
+        <a href="/credits">Credits</a> - <a href="/auth/logout">Logout</a>
+      </div>
+    </div>
+    <div class="content">
+      <h2>test</h2>
+    </div>
+  </body>
+</html>

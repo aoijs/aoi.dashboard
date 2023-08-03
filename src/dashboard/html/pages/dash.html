@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=data.username %> | Dashboard</title>
+    <style>
+      body {
+        font-family: "Quicksand", sans-serif;
+        background-color: #424549;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        border-radius: 0.3rem;
+        justify-content: space-between;
+        background-color: #36393e;
+        padding: 10px;
+        color: white;
+      }
+
+      .avatar-navbar-small {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+
+      .avatar-container {
+        display: center;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+      }
+
+      .avatar.green {
+        border: 3px solid green;
+      }
+
+      .avatar.grey {
+        border: 3px solid grey;
+      }
+
+      .avatar-text {
+        font-weight: 700;
+        color: white;
+        text-align: center;
+      }
+
+      .navbar-links {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar-link {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+      }
+
+      .login-button {
+        display: flex;
+        align-items: center; /* Center the text vertically */
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .login-button:hover {
+        background-color: #5a68a5;
+      }
+
+      .login-button:focus {
+        outline: none;
+      }
+
+      .login-button,
+      .navbar-link {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+        transition: color 0.3s;
+      }
+
+      .navbar-link:hover {
+        color: #f1f1f1;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      ul.guild-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0;
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+      }
+
+      .guild-container {
+        border-radius: 8px;
+        padding: 8px;
+        align-items: center;
+        background-color: #36393e;
+        transition: transform 0.3s;
+        flex: 1;
+      }
+
+      .guild-container:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+
+      li img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+      }
+
+      li h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="avatar-container-navbar">
+        <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
+        <div class="avatar-text"><%=data.username %></div>
+      </div>
+      <div class="navbar-links">
+        <a class="navbar-link" href="#">Commands</a>
+        <a class="navbar-link" href="#">Invite</a>
+        <a class="navbar-link" href="#">Discord</a>
+        <% if (data.auth) { %>
+        <div class="avatar-container-navbar">
+          <a
+            class="login-button"
+            style="vertical-align: middle"
+            href="/auth/logout"
+          >
+            <img
+              class="avatar-navbar-small"
+              src="<%=data.user.avatar %>"
+              alt="Avatar"
+            />
+            Logout
+          </a>
+        </div>
+        <% } else { %>
+        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <% } %>
+      </div>
+    </div>
+    <ul class="guild-list">
+      <% for (const guild of guildData) { %>
+      <li>
+        <% if (guild.permissions.includes('Administrator') ||
+        guild.permissions.includes('Manage Server')) { %>
+        <div class="guild-container" id="access-<%= guild.guildID %>">
+          <% } else { %>
+          <div class="guild-container" id="noaccess-<%= guild.guildID %>">
+            <% } %>
+            <img
+              class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('Manage Server') ? 'green' : 'grey' %>"
+              src="<%= guild.iconURL %>"
+              alt="Guild Icon"
+            />
+            <div class="avatar-text">
+              <p><%= guild.guildName %></p>
+            </div>
+          </div>
+        </div>
+      </li>
+      <% } %>
+    </ul>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const guildContainers = document.querySelectorAll(".guild-container");
+        guildContainers.forEach((container) => {
+          if (container.id.split("-")[0] === "noaccess") return;
+          const guildId = container.id.split("-")[1];
+          container.addEventListener("click", () => {
+            window.location.href = "/dash/guilds/" + guildId;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=data.username %> | Dashboard</title>
+    <style>
+      body {
+        font-family: "Quicksand", sans-serif;
+        background-color: #424549;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        border-radius: 0.3rem;
+        justify-content: space-between;
+        background-color: #36393e;
+        padding: 10px;
+        color: white;
+      }
+
+      .avatar-container {
+        display: center;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+      }
+
+      .avatar.green {
+        border: 3px solid green;
+      }
+
+      .avatar.grey {
+        border: 3px solid grey;
+      }
+
+      .avatar-text {
+        font-weight: 700;
+        color: white;
+        text-align: center;
+      }
+
+      .navbar-links {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar-link {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+      }
+
+      .login-button {
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .login-button:hover {
+        background-color: #5a68a5;
+      }
+
+      .login-button:focus {
+        outline: none;
+      }
+
+      .login-button,
+      .navbar-link {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+        transition: color 0.3s;
+      }
+
+      .navbar-link:hover {
+        color: #f1f1f1;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      ul.guild-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0;
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+      }
+
+      .guild-container {
+        border-radius: 8px;
+        padding: 8px;
+        background-color: #36393e;
+        flex: 1; 
+      }
+
+      li img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+      }
+
+      li h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="avatar-container-navbar">
+        <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
+        <div class="avatar-text"><%=data.username %></div>
+      </div>
+      <div class="navbar-links">
+        <a class="navbar-link" href="#">Commands</a>
+        <a class="navbar-link" href="#">Invite</a>
+        <a class="navbar-link" href="#">Discord</a>
+        <% if (data.auth) { %>
+        <a class="login-button" href="/auth/logout">Logout</a>
+        <% } else { %>
+        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="features">
+      <h2>Features</h2>
+      <!-- Your feature content goes here -->
+    </div>
+
+    <!-- Rest of your page content goes here -->
+  </body>
+</html>

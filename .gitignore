@@ -7,6 +7,10 @@
 
 # testing
 /coverage
+/index.js
+/package.json
+database
+/commands
 
 # production
 /build
