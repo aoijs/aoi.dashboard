@@ -197,7 +197,7 @@
           <div class="guild-container" id="noaccess-<%= guild.guildID %>">
             <% } %>
             <img
-              class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('Manage Server') ? 'green' : 'grey' %>"
+              class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('ManageGuild') ? 'green' : 'grey' %>"
               src="<%= guild.iconURL %>"
               alt="Guild Icon"
             />

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Quicksand", sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .error-code {
+      font-family: "Quicksand", sans-serif;
+      font-size: 6rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .error-message {
+      font-family: "Quicksand", sans-serif;
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .error-description {
+      font-family: "Quicksand", sans-serif;
+      font-size: 1.2rem;
+      margin: 0 0 20px;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .error-code {
+        font-size: 4rem;
+      }
+      .error-message {
+        font-size: 1.5rem;
+      }
+      .error-description {
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Huh..</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="error-code">404</h1>
+      <h2 class="error-message">Oops! How did you get here..</h2>
+      <p class="error-description">
+        Sorry, but this page doesn't exist. Maybe check your spelling?
+      </p>
+    </div>
+  </body>
+</html>

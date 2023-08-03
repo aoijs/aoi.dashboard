@@ -271,13 +271,19 @@ class Dashboard {
 
     app.get("/auth/login", passport.authenticate("discord"));
 
-    app.get(
-      "/auth/callback",
-      passport.authenticate("discord", { failureRedirect: "/" }),
-      (req, res) => {
-        res.redirect("/dash");
+    app.get("/auth/callback", (req, res) => {
+      try {
+        passport.authenticate("discord", { failureRedirect: "/" })(
+          req,
+          res,
+          () => {
+            res.redirect("/dash");
+          }
+        );
+      } catch (error) {
+        res.redirect("/");
       }
-    );
+    });
 
     app.get("/auth/logout", (req, res) => {
       req.logout(() => {});
@@ -318,11 +324,16 @@ class Dashboard {
       );
     });
 
-    app.get("/dash/guilds/:guildid", async (req, res) => {
+    app.get("/dash/guilds/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
       const guild = await this.client.guilds.cache.get(guildId);
 
       const data = {
+        user: {
+          avatar: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
+          username: req.user.username,
+          id: req.user.id,
+        },
         avatar: this.client.user.avatarURL(),
         username: this.client.user.username,
         id: this.client.user.id,
@@ -337,28 +348,61 @@ class Dashboard {
         );
       }
 
-      ejs.renderFile(
-        path.join(__dirname, "../", "dashboard/html/pages/guild.html"),
-        {
-          guild,
-          data,
-          sidebar: this.sidebar, // Include the sidebar variable here
-          getDefaultComponent: this.getDefaultComponent, // Include the function here
-        },
-        (err, html) => {
-          if (err) {
-            this.client.destroy();
-            console.error(
-              `${chalk.red.bold(
-                "[ERR]"
-              )} [Dashboard]: Failed to load dashboard with reason:`,
-              err
-            );
-          } else {
-            res.send(html);
+      const userPermissions = req.user.guilds.find(
+        (guild) => guild.id === guildId
+      )?.permissions;
+
+      if (
+        Boolean(userPermissions & 0x0000000000000008) ||
+        Boolean(userPermissions & 0x0000000000000020)
+      ) {
+        ejs.renderFile(
+          path.join(__dirname, "../", "dashboard/html/pages/guild.html"),
+          {
+            guild,
+            data,
+            sidebar: this.sidebar,
+            getDefaultComponent: this.getDefaultComponent,
+          },
+          (err, html) => {
+            if (err) {
+              this.client.destroy();
+              console.error(
+                `${chalk.red.bold(
+                  "[ERR]"
+                )} [Dashboard]: Failed to load dashboard with reason:`,
+                err
+              );
+            } else {
+              res.send(html);
+            }
           }
-        }
-      );
+        );
+      } else {
+        ejs.renderFile(
+          path.join(__dirname, "../", "dashboard/html/pages/error.html"),
+          {
+            data,
+            sidebar: this.sidebar,
+            getDefaultComponent: this.getDefaultComponent,
+          },
+          (err, html) => {
+            if (err) {
+              this.client.destroy();
+              console.error(
+                `${chalk.red.bold(
+                  "[ERR]"
+                )} [Dashboard]: Failed to load dashboard with reason:`,
+                err
+              );
+              return;
+            } else {
+              res.send(html);
+              return;
+            }
+          }
+        );
+      }
     });
 
     app.get("/dash", ensureAuthenticated, (req, res) => {
@@ -414,6 +458,14 @@ class Dashboard {
           }
         }
       );
+    });
+
+    app.use((req, res) => {
+      res
+        .status(404)
+        .sendFile(
+          path.join(__dirname, "../", "dashboard/html/pages/404.html")
+        );
     });
 
     await this.fetchGuilds();
