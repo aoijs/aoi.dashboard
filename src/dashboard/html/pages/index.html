@@ -2,10 +2,55 @@
 <html>
   <head>
     <title><%=data.username %> | Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
+      rel="stylesheet"
+    />
     <style>
       body {
-        font-family: "Quicksand", sans-serif;
+        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+          "Lucida Sans", sans-serif;
         background-color: #424549;
+        color: white;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50vh;
+        color: white;
+      }
+
+      .avatar img {
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        margin-right: 30px;
+        vertical-align: middle;
+        -webkit-box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
+        -moz-box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
+        box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .text-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .text-container strong {
+        display: block;
+      }
+
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .navbar {
@@ -16,12 +61,7 @@
         background-color: #36393e;
         padding: 10px;
         color: white;
-      }
-
-      .avatar-container {
-        display: center;
-        flex-direction: column;
-        align-items: center;
+        z-index: 5;
       }
 
       .avatar-container-navbar {
@@ -30,30 +70,13 @@
       }
 
       .avatar-navbar {
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
+        margin-left: 15px;
         margin-right: 10px;
-      }
-
-      .avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-      }
-
-      .avatar.green {
-        border: 3px solid green;
-      }
-
-      .avatar.grey {
-        border: 3px solid grey;
-      }
-
-      .avatar-text {
-        font-weight: 700;
-        color: white;
-        text-align: center;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
       }
 
       .navbar-links {
@@ -65,79 +88,141 @@
         color: white;
         text-decoration: none;
         margin-right: 20px;
+        position: relative;
+        margin-top: 2px;
+        border-bottom: 0 solid transparent;
+        transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .navbar-link:hover {
+        border-bottom: 3px solid #5a68a5;
+      }
+
+      .manage-button {
+        padding: 6px 4px;
+        margin-top: 35px;
+        display: flex;
+        background-color: #7289da;
+        color: white;
+        justify-content: center;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .manage-button:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
       }
 
       .login-button {
         padding: 6px 4px;
         background-color: #7289da;
         color: white;
+        margin-right: 20px;
         border-radius: 4px;
         cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
         transition: background-color 0.3s;
       }
 
       .login-button:hover {
         background-color: #5a68a5;
+        transition: background-color 0.3s;
       }
 
-      .login-button:focus {
-        outline: none;
-      }
-
-      .login-button,
-      .navbar-link {
-        color: white;
-        text-decoration: none;
-        margin-right: 20px;
-        transition: color 0.3s;
-      }
-
-      .navbar-link:hover {
-        color: #f1f1f1;
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      ul.guild-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 0;
-      }
-
-      li {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 10px;
-      }
-
-      .guild-container {
-        border-radius: 8px;
-        padding: 8px;
-        background-color: #36393e;
-        flex: 1; 
-      }
-
-      li img {
-        width: 80px;
-        height: 80px;
+      .avatar-navbar-small {
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
-        margin-bottom: 10px;
+        margin-right: 8px;
+        vertical-align: middle;
+        -webkit-user-drag: none;
       }
 
-      li h3 {
+      .features-list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 0 150px;
+        box-sizing: border-box;
+      }
+
+      .features-header {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+
+      .feature-container {
+        width: calc(100% - 60px);
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #36393e;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-image {
+        width: 250px;
+        height: 150px;
+        border-radius: 5px;
+        margin-right: 20px;
+        object-fit: cover;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .feature-details {
+        flex: 1;
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+      }
+
+      .feature-title {
+        font-size: 25px;
+        font-weight: bold;
+        color: white;
         margin: 0;
+        align-self: stretch;
+      }
+
+      .feature-description {
+        margin-top: 10px;
+        color: white;
+        line-height: 1.5;
+        align-self: stretch;
+      }
+
+      .footer {
+        margin: 0;
+        padding: 20px;
+        background-color: #36393e;
+        text-align: center;
+      }
+
+      .brand {
         font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .copyright {
+        font-size: 14px;
+        color: #777;
       }
     </style>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <div class="navbar">
@@ -146,22 +231,87 @@
         <div class="avatar-text"><%=data.username %></div>
       </div>
       <div class="navbar-links">
-        <a class="navbar-link" href="#">Commands</a>
-        <a class="navbar-link" href="#">Invite</a>
-        <a class="navbar-link" href="#">Discord</a>
-        <% if (data.auth) { %>
-        <a class="login-button" href="/auth/logout">Logout</a>
+        <% for (const item of sidebar) { %> <% const { title, to, href, html } =
+        item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
+        <a class="navbar-link" href="<%= href %>"><%= title %></a>
+        <% } else { %>
+        <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
+          ><%= title %></a
+        >
+        <% } %> <% } %> <% if (data.auth) { %>
+        <div class="avatar-container-navbar">
+          <a
+            class="login-button"
+            style="vertical-align: middle"
+            href="/auth/logout"
+          >
+            <img
+              class="avatar-navbar-small"
+              src="<%=data.user.avatar %>"
+              alt="Avatar"
+            />
+            Logout
+          </a>
+        </div>
         <% } else { %>
         <a class="login-button" href="/auth/login">Login with Discord</a>
         <% } %>
       </div>
     </div>
-
-    <div class="features">
-      <h2>Features</h2>
-      <!-- Your feature content goes here -->
+    <div class="container">
+      <div class="avatar">
+        <img src="<%=data.avatar %>" alt="<%=data.username %>" />
+      </div>
+      <div class="text-container">
+        <div style="font-size: 60px">
+          <strong><%=data.username %></strong>
+          <strong>Dashboard</strong>
+        </div>
+        <div style="font-size: 22px">
+          Serving <b><%=data.cachedUsers %></b> members <br />
+          in <b><%=data.guildCount %></b> guilds
+          <div>
+            <% if (data.auth) { %>
+            <a class="manage-button" href="/dash"> Manage Guilds</a>
+            <% } else { %>
+            <a class="manage-button" href="/auth/login">Login with Discord</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Rest of your page content goes here -->
+    <div class="features-list">
+      <h2 class="features-header">Why choose <%= data.username %>?</h2>
+      <% for (const feature of data.features) { %>
+      <div class="feature-container">
+        <% if (feature.preview) { %>
+        <img
+          class="feature-image"
+          src="<%= feature.preview %>"
+          alt="Preview Image"
+        />
+        <% } %>
+        <div class="feature-details">
+          <% if (feature.title) { %>
+          <h3 class="feature-title"><%= feature.title %></h3>
+          <% } %> <% if (feature.description && feature.description.length > 0)
+          { %>
+          <ul class="feature-description">
+            <% for (const point of feature.description) { %>
+            <li><%= point %></li>
+            <% } %>
+          </ul>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <footer class="footer">
+      <div class="brand"><%=data.username %></div>
+      <div class="copyright">
+        © <%= new Date().getFullYear() %> Copyright <%=data.username %>. All
+        Rights Reserved.
+      </div>
+    </footer>
   </body>
 </html>

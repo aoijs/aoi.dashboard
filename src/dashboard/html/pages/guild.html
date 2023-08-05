@@ -2,114 +2,159 @@
 <html>
   <head>
     <title><%=data.username %> | Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <style>
       body {
-        font-family: "Quicksand", sans-serif;
+        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+          "Lucida Sans", sans-serif;
         background-color: #424549;
+        color: white;
         margin: 0;
         padding: 0;
+      }
+
+      .avatar-navbar-small {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+        -webkit-user-drag: none;
+      }
+
+      .avatar-container {
+        display: center;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .avatar-container-navbar {
         display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .avatar-navbar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+      }
+
+      .avatar.green {
+        border: 3px solid green;
+      }
+
+      .avatar.grey {
+        border: 3px solid grey;
+      }
+
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .sidebar-links {
+        margin-top: 30px;
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
       }
 
       .sidebar {
         position: fixed;
         top: 0;
         left: 0;
-        height: 100%;
+        bottom: 0;
+        z-index: 3;
+        width: 200px;
         background-color: #36393e;
         color: white;
         padding: 20px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .avatar-container-sidebar {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .avatar-sidebar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        margin-right: 10px;
-      }
-
-      .avatar-text-sidebar {
-        font-weight: 700;
-        font-size: 18px;
-      }
-
-      .sidebar-links {
-        margin-top: 20px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
       }
 
       .sidebar-link {
-        display: block;
+        padding: 7px;
+        background-color: #5a68a5;
+        border-radius: 4px;
         color: white;
+        box-sizing: border-box;
         text-decoration: none;
         margin-bottom: 10px;
-        padding: 8px;
-        border-radius: 4px;
-        transition: background-color 0.3s;
+        text-align: center;
+        font-weight: bold;
+        width: 100%;
       }
 
       .sidebar-link:hover {
-        background-color: #5a68a5;
-      }
-
-      .content {
-        flex: 1;
-        padding: 20px;
-      }
-
-      .avatar-text {
-        font-weight: 700;
-        color: white;
-        text-align: center;
+        border-bottom-color: #5a68a5;
       }
 
       .login-button {
-        padding: 6px 4px;
-        background-color: #7289da;
+        position: absolute;
+        align-self: center;
+        bottom: 15px;
+        left: 0;
+        margin: 30px;
         color: white;
         border-radius: 4px;
         cursor: pointer;
-        transition: background-color 0.3s;
-        margin-top: auto;
-        margin-bottom: 10px;
+        transition: color 0.3s;
       }
 
       .login-button:hover {
-        background-color: #5a68a5;
+        color: #5a68a5;
+        transition: color 0.3s;
       }
 
       .login-button:focus {
         outline: none;
-      }
-
-      .login-button {
-        color: white;
-        text-decoration: none;
-        margin-right: 20px;
-        transition: color 0.3s;
-      }
-
-      .credits-logout {
-        color: #b0b0b0;
-        text-decoration: none;
-        text-align: center;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      .credits-logout:hover {
-        color: #d0d0d0;
       }
 
       ul {
@@ -132,10 +177,24 @@
       }
 
       .guild-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center items horizontally */
+        justify-content: center; /* Center items vertically */
         border-radius: 8px;
         padding: 8px;
         background-color: #36393e;
+        transition: all 0.3s;
         flex: 1;
+      }
+
+      .guild-container:hover {
+        transform: scale(1.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        -webkit-box-shadow: 0px 0px 56px 9px rgba(77, 77, 77, 0.9);
+        -moz-box-shadow: 0px 0px 56px 9px rgba(77, 77, 77, 0.9);
+        box-shadow: 0px 0px 56px 9px rgba(77, 77, 77, 0.9);
       }
 
       li img {
@@ -149,6 +208,42 @@
         margin: 0;
         font-size: 18px;
       }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        background-color: #36393e;
+        text-align: center;
+      }
+
+      .brand {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .copyright {
+        font-size: 14px;
+        color: #777;
+      }
+
+      .sidebar-category {
+        font-weight: bold;
+        color: white;
+        padding: 4px;
+        border-radius: 4px;
+        margin: 10px;
+        text-align: center;
+      }
+
+      .content {
+        margin-left: 350px;
+        color: white;
+        box-sizing: border-box;
+      }
     </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
@@ -157,26 +252,83 @@
   </head>
   <body>
     <div class="sidebar">
-      <div class="avatar-container-sidebar">
-        <img class="avatar-sidebar" src="<%=data.avatar %>" alt="Avatar" />
-        <div class="avatar-text-sidebar"><%=data.username %></div>
+      <div class="avatar-container-navbar">
+        <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
+        <div class="avatar-text"><%=data.username %></div>
       </div>
       <div class="sidebar-links">
-        <% for (const item of sidebar) { %> <% const { title, to, href } = item;
-        %> <% if (href) { %>
+        <% for (const item of sidebar) { %> <% const { title, to, href, html,
+        category, basePath } = item; %> <% if (html) { %> <%- html %> <% } else
+        if (category) { %>
+        <div class="sidebar-category"><%= title %></div>
+        <% } else if (href) { %>
         <a class="sidebar-link" href="<%= href %>"><%= title %></a>
         <% } else { %>
-        <a class="sidebar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
+        <a
+          class="sidebar-link"
+          href="<%= basePath ? to : '/' + 'dash/guilds/' + guild.id + to %>"
           ><%= title %></a
         >
-        <% } %> <% } %>
-      </div>
-      <div class="credits-logout">
-        <a href="/credits">Credits</a> - <a href="/auth/logout">Logout</a>
+        <% } %> <% } %> <% if (data.auth) { %>
+        <a class="login-button" href="/auth/logout">Logout</a>
+        <% } else { %>
+        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <% } %>
       </div>
     </div>
     <div class="content">
-      <h2>test</h2>
+      <h2>this is a PLACEHOLDER</h2>
+      <form id="updateForm">
+        <input type="text" id="variableName" placeholder="Variable Name" />
+        <input type="text" id="value" placeholder="Value" />
+        <button type="submit">Update Variable</button>
+      </form>
     </div>
+    <footer class="footer">
+      <div class="brand"><%=data.username %></div>
+      <div class="copyright">
+        © <%= new Date().getFullYear() %> Copyright <%=data.username %>. All
+        Rights Reserved.
+      </div>
+    </footer>
+    <script>
+      document
+        .getElementById("updateForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault(); // Prevent the default form submission
+
+          const variable = document.getElementById("variableName").value;
+          const value = document.getElementById("value").value;
+
+          const currentUrl = window.location.href; // Get the current URL
+          const urlParts = currentUrl.split("/"); // Split the URL by '/'
+          const guildId = urlParts[urlParts.length - 1]; // Get the last part of the URL
+
+          const data = {
+            variable: variable,
+            value: value,
+          };
+
+          console.log(data)
+
+          try {
+            const response = await fetch(`/data/update/${guildId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+              console.log("Data updated successfully");
+            } else {
+              console.error("Failed to update data");
+            }
+          } catch (error) {
+            console.error("An error occurred", error);
+          }
+        });
+    </script>
   </body>
 </html>

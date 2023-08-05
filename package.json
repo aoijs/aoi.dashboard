@@ -1,22 +1,26 @@
 {
-  "name": "dashboard",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "name": "aoi.js-dashboard",
+  "version": "0.0.1",
+  "description": "Simple and customizeable bot dashboard made for aoi.js",
   "keywords": [],
-  "author": "",
+  "author": "Fafa",
   "license": "ISC",
   "dependencies": {
-    "@akarui/aoi.db": "^1.0.0",
-    "aoi.js": "^6.4.0",
     "chalk": "^4.1.2",
-    "discord.js": "^14.12.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "passport": "^0.6.0",
     "passport-discord": "^0.1.4"
-  }
+  },
+  "main": "src/main/index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faf4a/dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/faf4a/dashboard/issues"
+  },
+  "homepage": "https://github.com/faf4a/dashboard#readme"
 }
