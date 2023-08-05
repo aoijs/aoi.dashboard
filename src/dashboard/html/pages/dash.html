@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%=data.username %> | Dashboard</title>
+    <title><%=data.username %> | Server Picker</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
+      rel="stylesheet"
+    />
     <style>
       body {
-        font-family: "Quicksand", sans-serif;
+        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+          "Lucida Sans", sans-serif;
         background-color: #424549;
+        color: white;
+        margin: 0;
+        padding: 0;
       }
 
       .navbar {
@@ -16,14 +24,33 @@
         background-color: #36393e;
         padding: 10px;
         color: white;
+        z-index: 5;
+      }
+
+      .login-button {
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: white;
+        margin-right: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
+        transition: background-color 0.3s;
+      }
+
+      .login-button:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
       }
 
       .avatar-navbar-small {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         margin-right: 8px;
         vertical-align: middle;
+        -webkit-user-drag: none;
       }
 
       .avatar-container {
@@ -35,6 +62,16 @@
       .avatar-container-navbar {
         display: flex;
         align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
       }
 
       .avatar-navbar {
@@ -51,7 +88,7 @@
       }
 
       .avatar.green {
-        border: 3px solid green;
+        border: 3px solid #6AFFAA;
       }
 
       .avatar.grey {
@@ -59,9 +96,43 @@
       }
 
       .avatar-text {
-        font-weight: 700;
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        border-radius: 0.3rem;
+        justify-content: space-between;
+        background-color: #36393e;
+        padding: 10px;
         color: white;
-        text-align: center;
+        z-index: 5;
+      }
+
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
       }
 
       .navbar-links {
@@ -73,11 +144,19 @@
         color: white;
         text-decoration: none;
         margin-right: 20px;
+        position: relative;
+        margin-top: 2px;
+        border-bottom: 0 solid transparent;
+        transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .navbar-link:hover {
+        border-bottom: 3px solid #5a68a5;
       }
 
       .login-button {
         display: flex;
-        align-items: center; /* Center the text vertically */
+        align-items: center;
         padding: 6px 4px;
         background-color: #7289da;
         color: white;
@@ -88,22 +167,11 @@
 
       .login-button:hover {
         background-color: #5a68a5;
+        transition: background-color 0.3s;
       }
 
       .login-button:focus {
         outline: none;
-      }
-
-      .login-button,
-      .navbar-link {
-        color: white;
-        text-decoration: none;
-        margin-right: 20px;
-        transition: color 0.3s;
-      }
-
-      .navbar-link:hover {
-        color: #f1f1f1;
       }
 
       ul {
@@ -126,17 +194,21 @@
       }
 
       .guild-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         border-radius: 8px;
         padding: 8px;
-        align-items: center;
         background-color: #36393e;
-        transition: transform 0.3s;
+        transition: all 0.3s;
         flex: 1;
+        -webkit-user-drag: none;
       }
 
       .guild-container:hover {
-        transform: scale(1.1);
-        transition: transform 0.3s;
+        transform: scale(1.05);
+        transition: all 0.3s;
         cursor: pointer;
       }
 
@@ -145,11 +217,33 @@
         height: 80px;
         border-radius: 50%;
         margin-bottom: 10px;
+        -webkit-user-drag: none;
       }
 
       li h3 {
         margin: 0;
         font-size: 18px;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        background-color: #36393e;
+        text-align: center;
+      }
+
+      .brand {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .copyright {
+        font-size: 14px;
+        color: #777;
       }
     </style>
     <link
@@ -164,10 +258,14 @@
         <div class="avatar-text"><%=data.username %></div>
       </div>
       <div class="navbar-links">
-        <a class="navbar-link" href="#">Commands</a>
-        <a class="navbar-link" href="#">Invite</a>
-        <a class="navbar-link" href="#">Discord</a>
-        <% if (data.auth) { %>
+        <% for (const item of sidebar) { %> <% const { title, to, href, html } = item;
+        %> <% if (html) { %> <%- html %> <% } else if (href) { %>
+        <a class="navbar-link" href="<%= href %>"><%= title %></a>
+        <% } else { %>
+        <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
+          ><%= title %></a
+        >
+        <% } %> <% } %> <% if (data.auth) { %>
         <div class="avatar-container-navbar">
           <a
             class="login-button"
@@ -201,7 +299,7 @@
               src="<%= guild.iconURL %>"
               alt="Guild Icon"
             />
-            <div class="avatar-text">
+            <div class="guild-text">
               <p><%= guild.guildName %></p>
             </div>
           </div>
@@ -209,17 +307,24 @@
       </li>
       <% } %>
     </ul>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const guildContainers = document.querySelectorAll(".guild-container");
-        guildContainers.forEach((container) => {
-          if (container.id.split("-")[0] === "noaccess") return;
-          const guildId = container.id.split("-")[1];
-          container.addEventListener("click", () => {
-            window.location.href = "/dash/guilds/" + guildId;
-          });
+    <footer class="footer">
+      <div class="brand"><%=data.username %></div>
+      <div class="copyright">
+        © <%= new Date().getFullYear() %> Copyright <%=data.username %>. All
+        Rights Reserved.
+      </div>
+    </footer>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const guildContainers = document.querySelectorAll(".guild-container");
+      guildContainers.forEach((container) => {
+        if (container.id.split("-")[0] === "noaccess") return;
+        const guildId = container.id.split("-")[1];
+        container.addEventListener("click", () => {
+          window.location.href = "/dash/guilds/" + guildId;
         });
       });
-    </script>
-  </body>
+    });
+  </script>
 </html>

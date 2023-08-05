@@ -1,10 +1,10 @@
 const express = require("express");
-const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
 const session = require("express-session");
 const passport = require("passport");
 const ejs = require("ejs");
+const { KeyValue } = require("@akarui/aoi.db");
 const DiscordStrategy = require("passport-discord").Strategy;
 
 class Dashboard {
@@ -14,22 +14,25 @@ class Dashboard {
     this.redirectURL = options.url + "/auth/callback";
     this.scopes = options.scopes || ["identify", "email", "guilds"];
     this.secret = options.secret;
-    this.sidebar = options.sidebar || [
+    this.dashbar = options.sidebar || [
       { title: "Discord", to: "discord" },
       { title: "Commands", to: "commands" },
       { title: "Invite", to: "invite" },
     ];
+    this.sidebar = options.navbar || [
+      { title: "Discord", to: "discord" },
+      { title: "Commands", to: "commands" },
+      { title: "Invite", to: "invite" },
+    ];
+    this.features = options.features;
     this.guilds = new Map();
     this.authSecret = require("crypto").randomBytes(16).toString("hex");
     this.sessionSecret = require("crypto").randomBytes(16).toString("hex");
+    this.db = this.client.db;
   }
 
   getDefaultComponent(to) {
     const defaultComponents = {
-      discord: {
-        title: "Discord",
-        to: "/discord",
-      },
       commands: {
         title: "Commands",
         to: "/commands",
@@ -46,10 +49,6 @@ class Dashboard {
         to: `/${to}`,
       }
     );
-  }
-
-  updateVariable(key, value) {
-    this.client.db.set(this.client.db.tables[0], key, { value: value });
   }
 
   async fetchGuilds() {
@@ -120,6 +119,65 @@ class Dashboard {
       }
     }
 
+    for (const item of this.dashbar) {
+      if ("category" in item) {
+        if (Object.keys(item).length !== 2 || !("title" in item)) {
+          console.error(
+            `${chalk.red.bold("\r[ERR]")} ${chalk.red(
+              "[SIDEBAR]"
+            )} [Dashboard]: Failed to load dashboard with reason: ${chalk.yellow.bold(
+              "category"
+            )} requires ${chalk.yellow.bold("title")} to work properly.`
+          );
+          process.exit(1);
+        }
+      } else {
+        if (!("title" in item && ("to" in item || "href" in item))) {
+          console.error(
+            `${chalk.red.bold("\r[ERR]")} ${chalk.red(
+              "[SIDEBAR]"
+            )} [Dashboard]: Failed to load dashboard with reason: ${chalk.yellow.bold(
+              "title"
+            )} requires ${chalk.yellow.bold("to")} or ${chalk.yellow.bold(
+              "href"
+            )} to work properly.`
+          );
+          process.exit(1);
+        }
+      }
+    }
+
+    for (const feature of this.features) {
+      if (!("title" in feature)) {
+        console.warn(
+          `\r${chalk.yellow.bold(
+            "[WARNING]"
+          )} [Dashboard]: Feature is missing ${chalk.yellow.bold(
+            "title"
+          )}. Therefore it may not display correctly.`
+        );
+      }
+
+      if (!("description" in feature) || feature.description.length === 0) {
+        console.warn(
+          `\r${chalk.yellow.bold("[WARNING]")} [Dashboard]: Feature "${
+            feature.title
+          }" is missing description points. Therefore it may not display correctly.`
+        );
+      }
+
+      if (
+        !("preview" in feature) ||
+        (feature.preview && feature.preview.trim() === "")
+      ) {
+        console.warn(
+          `\r${chalk.yellow.bold("[WARNING]")} [Dashboard]: Feature "${
+            feature.title
+          }" has an empty or missing preview image. Therefore it may not display correctly.`
+        );
+      }
+    }
+
     console.log(
       `\r${chalk.green.bold("[FETCH]")} [Dashboard]: Fetched all guilds in ${
         (new Date() - start) / 1000
@@ -142,12 +200,20 @@ class Dashboard {
   }
 
   connect = async () => {
+    const app = express();
     await new Promise((resolve) => {
       this.client.once("ready", () => {
         resolve();
       });
     });
-    const app = express();
+
+    this.client.on("guildCreate", async (guild) => {
+      this.guilds.set(guild.id, guild);
+    });
+
+    this.client.on("guildDelete", async (guild) => {
+      this.guilds.delete(guild.id);
+    });
 
     const allowedScopes = [
       "identify",
@@ -161,6 +227,7 @@ class Dashboard {
       "applications.commands.permissions.update",
       "applications.entitlements",
       "applications.store.update",
+      "bot",
       "connections",
       "dm_channels.read",
       "email",
@@ -245,6 +312,7 @@ class Dashboard {
       })
     );
 
+    app.use(express.json());
     app.use(passport.initialize());
     app.use(passport.session());
 
@@ -297,17 +365,37 @@ class Dashboard {
       res.redirect("/auth/login");
     };
 
-    app.get("/", (req, res) => {
+    app.get("/", async (req, res) => {
       const data = {
-        avatar: this.client.user.avatarURL(),
+        features: this.features,
+        user: {
+          avatar:
+            `https://cdn.discordapp.com/avatars/${req.user?.id}/${req.user?.avatar}.png` ||
+            `https://cdn.discordapp.com/embed/avatars/${req.user.id % 5}.png`,
+          username: req.user?.username,
+          id: req.user?.id,
+        },
+        avatar:
+          this.client.user.avatarURL({ format: "png", size: 4096 }) ||
+          `https://cdn.discordapp.com/embed/avatars/${
+            this.client.user.id % 5
+          }.png`,
         username: this.client.user.username,
         id: this.client.user.id,
         auth: req.isAuthenticated(),
+        guildCount: await this.client.guilds
+          .fetch()
+          .then((guilds) => guilds?.size),
+        cachedUsers: this.client.users.cache?.size,
       };
 
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/index.html"),
-        { data },
+        {
+          data,
+          sidebar: this.sidebar,
+          getDefaultComponent: this.getDefaultComponent,
+        },
         (err, html) => {
           if (err) {
             this.client.destroy();
@@ -324,17 +412,52 @@ class Dashboard {
       );
     });
 
+    app.post("/data/update/:guildid", ensureAuthenticated, async (req, res) => {
+      const guildId = req.params.guildid;
+      const userPermissions = req.user.guilds.find(
+        (guild) => guild.id === guildId
+      )?.permissions;
+      if (
+        Boolean(userPermissions & 0x0000000000000008) ||
+        Boolean(userPermissions & 0x0000000000000020)
+      ) {
+        try {
+          const data = req.body;
+
+          this.db.set(
+            this.client.db.tables[0],
+            data.variable,
+            guildId,
+            data.value
+          );
+
+          res.status(200).json({ message: "Data updated successfully" });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: "An error occurred" });
+        }
+      } else {
+        return;
+      }
+    });
+
     app.get("/dash/guilds/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
       const guild = await this.client.guilds.cache.get(guildId);
 
       const data = {
         user: {
-          avatar: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
-          username: req.user.username,
-          id: req.user.id,
+          avatar:
+            `https://cdn.discordapp.com/avatars/${req.user?.id}/${req.user?.avatar}.png` ||
+            `https://cdn.discordapp.com/embed/avatars/${req.user.id % 5}.png`,
+          username: req.user?.username,
+          id: req.user?.id,
         },
-        avatar: this.client.user.avatarURL(),
+        avatar:
+          this.client.user.avatarURL({ format: "png", size: 4096 }) ||
+          `https://cdn.discordapp.com/embed/avatars/${
+            this.client.user.id % 5
+          }.png`,
         username: this.client.user.username,
         id: this.client.user.id,
         auth: req.isAuthenticated(),
@@ -361,7 +484,7 @@ class Dashboard {
           {
             guild,
             data,
-            sidebar: this.sidebar,
+            sidebar: this.dashbar,
             getDefaultComponent: this.getDefaultComponent,
           },
           (err, html) => {
@@ -412,11 +535,17 @@ class Dashboard {
 
       const data = {
         user: {
-          avatar: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png`,
-          username: req.user.username,
-          id: req.user.id,
+          avatar:
+            `https://cdn.discordapp.com/avatars/${req.user?.id}/${req.user?.avatar}.png` ||
+            `https://cdn.discordapp.com/embed/avatars/${req.user.id % 5}.png`,
+          username: req.user?.username,
+          id: req.user?.id,
         },
-        avatar: this.client.user.avatarURL(),
+        avatar:
+          this.client.user.avatarURL({ format: "png", size: 4096 }) ||
+          `https://cdn.discordapp.com/embed/avatars/${
+            this.client.user.id % 5
+          }.png`,
         username: this.client.user.username,
         id: this.client.user.id,
         auth: req.isAuthenticated(),
@@ -443,7 +572,12 @@ class Dashboard {
 
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/dash.html"),
-        { guildData, data },
+        {
+          guildData,
+          data,
+          sidebar: this.sidebar,
+          getDefaultComponent: this.getDefaultComponent,
+        },
         async (err, html) => {
           if (err) {
             console.error(
@@ -463,9 +597,7 @@ class Dashboard {
     app.use((req, res) => {
       res
         .status(404)
-        .sendFile(
-          path.join(__dirname, "../", "dashboard/html/pages/404.html")
-        );
+        .sendFile(path.join(__dirname, "../", "dashboard/html/pages/404.html"));
     });
 
     await this.fetchGuilds();
