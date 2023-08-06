@@ -295,21 +295,19 @@
       document
         .getElementById("updateForm")
         .addEventListener("submit", async (event) => {
-          event.preventDefault(); // Prevent the default form submission
+          event.preventDefault();
 
           const variable = document.getElementById("variableName").value;
           const value = document.getElementById("value").value;
 
-          const currentUrl = window.location.href; // Get the current URL
-          const urlParts = currentUrl.split("/"); // Split the URL by '/'
-          const guildId = urlParts[urlParts.length - 1]; // Get the last part of the URL
+          const currentUrl = window.location.href;
+          const urlParts = currentUrl.split("/");
+          const guildId = urlParts[urlParts.length - 1];
 
           const data = {
             variable: variable,
             value: value,
           };
-
-          console.log(data)
 
           try {
             const response = await fetch(`/data/update/${guildId}`, {
