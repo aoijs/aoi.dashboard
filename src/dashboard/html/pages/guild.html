@@ -29,184 +29,69 @@
         -webkit-user-drag: none;
       }
 
-      .avatar-container {
-        display: center;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .avatar-container-navbar {
-        display: flex;
-        align-items: center;
-      }
-
-      .avatar-navbar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-left: 15px;
-        margin-right: 10px;
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
-      }
-
-      .avatar-navbar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-      }
-
-      .avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-      }
-
-      .avatar.green {
-        border: 3px solid green;
-      }
-
-      .avatar.grey {
-        border: 3px solid grey;
-      }
-
-      .avatar-text {
-        font-family: "Allerta Stencil";
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .avatar-text {
-        font-family: "Allerta Stencil";
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .avatar-container-navbar {
-        display: flex;
-        align-items: center;
-      }
-
-      .avatar-navbar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-left: 15px;
-        margin-right: 10px;
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
-      }
-
-      .sidebar-links {
-        margin-top: 30px;
-        display: flex;
-        align-items: stretch;
-        flex-direction: column;
-      }
-
       .sidebar {
+        background-color: #36393e;
+        color: white;
+        width: 250px;
+        height: 100%;
         position: fixed;
         top: 0;
         left: 0;
-        bottom: 0;
-        z-index: 3;
-        width: 200px;
-        background-color: #36393e;
-        color: white;
-        padding: 20px;
+      }
+
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-top: 10px;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .sidebar-links {
+        margin-top: 20px;
+      }
+
+      .sidebar-category {
+        font-weight: bold;
+      }
+
+      .sidebar-link,
+      .login-button {
+        display: block;
+        padding: 10px;
+        width: calc(100% - 20px);
+      }
+
+      .sidebar-link:hover,
+      .login-button:hover {
+        background-color: #424549;
       }
 
       .sidebar-link {
-        padding: 7px;
-        background-color: #5a68a5;
-        border-radius: 4px;
-        color: white;
-        box-sizing: border-box;
         text-decoration: none;
-        margin-bottom: 10px;
-        text-align: center;
-        font-weight: bold;
-        width: 100%;
-      }
-
-      .sidebar-link:hover {
-        border-bottom-color: #5a68a5;
+        color: white;
+        border-bottom: none;
       }
 
       .login-button {
         position: absolute;
-        align-self: center;
-        bottom: 15px;
-        left: 0;
-        margin: 30px;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: color 0.3s;
-      }
-
-      .login-button:hover {
-        color: #5a68a5;
-        transition: color 0.3s;
-      }
-
-      .login-button:focus {
-        outline: none;
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      ul.guild-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 0;
-      }
-
-      li {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 10px;
-      }
-
-      .guild-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Center items horizontally */
-        justify-content: center; /* Center items vertically */
-        border-radius: 8px;
-        padding: 8px;
-        background-color: #36393e;
-        transition: all 0.3s;
-        flex: 1;
-      }
-
-      .guild-container:hover {
-        transform: scale(1.1);
-        transition: all 0.3s;
-        cursor: pointer;
-        -webkit-box-shadow: 0px 0px 56px 9px rgba(77, 77, 77, 0.9);
-        -moz-box-shadow: 0px 0px 56px 9px rgba(77, 77, 77, 0.9);
-        box-shadow: 0px 0px 56px 9px rgba(77, 77, 77, 0.9);
-      }
-
-      li img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin-bottom: 10px;
-      }
-
-      li h3 {
-        margin: 0;
-        font-size: 18px;
+        bottom: 0;
       }
 
       .footer {
@@ -244,6 +129,17 @@
         color: white;
         box-sizing: border-box;
       }
+
+      #updateForm {
+        display: flex;
+        align-items: center;
+      }
+      #updateForm input[type="text"] {
+        margin-right: 10px;
+      }
+      #updateForm button[type="submit"] {
+        margin-left: auto;
+      }
     </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
@@ -252,10 +148,10 @@
   </head>
   <body>
     <div class="sidebar">
-      <div class="avatar-container-navbar">
+      <a class="avatar-container-navbar">
         <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
         <div class="avatar-text"><%=data.username %></div>
-      </div>
+      </a>
       <div class="sidebar-links">
         <% for (const item of sidebar) { %> <% const { title, to, href, html,
         category, basePath } = item; %> <% if (html) { %> <%- html %> <% } else
@@ -279,8 +175,7 @@
     <div class="content">
       <h2>this is a PLACEHOLDER</h2>
       <form id="updateForm">
-        <input type="text" id="variableName" placeholder="Variable Name" />
-        <input type="text" id="value" placeholder="Value" />
+        <input type="text" id="value-prefix" placeholder="Value" />
         <button type="submit">Update Variable</button>
       </form>
     </div>
@@ -297,8 +192,12 @@
         .addEventListener("submit", async (event) => {
           event.preventDefault();
 
-          const variable = document.getElementById("variableName").value;
-          const value = document.getElementById("value").value;
+          const valueInput = document.querySelector("[id^='value-']");
+          const variable = valueInput.id.split("-")[1];
+          const value = valueInput.value;
+
+          console.log("variable:", variable);
+          console.log("value:", value);
 
           const currentUrl = window.location.href;
           const urlParts = currentUrl.split("/");
@@ -320,11 +219,14 @@
 
             if (response.ok) {
               console.log("Data updated successfully");
+              alert("Data updated successfully");
             } else {
               console.error("Failed to update data");
+              alert("Failed to update data");
             }
           } catch (error) {
             console.error("An error occurred", error);
+            alert("An error occurred");
           }
         });
     </script>
