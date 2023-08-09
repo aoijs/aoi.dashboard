@@ -443,7 +443,16 @@ class Dashboard {
 
     app.get("/dash/guilds/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
-      const guild = await this.client.guilds.cache.get(guildId);
+      const guild = await this.client.guilds.fetch(guildId);
+      const owner = await guild.fetchOwner();
+      
+      const gobj = {
+        name: guild.name,
+        ownerId: owner.id,
+        ownerTag: owner.user.tag,
+        memberCount: guild.memberCount,
+      };
+      
 
       const data = {
         user: {
@@ -464,11 +473,27 @@ class Dashboard {
       };
 
       if (!guild) {
-        console.error(
-          `${chalk.red.bold(
-            "[ERR]"
-          )} [Dashboard]: Failed to load dashboard with reason: Failed to retrieve guild data.`
+        ejs.renderFile(
+          path.join(__dirname, "../", "dashboard/html/pages/error.html"),
+          {
+            sidebar: this.sidebar,
+            getDefaultComponent: this.getDefaultComponent,
+          },
+          async (err, html) => {
+            if (err) {
+              console.error(
+                `${chalk.red.bold(
+                  "[ERR]"
+                )} [Dashboard]: Failed to load dashboard with reason:`,
+                err
+              );
+              this.client.destroy();
+            } else {
+              res.send(html);
+            }
+          }
         );
+        return;
       }
 
       const userPermissions = req.user.guilds.find(
@@ -482,7 +507,7 @@ class Dashboard {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/guild.html"),
           {
-            guild,
+            gobj,
             data,
             sidebar: this.dashbar,
             getDefaultComponent: this.getDefaultComponent,

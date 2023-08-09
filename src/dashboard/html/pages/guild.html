@@ -124,21 +124,72 @@
         text-align: center;
       }
 
+      .container {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        margin-left: 270px;
+        min-height: 100%;
+      }
+
+      .bot-username {
+        text-align: center;
+      }
+
+      .guild-info {
+        text-align: center;
+      }
+
       .content {
-        margin-left: 350px;
-        color: white;
-        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .guild-info-container,
+      .content-container {
+        background-color: #5b5d6159;
+        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        flex: 1;
+        margin: 20px;
       }
 
       #updateForm {
         display: flex;
+        flex-direction: column;
         align-items: center;
       }
+
       #updateForm input[type="text"] {
-        margin-right: 10px;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        border-radius: 5px;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 2px solid #424549;
+        background-color: #36393e;
+        color: white;
       }
+
+      #updateForm input[type="text"]:focus {
+        outline: none;
+      }
+
       #updateForm button[type="submit"] {
-        margin-left: auto;
+        width: 100%;
+        background-color: #5a68a5;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      #updateForm button[type="submit"]:hover {
+        background-color: #7289da;
       }
     </style>
     <link
@@ -162,7 +213,7 @@
         <% } else { %>
         <a
           class="sidebar-link"
-          href="<%= basePath ? to : '/' + 'dash/guilds/' + guild.id + to %>"
+          href="<%= basePath ? to : '/' + 'dash/guilds/' + gobj.id + to %>"
           ><%= title %></a
         >
         <% } %> <% } %> <% if (data.auth) { %>
@@ -172,12 +223,23 @@
         <% } %>
       </div>
     </div>
-    <div class="content">
-      <h2>this is a PLACEHOLDER</h2>
-      <form id="updateForm">
-        <input type="text" id="value-prefix" placeholder="Value" />
-        <button type="submit">Update Variable</button>
-      </form>
+    <div class="container">
+      <div class="guild-info-container">
+        <div class="guild-info">
+          <h2>Guild Information</h2>
+          <p>Name: <%=gobj.name %></p>
+          <p>Member Count: <%=gobj.memberCount %></p>
+          <p>guild: <%=JSON.stringify(gobj) %></p>
+        </div>
+      </div>
+      <div class="content-container">
+        <div class="content">
+          <form id="updateForm">
+            <input type="text" id="value-prefix" placeholder="Update Bot Prefix.." />
+            <button type="submit">Update Prefix</button>
+          </form>
+        </div>
+      </div>
     </div>
     <footer class="footer">
       <div class="brand"><%=data.username %></div>
@@ -193,12 +255,16 @@
           event.preventDefault();
 
           const valueInput = document.querySelector("[id^='value-']");
+          const alert = document.createElement("div");
+          alert.innerHTML = "✔️";
+          alert.style.color = "green";
+          valueInput.insertAdjacentElement("afterend", alert);
+          setTimeout(() => {
+            alert.remove();
+          }, 3000);
+
           const variable = valueInput.id.split("-")[1];
           const value = valueInput.value;
-
-          console.log("variable:", variable);
-          console.log("value:", value);
-
           const currentUrl = window.location.href;
           const urlParts = currentUrl.split("/");
           const guildId = urlParts[urlParts.length - 1];
@@ -219,14 +285,11 @@
 
             if (response.ok) {
               console.log("Data updated successfully");
-              alert("Data updated successfully");
             } else {
               console.error("Failed to update data");
-              alert("Failed to update data");
             }
           } catch (error) {
             console.error("An error occurred", error);
-            alert("An error occurred");
           }
         });
     </script>
