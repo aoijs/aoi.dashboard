@@ -1,11 +1,11 @@
+const DiscordStrategy = require("passport-discord").Strategy;
 const express = require("express");
 const path = require("path");
 const chalk = require("chalk");
 const session = require("express-session");
 const passport = require("passport");
 const ejs = require("ejs");
-const { KeyValue } = require("@akarui/aoi.db");
-const DiscordStrategy = require("passport-discord").Strategy;
+const fs = require("fs");
 
 class Dashboard {
   constructor(client, options) {
@@ -26,6 +26,7 @@ class Dashboard {
     ];
     this.features = options.features;
     this.guilds = new Map();
+    this.routes = options.routes;
     this.authSecret = require("crypto").randomBytes(16).toString("hex");
     this.sessionSecret = require("crypto").randomBytes(16).toString("hex");
     this.db = this.client.db;
@@ -365,6 +366,67 @@ class Dashboard {
       res.redirect("/auth/login");
     };
 
+    this.routes.forEach((route) => {
+      if (!route.name) {
+        console.warn(
+          `\r${chalk.red.bold("[ERR]")} ${chalk.red(
+            "[ROUTES]"
+          )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property.`
+        );
+        process.exit(1);
+      }
+
+      const { name, path: filePath, auth } = route;
+
+      app.get(
+        name,
+        auth === true ? ensureAuthenticated : (_req, _res, next) => next(),
+        async (_req, res) => {
+          if (!filePath || !fs.existsSync(path.join(__dirname, filePath))) {
+            ejs.renderFile(
+              path.join(__dirname, "../dashboard/html/pages/setup.html"),
+              {
+                sidebar: this.sidebar,
+                getDefaultComponent: this.getDefaultComponent,
+              },
+              (err, html) => {
+                if (err) {
+                  console.warn(
+                    `\r${chalk.red.bold("[ERR]")} ${chalk.red(
+                      "[ROUTES]"
+                    )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
+                  );
+                  return;
+                } else {
+                  res.send(html);
+                }
+              }
+            );
+          } else {
+            ejs.renderFile(
+              path.join(__dirname, filePath),
+              {
+                sidebar: this.sidebar,
+                getDefaultComponent: this.getDefaultComponent,
+              },
+              (err, html) => {
+                if (err) {
+                  console.warn(
+                    `\r${chalk.red.bold("[ERR]")} ${chalk.red(
+                      "[ROUTES]"
+                    )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
+                  );
+                  return;
+                } else {
+                  res.send(html);
+                }
+              }
+            );
+          }
+        }
+      );
+    });
+
     app.get("/", async (req, res) => {
       const data = {
         features: this.features,
@@ -417,10 +479,7 @@ class Dashboard {
       const userPermissions = req.user.guilds.find(
         (guild) => guild.id === guildId
       )?.permissions;
-      if (
-        Boolean(userPermissions & 0x0000000000000008) ||
-        Boolean(userPermissions & 0x0000000000000020)
-      ) {
+      if (Boolean(userPermissions & 8) || Boolean(userPermissions & 32)) {
         try {
           const data = req.body;
 
@@ -445,14 +504,13 @@ class Dashboard {
       const guildId = req.params.guildid;
       const guild = await this.client.guilds.fetch(guildId);
       const owner = await guild.fetchOwner();
-      
+
       const gobj = {
         name: guild.name,
         ownerId: owner.id,
         ownerTag: owner.user.tag,
         memberCount: guild.memberCount,
       };
-      
 
       const data = {
         user: {
@@ -500,10 +558,7 @@ class Dashboard {
         (guild) => guild.id === guildId
       )?.permissions;
 
-      if (
-        Boolean(userPermissions & 0x0000000000000008) ||
-        Boolean(userPermissions & 0x0000000000000020)
-      ) {
+      if (Boolean(userPermissions & 8) || Boolean(userPermissions & 32)) {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/guild.html"),
           {
@@ -637,6 +692,4 @@ class Dashboard {
   };
 }
 
-module.exports = {
-  Dashboard,
-};
+module.exports = { Dashboard };
