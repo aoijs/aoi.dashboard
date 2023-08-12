@@ -27,8 +27,8 @@ class Dashboard {
     this.features = options.features;
     this.guilds = new Map();
     this.routes = options.routes;
-    this.authSecret = require("crypto").randomBytes(16).toString("hex");
-    this.sessionSecret = require("crypto").randomBytes(16).toString("hex");
+    this.authSecret = require("crypto").randomBytes(32).toString("hex");
+    this.sessionSecret = require("crypto").randomBytes(32).toString("hex");
     this.db = this.client.db;
   }
 
@@ -382,7 +382,7 @@ class Dashboard {
         name,
         auth === true ? ensureAuthenticated : (_req, _res, next) => next(),
         async (_req, res) => {
-          if (!filePath || !fs.existsSync(path.join(__dirname, filePath))) {
+          if (!filePath || !fs.existsSync(filePath)) {
             ejs.renderFile(
               path.join(__dirname, "../dashboard/html/pages/setup.html"),
               {
@@ -404,7 +404,7 @@ class Dashboard {
             );
           } else {
             ejs.renderFile(
-              path.join(__dirname, filePath),
+              filePath,
               {
                 sidebar: this.sidebar,
                 getDefaultComponent: this.getDefaultComponent,
@@ -473,6 +473,41 @@ class Dashboard {
         }
       );
     });
+
+    app.get("/invite", async (req, res) => {
+      const data = {
+        avatar:
+          this.client.user.avatarURL({ format: "png", size: 4096 }) ||
+          `https://cdn.discordapp.com/embed/avatars/${
+            this.client.user.id % 5
+          }.png`,
+        username: this.client.user.username,
+        id: this.client.user.id,
+      };
+
+      ejs.renderFile(
+        path.join(__dirname, "../", "dashboard/html/pages/invite.html"),
+        {
+          data,
+          sidebar: this.sidebar,
+          getDefaultComponent: this.getDefaultComponent,
+        },
+        (err, html) => {
+          if (err) {
+            this.client.destroy();
+            console.error(
+              `${chalk.red.bold(
+                "[ERR]"
+              )} [Dashboard]: Failed to load dashboard data with reason:`,
+              err
+            );
+          } else {
+            res.send(html);
+          }
+        }
+      );
+    });
+
 
     app.post("/data/update/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;

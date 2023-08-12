@@ -9,12 +9,24 @@
       color: #ffffff;
     }
 
+    a {
+      color: #5a68a5;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      position: relative;
+    }
+
+    .error-wrapper {
+      position: relative;
+      display: inline-block;
     }
 
     .error-code {
@@ -22,6 +34,18 @@
       font-size: 6rem;
       margin: 0;
       padding: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .error-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateX(-50%);
+      opacity: 0.3;
+      width: 120%; /* Adjust the size as needed */
+      z-index: -1;
     }
 
     .error-message {
@@ -55,13 +79,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 - Not Found</title>
   </head>
-
   <body>
     <div class="container">
       <h1 class="error-code">404</h1>
-      <h2 class="error-message">Did you forget to setup this page?</h2>
+      <h2 class="error-message">Did you forget to set up this page?</h2>
       <p class="error-description">
-        You need to properly setup routing before using this feature, check out the examples on the Github repository.
+        You need to properly set up routing before using this feature, check out
+        the examples on the <a href="https://github.com/Faf4a/dashboard">GitHub repository</a>.
       </p>
     </div>
   </body>
