@@ -6,6 +6,9 @@
       href="https://fonts.googleapis.com/css?family=Allerta Stencil"
       rel="stylesheet"
     />
+    <meta content="<%=data.username %> Dashboard" property="og:title" />
+    <meta content="Login with Discord to view this page." property="og:description" />
+    <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
       body {
         font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
@@ -88,7 +91,7 @@
       }
 
       .avatar.green {
-        border: 3px solid #6AFFAA;
+        border: 3px solid #6affaa;
       }
 
       .avatar.grey {
@@ -258,8 +261,8 @@
         <div class="avatar-text"><%=data.username %></div>
       </div>
       <div class="navbar-links">
-        <% for (const item of sidebar) { %> <% const { title, to, href, html } = item;
-        %> <% if (html) { %> <%- html %> <% } else if (href) { %>
+        <% for (const item of sidebar) { %> <% const { title, to, href, html } =
+        item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
         <a class="navbar-link" href="<%= href %>"><%= title %></a>
         <% } else { %>
         <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
