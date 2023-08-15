@@ -4,6 +4,7 @@ const path = require("path");
 const chalk = require("chalk");
 const session = require("express-session");
 const passport = require("passport");
+const readline = require("readline");
 const ejs = require("ejs");
 const fs = require("fs");
 
@@ -14,12 +15,12 @@ class Dashboard {
     this.redirectURL = options.url + "/auth/callback";
     this.scopes = options.scopes || ["identify", "email", "guilds"];
     this.secret = options.secret;
-    this.dashbar = options.sidebar || [
+    this.sidebar = options.sidebar || [
       { title: "Discord", to: "discord" },
       { title: "Commands", to: "commands" },
       { title: "Invite", to: "invite" },
     ];
-    this.sidebar = options.navbar || [
+    this.navbar = options.navbar || [
       { title: "Discord", to: "discord" },
       { title: "Commands", to: "commands" },
       { title: "Invite", to: "invite" },
@@ -79,10 +80,11 @@ class Dashboard {
 
     for (const guild of guilds.values()) {
       try {
-        const owner = await this.getOwners(guild);
+        const fetched = await this.client.guilds.fetch(guild.id);
+        const owner = await this.getOwners(fetched);
         if (owner) {
-          this.guilds.set(guild.id, {
-            guildName: guild.name,
+          this.guilds.set(fetched.id, {
+            guildName: fetched.name,
             ownerId: owner.user.id,
             ownerTag: owner.user.tag,
           });
@@ -90,7 +92,9 @@ class Dashboard {
           console.error(
             `${chalk.red.bold(
               "[ERR]"
-            )} [Dashboard]: Error fetching owner for guild with ID ${guild.id}`
+            )} [Dashboard]: Error fetching owner for guild with ID ${
+              fetched.id
+            }`
           );
         }
       } catch (err) {
@@ -105,7 +109,7 @@ class Dashboard {
     clearInterval(loading);
     process.stdout.clearLine();
 
-    for (const item of this.sidebar) {
+    for (const item of this.navbar) {
       if (!("title" in item && ("to" in item || "href" in item))) {
         console.error(
           `${chalk.red.bold("\r[ERR]")} ${chalk.red(
@@ -120,7 +124,7 @@ class Dashboard {
       }
     }
 
-    for (const item of this.dashbar) {
+    for (const item of this.sidebar) {
       if ("category" in item) {
         if (Object.keys(item).length !== 2 || !("title" in item)) {
           console.error(
@@ -133,7 +137,12 @@ class Dashboard {
           process.exit(1);
         }
       } else {
-        if (!("title" in item && ("to" in item || "href" in item))) {
+        if (
+          !(
+            "html" in item ||
+            ("title" in item && ("to" in item || "href" in item))
+          )
+        ) {
           console.error(
             `${chalk.red.bold("\r[ERR]")} ${chalk.red(
               "[SIDEBAR]"
@@ -141,7 +150,9 @@ class Dashboard {
               "title"
             )} requires ${chalk.yellow.bold("to")} or ${chalk.yellow.bold(
               "href"
-            )} to work properly.`
+            )} to work properly. \n\rLine: ${chalk.grey(
+              `Line: ${JSON.stringify(item)}`
+            )}`
           );
           process.exit(1);
         }
@@ -371,7 +382,9 @@ class Dashboard {
         console.warn(
           `\r${chalk.red.bold("[ERR]")} ${chalk.red(
             "[ROUTES]"
-          )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property.`
+          )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
+            `Line: ${route}`
+          )}`
         );
         process.exit(1);
       }
@@ -386,7 +399,7 @@ class Dashboard {
             ejs.renderFile(
               path.join(__dirname, "../dashboard/html/pages/setup.html"),
               {
-                sidebar: this.sidebar,
+                sidebar: this.navbar,
                 getDefaultComponent: this.getDefaultComponent,
               },
               (err, html) => {
@@ -406,7 +419,7 @@ class Dashboard {
             ejs.renderFile(
               filePath,
               {
-                sidebar: this.sidebar,
+                sidebar: this.navbar,
                 getDefaultComponent: this.getDefaultComponent,
               },
               (err, html) => {
@@ -455,7 +468,7 @@ class Dashboard {
         path.join(__dirname, "../", "dashboard/html/pages/index.html"),
         {
           data,
-          sidebar: this.sidebar,
+          sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
         (err, html) => {
@@ -489,7 +502,7 @@ class Dashboard {
         path.join(__dirname, "../", "dashboard/html/pages/invite.html"),
         {
           data,
-          sidebar: this.sidebar,
+          sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
         (err, html) => {
@@ -507,7 +520,6 @@ class Dashboard {
         }
       );
     });
-
 
     app.post("/data/update/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
@@ -542,6 +554,7 @@ class Dashboard {
 
       const gobj = {
         name: guild.name,
+        id: guild.id,
         ownerId: owner.id,
         ownerTag: owner.user.tag,
         memberCount: guild.memberCount,
@@ -569,7 +582,7 @@ class Dashboard {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/error.html"),
           {
-            sidebar: this.sidebar,
+            sidebar: this.navbar,
             getDefaultComponent: this.getDefaultComponent,
           },
           async (err, html) => {
@@ -599,7 +612,7 @@ class Dashboard {
           {
             gobj,
             data,
-            sidebar: this.dashbar,
+            sidebar: this.sidebar,
             getDefaultComponent: this.getDefaultComponent,
           },
           (err, html) => {
@@ -621,7 +634,7 @@ class Dashboard {
           path.join(__dirname, "../", "dashboard/html/pages/error.html"),
           {
             data,
-            sidebar: this.sidebar,
+            sidebar: this.navbar,
             getDefaultComponent: this.getDefaultComponent,
           },
           (err, html) => {
@@ -690,7 +703,7 @@ class Dashboard {
         {
           guildData,
           data,
-          sidebar: this.sidebar,
+          sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
         async (err, html) => {
