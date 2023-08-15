@@ -7,7 +7,10 @@
       rel="stylesheet"
     />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
-    <meta content="Login with Discord to view this page." property="og:description" />
+    <meta
+      content="Login with Discord to view this page."
+      property="og:description"
+    />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
       body {
@@ -288,28 +291,40 @@
         <% } %>
       </div>
     </div>
+    <% if (guildData.length === 0) { %>
+    <p>No guilds available.</p>
+    <% } else { %>
     <ul class="guild-list">
       <% for (const guild of guildData) { %>
       <li>
         <% if (guild.permissions.includes('Administrator') ||
         guild.permissions.includes('Manage Server')) { %>
         <div class="guild-container" id="access-<%= guild.guildID %>">
-          <% } else { %>
-          <div class="guild-container" id="noaccess-<%= guild.guildID %>">
-            <% } %>
-            <img
-              class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('ManageGuild') ? 'green' : 'grey' %>"
-              src="<%= guild.iconURL %>"
-              alt="Guild Icon"
-            />
-            <div class="guild-text">
-              <p><%= guild.guildName %></p>
-            </div>
+          <img
+            class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('ManageGuild') ? 'green' : 'grey' %>"
+            src="<%= guild.iconURL %>"
+            alt="Guild Icon"
+          />
+          <div class="guild-text">
+            <p><%= guild.guildName %></p>
           </div>
         </div>
+        <% } else { %>
+        <div class="guild-container" id="noaccess-<%= guild.guildID %>">
+          <img
+            class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('ManageGuild') ? 'green' : 'grey' %>"
+            src="<%= guild.iconURL %>"
+            alt="Guild Icon"
+          />
+          <div class="guild-text">
+            <p><%= guild.guildName %></p>
+          </div>
+        </div>
+        <% } %>
       </li>
       <% } %>
     </ul>
+    <% } %>
     <footer class="footer">
       <div class="brand"><%=data.username %></div>
       <div class="copyright">

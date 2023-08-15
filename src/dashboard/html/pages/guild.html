@@ -11,7 +11,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
-    <meta content="Login with Discord to view this page." property="og:description" />
+    <meta
+      content="Login with Discord to view this page."
+      property="og:description"
+    />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
       body {
@@ -66,30 +69,27 @@
         justify-content: center;
       }
 
-      .sidebar-links {
-        margin-top: 20px;
-      }
-
       .sidebar-category {
         font-weight: bold;
       }
 
-      .sidebar-link,
-      .login-button {
+      .sidebar-link {
         display: block;
         padding: 10px;
         width: calc(100% - 20px);
+        transition: all 0.3s;
       }
 
-      .sidebar-link:hover,
-      .login-button:hover {
-        background-color: #424549;
+      .sidebar-link:hover {
+        background-color: #5a68a5;
+        transition: all 0.3s;
       }
 
       .sidebar-link {
         text-decoration: none;
         color: white;
         border-bottom: none;
+        text-indent: 12px;
       }
 
       .login-button {
@@ -238,7 +238,11 @@
       <div class="content-container">
         <div class="content">
           <form id="updateForm">
-            <input type="text" id="value-prefix" placeholder="Update Bot Prefix.." />
+            <input
+              type="text"
+              id="value-prefix"
+              placeholder="Update Bot Prefix.."
+            />
             <button type="submit">Update Prefix</button>
           </form>
         </div>

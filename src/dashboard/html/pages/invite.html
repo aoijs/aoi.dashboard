@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Quicksand", sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .message {
+      font-family: "Quicksand", sans-serif;
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .description {
+      font-family: "Quicksand", sans-serif;
+      font-size: 1.2rem;
+      margin: 0 0 20px;
+      max-width: 300px;
+      text-align: center;
+    }
+  </style>
+  <head>
+    <meta http-equiv="refresh" content="5;url=https://www.example.com" />
+    <title><%=data.username %> | Server Picker</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
+      rel="stylesheet"
+    />
+    <meta content="<%=data.username %> Dashboard" property="og:title" />
+    <meta
+      content="Invite <%=data.username %> today!"
+      property="og:description"
+    />
+    <meta content="#7289da" data-react-helmet="true" name="theme-color" />
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="message">Redirect</h2>
+      <p class="description">
+        You will be redirected to an external website in 5 seconds..
+      </p>
+    </div>
+  </body>
+</html>
