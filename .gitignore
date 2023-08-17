@@ -9,6 +9,7 @@
 /index.js
 /coverage
 /package.json
+/package-lock.json
 /database
 /commands
 
