@@ -4,7 +4,6 @@ const path = require("path");
 const chalk = require("chalk");
 const session = require("express-session");
 const passport = require("passport");
-const readline = require("readline");
 const ejs = require("ejs");
 const fs = require("fs");
 
@@ -377,68 +376,70 @@ class Dashboard {
       res.redirect("/auth/login");
     };
 
-    this.routes.forEach((route) => {
-      if (!route.name) {
-        console.warn(
-          `\r${chalk.red.bold("[ERR]")} ${chalk.red(
-            "[ROUTES]"
-          )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
-            `Line: ${route}`
-          )}`
-        );
-        process.exit(1);
-      }
-
-      const { name, path: filePath, auth } = route;
-
-      app.get(
-        name,
-        auth === true ? ensureAuthenticated : (_req, _res, next) => next(),
-        async (_req, res) => {
-          if (!filePath || !fs.existsSync(filePath)) {
-            ejs.renderFile(
-              path.join(__dirname, "../dashboard/html/pages/setup.html"),
-              {
-                sidebar: this.navbar,
-                getDefaultComponent: this.getDefaultComponent,
-              },
-              (err, html) => {
-                if (err) {
-                  console.warn(
-                    `\r${chalk.red.bold("[ERR]")} ${chalk.red(
-                      "[ROUTES]"
-                    )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
-                  );
-                  return;
-                } else {
-                  res.send(html);
-                }
-              }
-            );
-          } else {
-            ejs.renderFile(
-              filePath,
-              {
-                sidebar: this.navbar,
-                getDefaultComponent: this.getDefaultComponent,
-              },
-              (err, html) => {
-                if (err) {
-                  console.warn(
-                    `\r${chalk.red.bold("[ERR]")} ${chalk.red(
-                      "[ROUTES]"
-                    )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
-                  );
-                  return;
-                } else {
-                  res.send(html);
-                }
-              }
-            );
-          }
+    if (this.routes) {
+      this.routes.forEach((route) => {
+        if (!route.name) {
+          console.warn(
+            `\r${chalk.red.bold("[ERR]")} ${chalk.red(
+              "[ROUTES]"
+            )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
+              `Line: ${route}`
+            )}`
+          );
+          process.exit(1);
         }
-      );
-    });
+
+        const { name, path: filePath, auth } = route;
+
+        app.get(
+          name,
+          auth === true ? ensureAuthenticated : (_req, _res, next) => next(),
+          async (_req, res) => {
+            if (!filePath || !fs.existsSync(filePath)) {
+              ejs.renderFile(
+                path.join(__dirname, "../dashboard/html/pages/setup.html"),
+                {
+                  sidebar: this.navbar,
+                  getDefaultComponent: this.getDefaultComponent,
+                },
+                (err, html) => {
+                  if (err) {
+                    console.warn(
+                      `\r${chalk.red.bold("[ERR]")} ${chalk.red(
+                        "[ROUTES]"
+                      )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
+                    );
+                    return;
+                  } else {
+                    res.send(html);
+                  }
+                }
+              );
+            } else {
+              ejs.renderFile(
+                filePath,
+                {
+                  sidebar: this.navbar,
+                  getDefaultComponent: this.getDefaultComponent,
+                },
+                (err, html) => {
+                  if (err) {
+                    console.warn(
+                      `\r${chalk.red.bold("[ERR]")} ${chalk.red(
+                        "[ROUTES]"
+                      )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
+                    );
+                    return;
+                  } else {
+                    res.send(html);
+                  }
+                }
+              );
+            }
+          }
+        );
+      });
+    }
 
     app.get("/", async (req, res) => {
       const data = {
