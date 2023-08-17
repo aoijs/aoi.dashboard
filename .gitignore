@@ -6,6 +6,7 @@
 .pnp.js
 
 # testing
+/index.js
 /coverage
 /package.json
 /database
