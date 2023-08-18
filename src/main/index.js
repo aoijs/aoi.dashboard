@@ -488,6 +488,57 @@ class Dashboard {
       );
     });
 
+    app.get("/commands", async (req, res) => {
+      const data = {
+        client: this.client,
+        commands: {
+          text: this.client.cmd.default.map((x) => x.name).join(", "),
+          slash: client.cmd.interaction.slash.map(x => x.name).join(", "),
+        },
+        user: {
+          avatar:
+            `https://cdn.discordapp.com/avatars/${req.user?.id}/${req.user?.avatar}.png` ||
+            `https://cdn.discordapp.com/embed/avatars/${req.user.id % 5}.png`,
+          username: req.user?.username,
+          id: req.user?.id,
+        },
+        avatar:
+          this.client.user.avatarURL({ format: "png", size: 4096 }) ||
+          `https://cdn.discordapp.com/embed/avatars/${
+            this.client.user.id % 5
+          }.png`,
+        username: this.client.user.username,
+        id: this.client.user.id,
+        auth: req.isAuthenticated(),
+        guildCount: await this.client.guilds
+          .fetch()
+          .then((guilds) => guilds?.size),
+        cachedUsers: this.client.users.cache?.size,
+      };
+
+      ejs.renderFile(
+        path.join(__dirname, "../", "dashboard/html/pages/commands.html"),
+        {
+          data,
+          sidebar: this.navbar,
+          getDefaultComponent: this.getDefaultComponent,
+        },
+        (err, html) => {
+          if (err) {
+            this.client.destroy();
+            console.error(
+              `${chalk.red.bold(
+                "[ERR]"
+              )} [Dashboard]: Failed to load dashboard data with reason:`,
+              err
+            );
+          } else {
+            res.send(html);
+          }
+        }
+      );
+    });
+
     app.get("/invite", async (req, res) => {
       const data = {
         avatar:

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=data.username %> | Commands</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
+      rel="stylesheet"
+    />
+    <meta content="<%=data.username %> Commands" property="og:title" />
+    <meta content="#7289da" data-react-helmet="true" name="theme-color" />
+    <style>
+      body {
+        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+          "Lucida Sans", sans-serif;
+        background-color: #424549;
+        color: white;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50vh;
+        color: white;
+      }
+
+      .avatar img {
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        margin-right: 30px;
+        vertical-align: middle;
+        -webkit-box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
+        -moz-box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
+        box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .text-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .text-container strong {
+        display: block;
+      }
+
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        border-radius: 0.3rem;
+        justify-content: space-between;
+        background-color: #36393e;
+        padding: 10px;
+        color: white;
+        z-index: 5;
+      }
+
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .navbar-links {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar-link {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+        position: relative;
+        margin-top: 2px;
+        border-bottom: 0 solid transparent;
+        transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .navbar-link:hover {
+        border-bottom: 3px solid #5a68a5;
+      }
+
+      .manage-button {
+        padding: 6px 4px;
+        margin-top: 35px;
+        display: flex;
+        background-color: #7289da;
+        color: white;
+        justify-content: center;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .manage-button:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
+      }
+
+      .login-button {
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: white;
+        margin-right: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
+        transition: background-color 0.3s;
+      }
+
+      .login-button:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
+      }
+
+      .avatar-navbar-small {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+        -webkit-user-drag: none;
+      }
+
+      .features-list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 0 150px;
+        box-sizing: border-box;
+      }
+
+      .features-header {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+
+      .feature-container {
+        width: calc(100% - 60px);
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #36393e;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-image {
+        width: 250px;
+        height: 150px;
+        border-radius: 5px;
+        margin-right: 20px;
+        object-fit: cover;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+
+      .feature-details {
+        flex: 1;
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+      }
+
+      .feature-title {
+        font-size: 25px;
+        font-weight: bold;
+        color: white;
+        margin: 0;
+        align-self: stretch;
+      }
+
+      .feature-description {
+        margin-top: 10px;
+        color: white;
+        line-height: 1.5;
+        align-self: stretch;
+      }
+
+      .footer {
+        margin: 0;
+        padding: 20px;
+        background-color: #36393e;
+        text-align: center;
+      }
+
+      .brand {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .copyright {
+        font-size: 14px;
+        color: #777;
+      }
+
+      .slash {
+        color: #7289da;
+        font-weight: bold;
+      }
+
+      .separator {
+        margin: 0 10px;
+      }
+
+      .text {
+        color: #000000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="avatar-container-navbar">
+        <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
+        <div class="avatar-text"><%=data.username %></div>
+      </div>
+      <div class="navbar-links">
+        <% for (const item of sidebar) { %> <% const { title, to, href, html } =
+        item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
+        <a class="navbar-link" href="<%= href %>"><%= title %></a>
+        <% } else { %>
+        <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
+          ><%= title %></a
+        >
+        <% } %> <% } %> <% if (data.auth) { %>
+        <div class="avatar-container-navbar">
+          <a
+            class="login-button"
+            style="vertical-align: middle"
+            href="/auth/logout"
+          >
+            <img
+              class="avatar-navbar-small"
+              src="<%=data.user.avatar %>"
+              alt="Avatar"
+            />
+            Logout
+          </a>
+        </div>
+        <% } else { %>
+        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <% } %>
+      </div>
+    </div>
+    <div class="container">
+      <div class="text-container">
+        <div style="font-size: 40px">
+          <strong>Commands</strong>
+        </div>
+      </div>
+    </div>
+    <div class="text-container">
+      <div style="font-size: 25px">
+        <% if (data.commands.slash) { %>
+        <span class="slash"><%= data.commands.slash %></span>
+        <% } %> <% if (data.commands.slash && data.commands.text) { %>
+        <span class="separator">,</span>
+        <% } %> <% if (data.commands.text) { %>
+        <span class="text"><%= data.commands.text %></span>
+        <% } else if (!data.commands.slash) { %>
+        <span class="text">No commands found!</span>
+        <% } %>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="brand"><%=data.username %></div>
+      <div class="copyright">
+        © <%= new Date().getFullYear() %> Copyright <%=data.username %>. All
+        Rights Reserved.
+      </div>
+    </footer>
+  </body>
+</html>
