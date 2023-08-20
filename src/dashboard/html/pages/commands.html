@@ -18,34 +18,44 @@
         padding: 0;
       }
 
-      .container {
+      .command-container {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 50vh;
-        color: white;
+        flex-wrap: wrap;
+        justify-content: flex-start; /* Change this to flex-start */
+        align-items: flex-start; /* Add this line to align items at the top */
+        margin-top: 20px;
+        gap: 15px;
       }
 
-      .avatar img {
-        width: 240px;
-        height: 240px;
-        border-radius: 50%;
-        margin-right: 30px;
-        vertical-align: middle;
-        -webkit-box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
-        -moz-box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
-        box-shadow: 0px 0px 14px 6px rgba(255, 255, 255, 0.61);
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
+      .command {
+        background-color: #555555;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 14px;
+        flex: auto; /* Adjust width and spacing as needed */
+        box-sizing: border-box; /* Include padding in the width calculation */
       }
 
-      .text-container {
+      .command-header {
         display: flex;
         flex-direction: column;
+        margin-bottom: 10px;
       }
 
-      .text-container strong {
-        display: block;
+      .command-title {
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .command-description {
+        color: #999999;
+        font-size: 14px;
+      }
+
+      .command-subtitle {
+        color: #cccccc;
+        font-size: 14px;
       }
 
       .avatar-text {
@@ -100,23 +110,13 @@
         border-bottom: 3px solid #5a68a5;
       }
 
-      .manage-button {
-        padding: 6px 4px;
-        margin-top: 35px;
-        display: flex;
-        background-color: #7289da;
-        color: white;
-        justify-content: center;
-        text-align: center;
-        border-radius: 8px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: background-color 0.3s;
-      }
-
-      .manage-button:hover {
-        background-color: #5a68a5;
-        transition: background-color 0.3s;
+      .avatar-navbar-small {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+        -webkit-user-drag: none;
       }
 
       .login-button {
@@ -136,79 +136,17 @@
         transition: background-color 0.3s;
       }
 
-      .avatar-navbar-small {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 8px;
-        vertical-align: middle;
-        -webkit-user-drag: none;
-      }
-
-      .features-list {
+      .container {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        padding: 0 150px;
-        box-sizing: border-box;
-      }
-
-      .features-header {
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 20px;
-      }
-
-      .feature-container {
-        width: calc(100% - 60px);
-        margin: 20px 0;
-        padding: 20px;
-        background-color: #36393e;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      .feature-image {
-        width: 250px;
-        height: 150px;
-        border-radius: 5px;
-        margin-right: 20px;
-        object-fit: cover;
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
-      }
-
-      .feature-details {
-        flex: 1;
-        margin-right: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: stretch;
-      }
-
-      .feature-title {
-        font-size: 25px;
-        font-weight: bold;
-        color: white;
-        margin: 0;
-        align-self: stretch;
-      }
-
-      .feature-description {
-        margin-top: 10px;
-        color: white;
-        line-height: 1.5;
-        align-self: stretch;
+        flex-grow: 1;
       }
 
       .footer {
-        margin: 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
         padding: 20px;
         background-color: #36393e;
         text-align: center;
@@ -223,11 +161,6 @@
       .copyright {
         font-size: 14px;
         color: #777;
-      }
-
-      .slash {
-        color: #7289da;
-        font-weight: bold;
       }
 
       .separator {
@@ -280,18 +213,18 @@
         </div>
       </div>
     </div>
-    <div class="text-container">
-      <div style="font-size: 25px">
-        <% if (data.commands.slash) { %>
-        <span class="slash"><%= data.commands.slash %></span>
-        <% } %> <% if (data.commands.slash && data.commands.text) { %>
-        <span class="separator">,</span>
-        <% } %> <% if (data.commands.text) { %>
-        <span class="text"><%= data.commands.text %></span>
-        <% } else if (!data.commands.slash) { %>
-        <span class="text">No commands found!</span>
-        <% } %>
+    <div class="command-container">
+      <% const commands = data.commands.text.split(', '); const descriptions =
+      data.client.cmd.default.map((x) => x.description); %> <% for (let i = 0; i
+      < commands.length; i++) { %> <% const command = commands[i]; const
+      description = descriptions[i] || "No description available"; %>
+      <div class="command">
+        <div class="command-header">
+          <span class="command-title"><%= data.client.prefix + command %></span>
+          <span class="command-description"><%= description %></span>
+        </div>
       </div>
+      <% } %>
     </div>
     <footer class="footer">
       <div class="brand"><%=data.username %></div>
