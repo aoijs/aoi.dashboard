@@ -383,17 +383,17 @@ class Dashboard {
             `\r${chalk.red.bold("[ERR]")} ${chalk.red(
               "[ROUTES]"
             )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
-              `Line: ${route}`
+              `Line: ${JSON.stringify(route)}`
             )}`
           );
           process.exit(1);
         }
 
-        const { name, path: filePath, auth } = route;
+        const { name, path: filePath, requireAuth } = route;
 
         app.get(
           name,
-          auth === true ? ensureAuthenticated : (_req, _res, next) => next(),
+          requireAuth === true ? ensureAuthenticated : (_req, _res, next) => next(),
           async (_req, res) => {
             if (!filePath || !fs.existsSync(filePath)) {
               ejs.renderFile(
@@ -493,7 +493,7 @@ class Dashboard {
         client: this.client,
         commands: {
           text: this.client.cmd.default.map((x) => x.name).join(", "),
-          slash: client.cmd.interaction.slash.map(x => x.name).join(", "),
+          slash: this.client.cmd.interaction.slash.map(x => x.name).join(", "),
         },
         user: {
           avatar:
