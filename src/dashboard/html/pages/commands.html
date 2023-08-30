@@ -13,49 +13,56 @@
         font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
           "Lucida Sans", sans-serif;
         background-color: #424549;
-        color: white;
+        color: #fff;
         margin: 0;
         padding: 0;
       }
+      .container {
+        width: 90%;
+        margin: 0 auto;
+      }
+
+      .text-container {
+        text-align: center;
+        margin: 50px 0;
+      }
 
       .command-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start; /* Change this to flex-start */
-        align-items: flex-start; /* Add this line to align items at the top */
-        margin-top: 20px;
-        gap: 15px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
       }
 
       .command {
         background-color: #555555;
-        padding: 10px;
-        border-radius: 5px;
-        margin: 14px;
-        flex: auto; /* Adjust width and spacing as needed */
-        box-sizing: border-box; /* Include padding in the width calculation */
+        border-radius: 10px;
+        padding: 20px;
+        color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .command:hover {
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
       }
 
       .command-header {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 10px;
+        display: grid;
       }
 
       .command-title {
-        color: white;
-        font-weight: bold;
-        font-size: 18px;
+        font-size: 24px;
+        margin-bottom: 10px;
       }
 
       .command-description {
+        font-size: 16px;
         color: #999999;
-        font-size: 14px;
       }
 
-      .command-subtitle {
-        color: #cccccc;
-        font-size: 14px;
+      .gradient {
+        background-image: linear-gradient(to right bottom, #7289da, #5a68a5);
       }
 
       .avatar-text {
@@ -64,7 +71,6 @@
         flex-direction: column;
         justify-content: center;
       }
-
       .navbar {
         display: flex;
         align-items: center;
@@ -72,15 +78,13 @@
         justify-content: space-between;
         background-color: #36393e;
         padding: 10px;
-        color: white;
+        color: #fff;
         z-index: 5;
       }
-
       .avatar-container-navbar {
         display: flex;
         align-items: center;
       }
-
       .avatar-navbar {
         width: 30px;
         height: 30px;
@@ -90,14 +94,12 @@
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
-
       .navbar-links {
         display: flex;
         align-items: center;
       }
-
       .navbar-link {
-        color: white;
+        color: #fff;
         text-decoration: none;
         margin-right: 20px;
         position: relative;
@@ -105,11 +107,9 @@
         border-bottom: 0 solid transparent;
         transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
-
       .navbar-link:hover {
         border-bottom: 3px solid #5a68a5;
       }
-
       .avatar-navbar-small {
         width: 20px;
         height: 20px;
@@ -118,11 +118,10 @@
         vertical-align: middle;
         -webkit-user-drag: none;
       }
-
       .login-button {
         padding: 6px 4px;
         background-color: #7289da;
-        color: white;
+        color: #fff;
         margin-right: 20px;
         border-radius: 4px;
         cursor: pointer;
@@ -130,18 +129,10 @@
         transition: color 0.3s;
         transition: background-color 0.3s;
       }
-
       .login-button:hover {
         background-color: #5a68a5;
         transition: background-color 0.3s;
       }
-
-      .container {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-      }
-
       .footer {
         position: fixed;
         bottom: 0;
@@ -151,24 +142,17 @@
         background-color: #36393e;
         text-align: center;
       }
-
       .brand {
         font-size: 18px;
-        font-weight: bold;
+        font-weight: 700;
         margin: 10px 0;
       }
-
       .copyright {
         font-size: 14px;
         color: #777;
       }
-
-      .separator {
-        margin: 0 10px;
-      }
-
       .text {
-        color: #000000;
+        color: #000;
       }
     </style>
   </head>
@@ -215,16 +199,17 @@
     </div>
     <div class="command-container">
       <% const commands = data.commands.text.split(', '); const descriptions =
-      data.client.cmd.default.map((x) => x.description); %> <% for (let i = 0; i
-      < commands.length; i++) { %> <% const command = commands[i]; const
-      description = descriptions[i] || "No description available"; %>
+      data.client.cmd.default.map((x) => x.description); const exclude =
+      data.client.cmd.default.map((x) => x.exclude); for (let i = 0; i <
+      commands.length; i++) { const command = commands[i]; const description =
+      descriptions[i] || "No description available"; if (!exclude[i]) { %>
       <div class="command">
         <div class="command-header">
-          <span class="command-title"><%= data.client.prefix + command %></span>
-          <span class="command-description"><%= description %></span>
+          <div class="command-title"><%= data.client.prefix + command %></div>
+          <div class="command-description"><%= description %></div>
         </div>
       </div>
-      <% } %>
+      <% } } %>
     </div>
     <footer class="footer">
       <div class="brand"><%=data.username %></div>
