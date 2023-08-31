@@ -6,11 +6,10 @@ const session = require("express-session");
 const passport = require("passport");
 const ejs = require("ejs");
 const fs = require("fs");
-
 class Dashboard {
   constructor(client, options) {
     this.client = client;
-    this.port = options.port;
+    this.port = options.port || 3000;
     this.redirectURL = options.url + "/auth/callback";
     this.scopes = options.scopes || ["identify", "email", "guilds"];
     this.secret = options.secret;
@@ -30,20 +29,13 @@ class Dashboard {
     this.authSecret = require("crypto").randomBytes(32).toString("hex");
     this.sessionSecret = require("crypto").randomBytes(32).toString("hex");
     this.db = this.client.db;
+    this.connect();
   }
-
   getDefaultComponent(to) {
     const defaultComponents = {
-      commands: {
-        title: "Commands",
-        to: "/commands",
-      },
-      invite: {
-        title: "Invite",
-        to: "/invite",
-      },
+      commands: { title: "Commands", to: "/commands" },
+      invite: { title: "Invite", to: "/invite" },
     };
-
     return (
       defaultComponents[to.toLowerCase().replace("/", "")] || {
         title: title,
@@ -51,7 +43,6 @@ class Dashboard {
       }
     );
   }
-
   async fetchGuilds() {
     let start = new Date();
     console.log(
@@ -59,11 +50,9 @@ class Dashboard {
         "[FETCH]"
       )} [Dashboard]: Attempting to fetch all guilds, this may take a while.`
     );
-
     const animateLoading = () => {
       const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
       let i = 0;
-
       return setInterval(() => {
         process.stdout.write(
           `\r ${chalk.blue.bold(frames[i])} ${chalk.yellow.bold(
@@ -73,10 +62,8 @@ class Dashboard {
         i = (i + 1) % frames.length;
       }, 100);
     };
-
     const loading = animateLoading();
     const guilds = this.client.guilds.cache;
-
     for (const guild of guilds.values()) {
       try {
         const fetched = await this.client.guilds.fetch(guild.id);
@@ -104,10 +91,8 @@ class Dashboard {
         );
       }
     }
-
     clearInterval(loading);
     process.stdout.clearLine();
-
     for (const item of this.navbar) {
       if (!("title" in item && ("to" in item || "href" in item))) {
         console.error(
@@ -122,7 +107,6 @@ class Dashboard {
         process.exit(1);
       }
     }
-
     for (const item of this.sidebar) {
       if ("category" in item) {
         if (Object.keys(item).length !== 2 || !("title" in item)) {
@@ -157,7 +141,6 @@ class Dashboard {
         }
       }
     }
-
     for (const feature of this.features) {
       if (!("title" in feature)) {
         console.warn(
@@ -168,7 +151,6 @@ class Dashboard {
           )}. Therefore it may not display correctly.`
         );
       }
-
       if (!("description" in feature) || feature.description.length === 0) {
         console.warn(
           `\r${chalk.yellow.bold("[WARNING]")} [Dashboard]: Feature "${
@@ -176,7 +158,6 @@ class Dashboard {
           }" is missing description points. Therefore it may not display correctly.`
         );
       }
-
       if (
         !("preview" in feature) ||
         (feature.preview && feature.preview.trim() === "")
@@ -188,14 +169,12 @@ class Dashboard {
         );
       }
     }
-
     console.log(
       `\r${chalk.green.bold("[FETCH]")} [Dashboard]: Fetched all guilds in ${
-        (new Date() - start) / 1000
+        (new Date() - start) / 1e3
       } seconds.`
     );
   }
-
   async getOwners(guild) {
     try {
       const owner = await guild.fetchOwner();
@@ -209,7 +188,6 @@ class Dashboard {
       return null;
     }
   }
-
   connect = async () => {
     const app = express();
     await new Promise((resolve) => {
@@ -217,15 +195,12 @@ class Dashboard {
         resolve();
       });
     });
-
     this.client.on("guildCreate", async (guild) => {
       this.guilds.set(guild.id, guild);
     });
-
     this.client.on("guildDelete", async (guild) => {
-      this.guilds.delete(guild.id);
+      this.guilds["delete"](guild.id);
     });
-
     const allowedScopes = [
       "identify",
       "guilds",
@@ -258,21 +233,17 @@ class Dashboard {
       "voice",
       "webhook.incoming",
     ];
-
     if (!this.scopes || !Array.isArray(this.scopes)) {
       console.error(
         `${chalk.red.bold(
           "[ERR]"
         )} [Dashboard]: Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty.`
       );
-
       process.exit(1);
     }
-
     const invalidScopes = this.scopes.filter(
       (scope) => !allowedScopes.includes(scope)
     );
-
     if (invalidScopes.length > 0) {
       console.error(
         `${chalk.red.bold("[ERR]")} ${chalk.red(
@@ -281,20 +252,16 @@ class Dashboard {
           invalidScopes.join(chalk.white(`", "`))
         )}"`
       );
-
       process.exit(1);
     }
-
     if (!this.secret) {
       console.error(
         `${chalk.red.bold("[ERR]")} ${chalk.red(
           "[clientSecret]"
         )} [Dashboard]: Failed to load dashboard with reason: Invalid or no clientSecret was provided. Don't know what that is? Check this: https://support.heateor.com/discord-client-id-discord-client-secret/`
       );
-
       process.exit(1);
     }
-
     if (
       !this.redirectURL ||
       (!this.redirectURL.startsWith("https://") &&
@@ -311,22 +278,14 @@ class Dashboard {
           "http://"
         )} or ${chalk.yellow.bold("https://")}`
       );
-
       process.exit(1);
     }
-
     app.use(
-      session({
-        secret: this.secret,
-        resave: true,
-        saveUninitialized: false,
-      })
+      session({ secret: this.secret, resave: true, saveUninitialized: false })
     );
-
     app.use(express.json());
     app.use(passport.initialize());
     app.use(passport.session());
-
     passport.use(
       new DiscordStrategy(
         {
@@ -340,16 +299,13 @@ class Dashboard {
         }
       )
     );
-
     passport.serializeUser((user, done) => {
       done(null, user);
     });
     passport.deserializeUser((obj, done) => {
       done(null, obj);
     });
-
     app.get("/auth/login", passport.authenticate("discord"));
-
     app.get("/auth/callback", (req, res) => {
       try {
         passport.authenticate("discord", { failureRedirect: "/" })(
@@ -363,19 +319,16 @@ class Dashboard {
         res.redirect("/");
       }
     });
-
     app.get("/auth/logout", (req, res) => {
       req.logout(() => {});
       res.redirect("/");
     });
-
     const ensureAuthenticated = (req, res, next) => {
       if (req.isAuthenticated()) {
         return next();
       }
       res.redirect("/auth/login");
     };
-
     if (this.routes) {
       this.routes.forEach((route) => {
         if (!route.name) {
@@ -388,12 +341,12 @@ class Dashboard {
           );
           process.exit(1);
         }
-
         const { name, path: filePath, requireAuth } = route;
-
         app.get(
           name,
-          requireAuth === true ? ensureAuthenticated : (_req, _res, next) => next(),
+          requireAuth === true
+            ? ensureAuthenticated
+            : (_req, _res, next) => next(),
           async (_req, res) => {
             if (!filePath || !fs.existsSync(filePath)) {
               ejs.renderFile(
@@ -440,7 +393,6 @@ class Dashboard {
         );
       });
     }
-
     app.get("/", async (req, res) => {
       const data = {
         features: this.features,
@@ -464,11 +416,10 @@ class Dashboard {
           .then((guilds) => guilds?.size),
         cachedUsers: this.client.users.cache?.size,
       };
-
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/index.html"),
         {
-          data,
+          data: data,
           sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
@@ -487,13 +438,14 @@ class Dashboard {
         }
       );
     });
-
     app.get("/commands", async (req, res) => {
       const data = {
         client: this.client,
         commands: {
-          text: this.client.cmd.default.map((x) => x.name).join(", "),
-          slash: this.client.cmd.interaction.slash.map(x => x.name).join(", "),
+          text: this.client.cmd["default"].map((x) => x.name).join(", "),
+          slash: this.client.cmd.interaction.slash
+            .map((x) => x.name)
+            .join(", "),
         },
         user: {
           avatar:
@@ -515,11 +467,10 @@ class Dashboard {
           .then((guilds) => guilds?.size),
         cachedUsers: this.client.users.cache?.size,
       };
-
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/commands.html"),
         {
-          data,
+          data: data,
           sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
@@ -538,7 +489,6 @@ class Dashboard {
         }
       );
     });
-
     app.get("/invite", async (req, res) => {
       const data = {
         avatar:
@@ -546,14 +496,16 @@ class Dashboard {
           `https://cdn.discordapp.com/embed/avatars/${
             this.client.user.id % 5
           }.png`,
+        invite: this.client.generateInvite({
+          scopes: ["applications.commands", "bot"],
+        }),
         username: this.client.user.username,
         id: this.client.user.id,
       };
-
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/invite.html"),
         {
-          data,
+          data: data,
           sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
@@ -572,7 +524,6 @@ class Dashboard {
         }
       );
     });
-
     app.post("/data/update/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
       const userPermissions = req.user.guilds.find(
@@ -581,14 +532,12 @@ class Dashboard {
       if (Boolean(userPermissions & 8) || Boolean(userPermissions & 32)) {
         try {
           const data = req.body;
-
           this.db.set(
             this.client.db.tables[0],
             data.variable,
             guildId,
             data.value
           );
-
           res.status(200).json({ message: "Data updated successfully" });
         } catch (error) {
           console.error(error);
@@ -598,12 +547,10 @@ class Dashboard {
         return;
       }
     });
-
     app.get("/dash/guilds/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
       const guild = await this.client.guilds.fetch(guildId);
       const owner = await guild.fetchOwner();
-
       const gobj = {
         name: guild.name,
         id: guild.id,
@@ -611,7 +558,6 @@ class Dashboard {
         ownerTag: owner.user.tag,
         memberCount: guild.memberCount,
       };
-
       const data = {
         user: {
           avatar:
@@ -629,7 +575,6 @@ class Dashboard {
         id: this.client.user.id,
         auth: req.isAuthenticated(),
       };
-
       if (!guild) {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/error.html"),
@@ -653,17 +598,15 @@ class Dashboard {
         );
         return;
       }
-
       const userPermissions = req.user.guilds.find(
         (guild) => guild.id === guildId
       )?.permissions;
-
       if (Boolean(userPermissions & 8) || Boolean(userPermissions & 32)) {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/guild.html"),
           {
-            gobj,
-            data,
+            gobj: gobj,
+            data: data,
             sidebar: this.sidebar,
             getDefaultComponent: this.getDefaultComponent,
           },
@@ -685,7 +628,7 @@ class Dashboard {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/error.html"),
           {
-            data,
+            data: data,
             sidebar: this.navbar,
             getDefaultComponent: this.getDefaultComponent,
           },
@@ -707,12 +650,10 @@ class Dashboard {
         );
       }
     });
-
     app.get("/dash", ensureAuthenticated, (req, res) => {
       const mutualGuilds = this.client.guilds.cache.filter((guild) =>
         req.user.guilds.some((userGuild) => userGuild.id === guild.id)
       );
-
       const data = {
         user: {
           avatar:
@@ -730,7 +671,6 @@ class Dashboard {
         id: this.client.user.id,
         auth: req.isAuthenticated(),
       };
-
       const guildData = mutualGuilds.map((guild) => {
         const permissions = guild.members.cache.get(
           this.client.user.id
@@ -738,7 +678,6 @@ class Dashboard {
         const userpermissions = guild.members.cache.get(
           req.user.id
         )?.permissions;
-
         return {
           guildID: guild.id,
           guildName: guild.name,
@@ -749,12 +688,11 @@ class Dashboard {
             "https://cdn.discordapp.com/embed/avatars/1.png",
         };
       });
-
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/dash.html"),
         {
-          guildData,
-          data,
+          guildData: guildData,
+          data: data,
           sidebar: this.navbar,
           getDefaultComponent: this.getDefaultComponent,
         },
@@ -773,15 +711,12 @@ class Dashboard {
         }
       );
     });
-
     app.use((req, res) => {
       res
         .status(404)
         .sendFile(path.join(__dirname, "../", "dashboard/html/pages/404.html"));
     });
-
     await this.fetchGuilds();
-
     app.listen(this.port, () => {
       console.log(
         `${chalk.green.bold(
@@ -791,5 +726,4 @@ class Dashboard {
     });
   };
 }
-
 module.exports = { Dashboard };
