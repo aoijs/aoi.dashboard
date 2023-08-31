@@ -7,6 +7,11 @@
       font-family: "Quicksand", sans-serif;
       background-color: #1a1a1a;
       color: #ffffff;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .container {
@@ -36,13 +41,11 @@
     <title><%=data.username %> | Server Picker</title>
     <link
       href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
     <meta
       content="Invite <%=data.username %> today!"
-      property="og:description"
-    />
+      property="og:description" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
   </head>
   <body>

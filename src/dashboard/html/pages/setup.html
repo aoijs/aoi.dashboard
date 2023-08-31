@@ -7,6 +7,11 @@
       font-family: "Quicksand", sans-serif;
       background-color: #1a1a1a;
       color: #ffffff;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     a {
@@ -24,11 +29,6 @@
       position: relative;
     }
 
-    .error-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-
     .error-code {
       font-family: "Quicksand", sans-serif;
       font-size: 6rem;
@@ -36,16 +36,6 @@
       padding: 0;
       position: relative;
       z-index: 1;
-    }
-
-    .error-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: translateX(-50%);
-      opacity: 0.3;
-      width: 120%; /* Adjust the size as needed */
-      z-index: -1;
     }
 
     .error-message {
@@ -85,7 +75,8 @@
       <h2 class="error-message">Did you forget to set up this page?</h2>
       <p class="error-description">
         You need to properly set up routing before using this feature, check out
-        the examples on the <a href="https://github.com/Faf4a/dashboard">GitHub repository</a>.
+        the examples on the <a href="https://github.com/Faf4a/dashboard">GitHub
+          repository</a>.
       </p>
     </div>
   </body>

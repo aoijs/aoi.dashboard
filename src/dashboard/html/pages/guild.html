@@ -4,52 +4,37 @@
     <title><%=data.username %> | Dashboard</title>
     <link
       href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
     <meta
       content="Login with Discord to view this page."
-      property="og:description"
-    />
+      property="og:description" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
       body {
         font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
           "Lucida Sans", sans-serif;
         background-color: #424549;
-        color: white;
+        color: #fff;
         margin: 0;
         padding: 0;
       }
-
-      .avatar-navbar-small {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 8px;
-        vertical-align: middle;
-        -webkit-user-drag: none;
-      }
-
       .sidebar {
         background-color: #36393e;
-        color: white;
+        color: #fff;
         width: 250px;
         height: 100%;
         position: fixed;
         top: 0;
         left: 0;
       }
-
       .avatar-container-navbar {
         display: flex;
         align-items: center;
       }
-
       .avatar-navbar {
         width: 30px;
         height: 30px;
@@ -60,7 +45,6 @@
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
-
       .avatar-text {
         font-family: "Allerta Stencil";
         margin-top: 10px;
@@ -68,35 +52,53 @@
         flex-direction: column;
         justify-content: center;
       }
-
       .sidebar-category {
-        font-weight: bold;
+        font-weight: 700;
       }
-
       .sidebar-link {
         display: block;
         padding: 10px;
         width: calc(100% - 20px);
         transition: all 0.3s;
       }
-
       .sidebar-link:hover {
         background-color: #5a68a5;
         transition: all 0.3s;
       }
-
       .sidebar-link {
         text-decoration: none;
-        color: white;
+        color: #fff;
         border-bottom: none;
         text-indent: 12px;
       }
-
-      .login-button {
-        position: absolute;
-        bottom: 0;
+      .avatar-navbar-small {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+        -webkit-box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
+        -moz-box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
+        box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
       }
-
+      .login-button {
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: #fff;
+        margin-right: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
+        transition: background-color 0.3s;
+        text-align: center;
+      }
+      .login-button:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
+      }
       .footer {
         position: fixed;
         bottom: 0;
@@ -106,27 +108,23 @@
         background-color: #36393e;
         text-align: center;
       }
-
       .brand {
         font-size: 18px;
-        font-weight: bold;
+        font-weight: 700;
         margin: 10px 0;
       }
-
       .copyright {
         font-size: 14px;
         color: #777;
       }
-
       .sidebar-category {
-        font-weight: bold;
-        color: white;
+        font-weight: 700;
+        color: #fff;
         padding: 4px;
         border-radius: 4px;
         margin: 10px;
         text-align: center;
       }
-
       .container {
         display: flex;
         flex-direction: row;
@@ -134,36 +132,30 @@
         margin-left: 270px;
         min-height: 100%;
       }
-
       .bot-username {
         text-align: center;
       }
-
       .guild-info {
         text-align: center;
       }
-
       .content {
         display: flex;
         flex-direction: column;
         align-items: center;
       }
-
-      .guild-info-container,
-      .content-container {
+      .content-container,
+      .guild-info-container {
         background-color: #5b5d6159;
-        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         border-radius: 5px;
         flex: 1;
         margin: 20px;
       }
-
       #updateForm {
         display: flex;
         flex-direction: column;
         align-items: center;
       }
-
       #updateForm input[type="text"] {
         width: 100%;
         padding: 12px 20px;
@@ -173,32 +165,28 @@
         border: none;
         border-bottom: 2px solid #424549;
         background-color: #36393e;
-        color: white;
+        color: #fff;
       }
-
       #updateForm input[type="text"]:focus {
-        outline: none;
+        outline: 0;
       }
-
       #updateForm button[type="submit"] {
         width: 100%;
         background-color: #5a68a5;
-        color: white;
+        color: #fff;
         padding: 14px 20px;
         margin: 8px 0;
         border: none;
         border-radius: 4px;
         cursor: pointer;
       }
-
       #updateForm button[type="submit"]:hover {
         background-color: #7289da;
       }
     </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
   </head>
   <body>
     <div class="sidebar">
@@ -216,9 +204,8 @@
         <% } else { %>
         <a
           class="sidebar-link"
-          href="<%= basePath ? to : '/' + 'dash/guilds/' + gobj.id + to %>"
-          ><%= title %></a
-        >
+          href="<%= basePath ? to : '/' + 'dash/guilds/' + gobj.id + to %>"><%=
+          title %></a>
         <% } %> <% } %> <% if (data.auth) { %>
         <a class="login-button" href="/auth/logout">Logout</a>
         <% } else { %>
@@ -241,8 +228,7 @@
             <input
               type="text"
               id="value-prefix"
-              placeholder="Update Bot Prefix.."
-            />
+              placeholder="Update Bot Prefix.." />
             <button type="submit">Update Prefix</button>
           </form>
         </div>
