@@ -14,6 +14,12 @@
       user-select: none;
     }
 
+    a {
+      color: #5a68a5;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
     .container {
       display: flex;
       flex-direction: column;
@@ -37,8 +43,8 @@
     }
   </style>
   <head>
-    <meta http-equiv="refresh" content="5;url=https://www.example.com" />
-    <title><%=data.username %> | Server Picker</title>
+    <meta http-equiv="refresh" content="5.3;url=<%=data.invite %>" />
+    <title><%=data.username %> | Invite</title>
     <link
       href="https://fonts.googleapis.com/css?family=Allerta Stencil"
       rel="stylesheet" />
@@ -51,9 +57,32 @@
   <body>
     <div class="container">
       <h2 class="message">Redirect</h2>
+      <p class="description" id="t">
+        You will be redirected to an external website in 5 seconds
+      </p>
       <p class="description">
-        You will be redirected to an external website in 5 seconds..
+        <a id="b" href="#">Go back</a>
       </p>
     </div>
   </body>
+  <script>
+    var goBackLink = document.getElementById("b");
+
+    if (document.referrer === "") {
+      goBackLink.style.color = "grey";
+      goBackLink.style.cursor = "not-allowed";
+    } else {
+      goBackLink.href = document.referrer;
+    }
+
+    var i = 5;
+    var interval = setInterval(function () {
+      document.getElementById("t").textContent = "You will be redirected to an external website in " + i + " seconds";
+      i--;
+      if (i < 1) {
+        document.getElementById("t").textContent = "Redirecting..";
+        clearInterval(interval);
+      }
+    }, 1000);
+  </script>
 </html>
