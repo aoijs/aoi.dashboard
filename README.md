@@ -2,6 +2,8 @@
 
 Gives your users the ability to manage your bot in their guild.
 
+Follow the progress **[here](https://github.com/users/Faf4a/projects/2)**!
+
 ## Setup
 
 ```js
