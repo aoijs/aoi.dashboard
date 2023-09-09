@@ -6,8 +6,11 @@ const session = require("express-session");
 const passport = require("passport");
 const ejs = require("ejs");
 const fs = require("fs");
+let dothesilly;
+
 class Dashboard {
   constructor(client, options) {
+    dothesilly = Boolean(options.logging) || true;
     this.client = client;
     this.port = options.port || 3000;
     this.redirectURL = options.url + "/auth/callback";
@@ -45,10 +48,10 @@ class Dashboard {
   }
   async fetchGuilds() {
     let start = new Date();
-    console.log(
-      `${chalk.yellow.bold(
-        "[FETCH]"
-      )} [Dashboard]: Attempting to fetch all guilds, this may take a while.`
+    log(
+      "Attempting to fetch all guilds, this may take a while.",
+      "warn",
+      "[FETCH]"
     );
     const animateLoading = () => {
       const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
@@ -62,7 +65,10 @@ class Dashboard {
         i = (i + 1) % frames.length;
       }, 100);
     };
-    const loading = animateLoading();
+    let loading;
+    if (dothesilly) {
+      loading = animateLoading();
+    }
     const guilds = this.client.guilds.cache;
     for (const guild of guilds.values()) {
       try {
@@ -75,12 +81,10 @@ class Dashboard {
             ownerTag: owner.user.tag,
           });
         } else {
-          console.error(
-            `${chalk.red.bold(
-              "[ERR]"
-            )} [Dashboard]: Error fetching owner for guild with ID ${
-              fetched.id
-            }`
+          log(
+            `Error fetching owner for guild with ID ${fetched.id}`,
+            "error",
+            "[FETCH]"
           );
         }
       } catch (err) {
@@ -91,8 +95,10 @@ class Dashboard {
         );
       }
     }
-    clearInterval(loading);
-    process.stdout.clearLine();
+    if (dothesilly) {
+      clearInterval(loading);
+      process.stdout.clearLine();
+    }
     for (const item of this.navbar) {
       if (!("title" in item && ("to" in item || "href" in item))) {
         console.error(
@@ -143,36 +149,34 @@ class Dashboard {
     }
     for (const feature of this.features) {
       if (!("title" in feature)) {
-        console.warn(
-          `\r${chalk.yellow.bold(
-            "[WARNING]"
-          )} [Dashboard]: Feature is missing ${chalk.yellow.bold(
-            "title"
-          )}. Therefore it may not display correctly.`
+        log(
+          `Feature has an empty or missing title. Therefore it may not display correctly.`,
+          "warn",
+          "\r[SERVER] [features]"
         );
       }
       if (!("description" in feature) || feature.description.length === 0) {
-        console.warn(
-          `\r${chalk.yellow.bold("[WARNING]")} [Dashboard]: Feature "${
-            feature.title
-          }" is missing description points. Therefore it may not display correctly.`
+        log(
+          `Feature "${feature.title}" has an empty or missing descriptions. Therefore it may not display correctly.`,
+          "warn",
+          "\r[SERVER] [features]"
         );
       }
       if (
         !("preview" in feature) ||
         (feature.preview && feature.preview.trim() === "")
       ) {
-        console.warn(
-          `\r${chalk.yellow.bold("[WARNING]")} [Dashboard]: Feature "${
-            feature.title
-          }" has an empty or missing preview image. Therefore it may not display correctly.`
+        log(
+          `Feature "${feature.title}" has an empty or missing preview image. Therefore it may not display correctly.`,
+          "warn",
+          "\r[SERVER] [features]"
         );
       }
     }
-    console.log(
-      `\r${chalk.green.bold("[FETCH]")} [Dashboard]: Fetched all guilds in ${
-        (new Date() - start) / 1e3
-      } seconds.`
+    log(
+      `Fetched all guilds in ${(new Date() - start) / 1e3} seconds.`,
+      "success",
+      "[SERVER] [FETCH]"
     );
   }
   async getOwners(guild) {
@@ -180,11 +184,6 @@ class Dashboard {
       const owner = await guild.fetchOwner();
       return owner;
     } catch (err) {
-      console.error(
-        `${chalk.red.bold("[ERR]")} ${chalk.red.bold(
-          "[ERR]"
-        )} [Dashboard]: Error fetching owner for guild with ID ${guild.id}`
-      );
       return null;
     }
   }
@@ -192,7 +191,9 @@ class Dashboard {
     const app = express();
     await new Promise((resolve) => {
       this.client.once("ready", () => {
-        resolve();
+        setTimeout(() => {
+          resolve();
+        }, 4000); // delay due to aoi.js logging or user logging (ignore)
       });
     });
     this.client.on("guildCreate", async (guild) => {
@@ -234,10 +235,10 @@ class Dashboard {
       "webhook.incoming",
     ];
     if (!this.scopes || !Array.isArray(this.scopes)) {
-      console.error(
-        `${chalk.red.bold(
-          "[ERR]"
-        )} [Dashboard]: Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty.`
+      log(
+        "Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty.",
+        "error",
+        "[SERVER] [scopes]"
       );
       process.exit(1);
     }
@@ -245,20 +246,20 @@ class Dashboard {
       (scope) => !allowedScopes.includes(scope)
     );
     if (invalidScopes.length > 0) {
-      console.error(
-        `${chalk.red.bold("[ERR]")} ${chalk.red(
-          "[redirectURL]"
-        )} [Dashboard]: Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty. Invalid scopes: "${chalk.redBright.bold(
+      log(
+        `Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty. Invalid scopes: "${chalk.redBright.bold(
           invalidScopes.join(chalk.white(`", "`))
-        )}"`
+        )}"`,
+        "error",
+        "[SERVER] [scopes]"
       );
       process.exit(1);
     }
     if (!this.secret) {
-      console.error(
-        `${chalk.red.bold("[ERR]")} ${chalk.red(
-          "[clientSecret]"
-        )} [Dashboard]: Failed to load dashboard with reason: Invalid or no clientSecret was provided. Don't know what that is? Check this: https://support.heateor.com/discord-client-id-discord-client-secret/`
+      log(
+        "Failed to load dashboard with reason: Invalid or no clientSecret was provided. Don't know what that is? Check this: https://support.heateor.com/discord-client-id-discord-client-secret/",
+        "error",
+        "[SERVER] [clientSecret]"
       );
       process.exit(1);
     }
@@ -267,16 +268,16 @@ class Dashboard {
       (!this.redirectURL.startsWith("https://") &&
         !this.redirectURL.startsWith("http://"))
     ) {
-      console.error(
-        `${chalk.red.bold("[ERR]")} ${chalk.red(
-          "[redirectURL]"
-        )} [Dashboard]: Failed to load dashboard with reason: Invalid or no ${chalk.yellow.bold(
+      log(
+        `Failed to load dashboard with reason: Invalid or no ${chalk.yellow.bold(
           "redirectURL"
         )} was provided. ${chalk.yellow.bold(
           "redirectURL"
         )} must begin with either ${chalk.yellow.bold(
           "http://"
-        )} or ${chalk.yellow.bold("https://")}`
+        )} or ${chalk.yellow.bold("https://")}`,
+        "error",
+        "[SERVER] [redirectURL]"
       );
       process.exit(1);
     }
@@ -332,12 +333,12 @@ class Dashboard {
     if (this.routes) {
       this.routes.forEach((route) => {
         if (!route.name) {
-          console.warn(
-            `\r${chalk.red.bold("[ERR]")} ${chalk.red(
-              "[ROUTES]"
-            )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
+          log(
+            `Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
               `Line: ${JSON.stringify(route)}`
-            )}`
+            )}`,
+            "error",
+            "[SERVER] [ROUTES]"
           );
           process.exit(1);
         }
@@ -357,10 +358,10 @@ class Dashboard {
                 },
                 (err, html) => {
                   if (err) {
-                    console.warn(
-                      `\r${chalk.red.bold("[ERR]")} ${chalk.red(
-                        "[ROUTES]"
-                      )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
+                    log(
+                      "Failed to load dashboard with reason: One or multiple routes are invalid.",
+                      "error",
+                      "[SERVER] [ROUTES]"
                     );
                     return;
                   } else {
@@ -377,10 +378,10 @@ class Dashboard {
                 },
                 (err, html) => {
                   if (err) {
-                    console.warn(
-                      `\r${chalk.red.bold("[ERR]")} ${chalk.red(
-                        "[ROUTES]"
-                      )} [Dashboard]: Failed to load dashboard with reason: One or multiple routes are invalid.`
+                    log(
+                      "Failed to load dashboard with reason: One or multiple routes are invalid.",
+                      "error",
+                      "[SERVER] [ROUTES]"
                     );
                     return;
                   } else {
@@ -425,13 +426,12 @@ class Dashboard {
         },
         (err, html) => {
           if (err) {
-            this.client.destroy();
-            console.error(
-              `${chalk.red.bold(
-                "[ERR]"
-              )} [Dashboard]: Failed to load dashboard data with reason:`,
-              err
+            log(
+              `Failed to load Dashboard with reason: ${err}`,
+              "error",
+              "[SERVER]"
             );
+            this.client.destroy();
           } else {
             res.send(html);
           }
@@ -476,13 +476,12 @@ class Dashboard {
         },
         (err, html) => {
           if (err) {
-            this.client.destroy();
-            console.error(
-              `${chalk.red.bold(
-                "[ERR]"
-              )} [Dashboard]: Failed to load dashboard data with reason:`,
-              err
+            log(
+              `Failed to load Dashboard with reason: ${err}`,
+              "error",
+              "[SERVER]"
             );
+            this.client.destroy();
           } else {
             res.send(html);
           }
@@ -511,13 +510,12 @@ class Dashboard {
         },
         (err, html) => {
           if (err) {
-            this.client.destroy();
-            console.error(
-              `${chalk.red.bold(
-                "[ERR]"
-              )} [Dashboard]: Failed to load dashboard data with reason:`,
-              err
+            log(
+              `Failed to load Dashboard with reason: ${err}`,
+              "error",
+              "[SERVER]"
             );
+            this.client.destroy();
           } else {
             res.send(html);
           }
@@ -539,9 +537,13 @@ class Dashboard {
             data.value
           );
           res.status(200).json({ message: "Data updated successfully" });
-        } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: "An error occurred" });
+        } catch (err) {
+          log(
+            `Failed to update data with reason: ${err}`,
+            "error",
+            "[SERVER] [API]"
+          );
+          res.status(500).json({ error: "Failed to update data" });
         }
       } else {
         return;
@@ -584,11 +586,10 @@ class Dashboard {
           },
           async (err, html) => {
             if (err) {
-              console.error(
-                `${chalk.red.bold(
-                  "[ERR]"
-                )} [Dashboard]: Failed to load dashboard with reason:`,
-                err
+              log(
+                `Failed to load Dashboard with reason: ${err}`,
+                "error",
+                "[SERVER]"
               );
               this.client.destroy();
             } else {
@@ -612,13 +613,12 @@ class Dashboard {
           },
           (err, html) => {
             if (err) {
-              this.client.destroy();
-              console.error(
-                `${chalk.red.bold(
-                  "[ERR]"
-                )} [Dashboard]: Failed to load dashboard with reason:`,
-                err
+              log(
+                `Failed to load Dashboard with reason: ${err}`,
+                "error",
+                "[SERVER]"
               );
+              this.client.destroy();
             } else {
               res.send(html);
             }
@@ -634,13 +634,12 @@ class Dashboard {
           },
           (err, html) => {
             if (err) {
-              this.client.destroy();
-              console.error(
-                `${chalk.red.bold(
-                  "[ERR]"
-                )} [Dashboard]: Failed to load dashboard with reason:`,
-                err
+              log(
+                `Failed to load Dashboard with reason: ${err}`,
+                "error",
+                "[SERVER]"
               );
+              this.client.destroy();
               return;
             } else {
               res.send(html);
@@ -698,11 +697,10 @@ class Dashboard {
         },
         async (err, html) => {
           if (err) {
-            console.error(
-              `${chalk.red.bold(
-                "[ERR]"
-              )} [Dashboard]: Failed to load dashboard with reason:`,
-              err
+            log(
+              `Failed to load Dashboard with reason: ${err}`,
+              "error",
+              "[SERVER]"
             );
             this.client.destroy();
           } else {
@@ -718,12 +716,42 @@ class Dashboard {
     });
     await this.fetchGuilds();
     app.listen(this.port, () => {
-      console.log(
-        `${chalk.green.bold(
-          "[SERVER]"
-        )} [Dashboard]: Marked Dashboard as Running`
-      );
+      log("Marked Dashboard as Running", "success", "[SERVER]");
     });
   };
 }
+
+function log(message, level = "default", tag = "") {
+  let logFunction;
+  let logColor;
+
+  if (dothesilly) {
+    switch (level.toLowerCase()) {
+      case "error":
+        logFunction = console.error;
+        logColor = chalk.red.bold;
+        tag = tag || "[ERR]";
+        break;
+      case "warn":
+        logFunction = console.warn;
+        logColor = chalk.yellow.bold;
+        tag = tag || "[WARN]";
+        break;
+      case "success":
+        logFunction = console.log;
+        logColor = chalk.green.bold;
+        tag = tag || "[SUCCESS]";
+        break;
+      default:
+        logFunction = console.log;
+        logColor = chalk.white;
+        tag = tag || "";
+    }
+
+    logFunction(
+      `${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
+    );
+  }
+}
+
 module.exports = { Dashboard };
