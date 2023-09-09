@@ -5,11 +5,12 @@ Gives your users the ability to manage your bot in their guild.
 ## Setup
 
 ```js
-const dashboard = new Dashboard(bot, {
+const dashboard = new Dashboard(bot, { // the client
   port: 3000, // The port, default: 3000
   secret: "", // The client secret.
-  scopes: ["identify", "email", "guilds"], // Scopes the website/bot will ask for. Identify/guilds are required.
+  scopes: ["identify", "email", "guilds"], // Scopes the website/bot will ask for. Identify/guilds are required for the dashboard to work properly.
   url: "http://localhost:3000", // Url to your website.
+  logging: true, // Disable all console logs.
   routes: [{ name: "/hello", path: "", requireAuth: true }], // Custom Routes
   navbar: [ // Custom Navbar
     { title: "Dashboard", to: "/dash" },
@@ -37,6 +38,4 @@ const dashboard = new Dashboard(bot, {
     },
   ],
 });
-
-dashboard.connect(); // "Connect" the dashboard.
 ```
