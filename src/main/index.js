@@ -51,7 +51,7 @@ class Dashboard {
     log(
       "Attempting to fetch all guilds, this may take a while.",
       "warn",
-      "[FETCH]"
+      "[fetch]"
     );
     const animateLoading = () => {
       const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
@@ -59,7 +59,7 @@ class Dashboard {
       return setInterval(() => {
         process.stdout.write(
           `\r ${chalk.blue.bold(frames[i])} ${chalk.yellow.bold(
-            "[FETCH]"
+            "[fetch]"
           )} [Dashboard]: Fetching guilds `
         );
         i = (i + 1) % frames.length;
@@ -84,7 +84,7 @@ class Dashboard {
           log(
             `Error fetching owner for guild with ID ${fetched.id}`,
             "error",
-            "[FETCH]"
+            "[fetch]"
           );
         }
       } catch (err) {
@@ -176,7 +176,7 @@ class Dashboard {
     log(
       `Fetched all guilds in ${(new Date() - start) / 1e3} seconds.`,
       "success",
-      "[SERVER] [FETCH]"
+      "[SERVER] [fetch]"
     );
   }
   async getOwners(guild) {
@@ -394,6 +394,7 @@ class Dashboard {
         );
       });
     }
+
     app.get("/", async (req, res) => {
       const data = {
         features: this.features,
@@ -438,6 +439,52 @@ class Dashboard {
         }
       );
     });
+
+    app.get("/status", async (req, res) => {
+      const data = {
+        client: this.client,
+        user: {
+          avatar:
+            `https://cdn.discordapp.com/avatars/${req.user?.id}/${req.user?.avatar}.png` ||
+            `https://cdn.discordapp.com/embed/avatars/${req.user.id % 5}.png`,
+          username: req.user?.username,
+          id: req.user?.id,
+        },
+        avatar:
+          this.client.user.avatarURL({ format: "png", size: 4096 }) ||
+          `https://cdn.discordapp.com/embed/avatars/${
+            this.client.user.id % 5
+          }.png`,
+        username: this.client.user.username,
+        id: this.client.user.id,
+        auth: req.isAuthenticated(),
+        guildCount: await this.client.guilds
+          .fetch()
+          .then((guilds) => guilds?.size),
+        cachedUsers: this.client.users.cache?.size,
+      };
+      ejs.renderFile(
+        path.join(__dirname, "../", "dashboard/html/pages/status.html"),
+        {
+          data: data,
+          sidebar: this.navbar,
+          getDefaultComponent: this.getDefaultComponent,
+        },
+        (err, html) => {
+          if (err) {
+            log(
+              `Failed to load Dashboard with reason: ${err}`,
+              "error",
+              "[SERVER]"
+            );
+            this.client.destroy();
+          } else {
+            res.send(html);
+          }
+        }
+      );
+    });
+
     app.get("/commands", async (req, res) => {
       const data = {
         client: this.client,
@@ -488,6 +535,7 @@ class Dashboard {
         }
       );
     });
+
     app.get("/invite", async (req, res) => {
       const data = {
         avatar:
@@ -522,6 +570,16 @@ class Dashboard {
         }
       );
     });
+
+    app.get("/api/client", async (req, res) => {
+      res.status(200).send({
+        data: {
+          ping: JSON.stringify(this.client.ws.ping),
+          uptime: JSON.stringify(this.client.uptime),
+        },
+      });
+    });
+
     app.post("/data/update/:guildid", ensureAuthenticated, async (req, res) => {
       const guildId = req.params.guildid;
       const userPermissions = req.user.guilds.find(
@@ -579,7 +637,7 @@ class Dashboard {
       };
       if (!guild) {
         ejs.renderFile(
-          path.join(__dirname, "../", "dashboard/html/pages/error.html"),
+          path.join(__dirname, "../", "dashboard/html/pages/401.html"),
           {
             sidebar: this.navbar,
             getDefaultComponent: this.getDefaultComponent,
@@ -626,7 +684,7 @@ class Dashboard {
         );
       } else {
         ejs.renderFile(
-          path.join(__dirname, "../", "dashboard/html/pages/error.html"),
+          path.join(__dirname, "../", "dashboard/html/pages/401.html"),
           {
             data: data,
             sidebar: this.navbar,

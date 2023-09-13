@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=data.username %> | Status</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
+      rel="stylesheet"
+    />
+    <meta content="<%=data.username %> Status" property="og:title" />
+    <meta content="#7289da" data-react-helmet="true" name="theme-color" />
+    <style>
+      body {
+        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+          "Lucida Sans", sans-serif;
+        background-color: #424549;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .container {
+        width: 90%;
+        margin: 0 auto;
+      }
+      .status-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .uptime-container,
+      .ping-container {
+        width: 45%;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #36393e;
+        color: #fff;
+        font-size: 24px;
+        transition: background-color 0.3s;
+      }
+
+      .uptime-container:hover,
+      .ping-container:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
+      }
+      .text-container {
+        text-align: center;
+        margin: 50px 0;
+      }
+      .avatar-text {
+        font-family: "Allerta Stencil";
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .navbar {
+        display: flex;
+        align-items: center;
+        border-radius: 0.3rem;
+        justify-content: space-between;
+        background-color: #36393e;
+        padding: 10px;
+        color: #fff;
+        z-index: 5;
+      }
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
+      .avatar-navbar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 15px;
+        margin-right: 10px;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+      .navbar-links {
+        display: flex;
+        align-items: center;
+      }
+      .navbar-link {
+        color: #fff;
+        text-decoration: none;
+        margin-right: 20px;
+        position: relative;
+        margin-top: 2px;
+        border-bottom: 0 solid transparent;
+        transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .navbar-link:hover {
+        border-bottom: 3px solid #5a68a5;
+      }
+      .avatar-navbar-small {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+        -webkit-box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
+        -moz-box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
+        box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+      }
+      .login-button {
+        padding: 6px 4px;
+        background-color: #7289da;
+        color: #fff;
+        margin-right: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
+        transition: background-color 0.3s;
+        text-align: center;
+      }
+      .login-button:hover {
+        background-color: #5a68a5;
+        transition: background-color 0.3s;
+      }
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        background-color: #36393e;
+        text-align: center;
+      }
+      .brand {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 10px 0;
+      }
+      .copyright {
+        font-size: 14px;
+        color: #777;
+      }
+      .text {
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="avatar-container-navbar">
+        <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
+        <div class="avatar-text"><%=data.username %></div>
+      </div>
+      <div class="navbar-links">
+        <% for (const item of sidebar) { %> <% const { title, to, href, html
+        }=item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
+        <a class="navbar-link" href="<%= href %>"> <%= title %> </a>
+        <% } else { %>
+        <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>">
+          <%= title %>
+        </a>
+        <% } %> <% } %> <% if (data.auth) { %>
+        <div class="avatar-container-navbar">
+          <a
+            class="login-button"
+            style="vertical-align: middle"
+            href="/auth/logout"
+          >
+            <img
+              class="avatar-navbar-small"
+              src="<%=data.user.avatar %>"
+              alt="Avatar"
+            />
+            Logout
+          </a>
+        </div>
+        <% } else { %>
+        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <% } %>
+      </div>
+    </div>
+    <div class="container">
+      <div class="text-container">
+        <div style="font-size: 40px">
+          <strong>Status</strong>
+        </div>
+        <div style="font-size: 13px; margin-bottom: 2rem; color: #989898">
+          (This Page will refresh every 30 seconds.)
+        </div>
+        <div class="status-container">
+          <div class="uptime-container">
+            <strong>Uptime:</strong>
+            <%= new Date(data.client.uptime).toISOString().substr(11, 8) %>
+            <br />
+            <strong>Status:</strong>
+            <% if (data.client.ws.ping > 1000) { %> Highly Increased Latency <%
+            } else if (data.client.ws.ping > 250) { %> Increased Latency <% }
+            else if (data.client.ws.ping > 100) { %> Decreased Performance <% }
+            else { %> No Issues <% } %>
+          </div>
+          <div class="ping-container">
+            <strong>Client Ping:</strong>
+            <%= data.client.ws.ping %>ms
+            <br />
+            <strong>Database Ping:</strong>
+            <%= data.client.db.ping %>ms
+          </div>
+        </div>
+      </div>
+      <canvas id="lineChart" style="display: flex; margin-bottom: 8rem"></canvas>
+    </div>
+    <footer class="footer">
+      <div class="brand"><%=data.username %></div>
+      <div class="copyright">
+        © <%= new Date().getFullYear() %> Copyright <%=data.username %>. All
+        Rights Reserved.
+      </div>
+    </footer>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+  <script>
+    var lineChart = new Chart("lineChart", {
+      type: "line",
+      data: {
+        labels: Array.from({ length: 15 }, (_, i) => i),
+        datasets: [
+          {
+            label: "Client Latency",
+            pointRadius: 4,
+            borderColor: "rgb(0,0,255)",
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            showLine: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          filler: {
+            propagate: false,
+          },
+          legend: {
+            display: false,
+          },
+          title: {
+            display: false,
+          },
+        },
+        scales: {
+          yAxes: [{ ticks: { min: 0, max: 250 } }],
+        },
+      },
+    });
+
+    setInterval(function () {
+      fetch("/api/client?random=" + Math.random())
+        .then((response) => response.json())
+        .then((data) => {
+          const p = data.data.ping;
+
+          lineChart.data.datasets[0].data.push({ x: 16, y: p.replace("-1", "1") });
+          lineChart.data.datasets[0].data.shift();    
+
+          lineChart.update();
+        })
+        .catch((error) => console.error("Error:", error));
+    }, 2500);
+  </script>
+</html>
