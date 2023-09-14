@@ -22,6 +22,7 @@
         -ms-user-select: none;
         user-select: none;
       }
+
       .container {
         width: 90%;
         margin: 0 auto;
@@ -210,7 +211,10 @@
           </div>
         </div>
       </div>
-      <canvas id="lineChart" style="display: flex; margin-bottom: 8rem"></canvas>
+      <canvas
+        id="lineChart"
+        style="display: flex; margin-bottom: 8rem"
+      ></canvas>
     </div>
     <footer class="footer">
       <div class="brand"><%=data.username %></div>
@@ -229,8 +233,29 @@
         datasets: [
           {
             label: "Client Latency",
+            borderCapStyle: "square",
+            pointHitRadius: 250,
             pointRadius: 4,
             borderColor: "rgb(0,0,255)",
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            showLine: true,
+          },
+          {
+            label: "Database Latency",
+            borderCapStyle: "square",
+            pointHitRadius: 250,
+            pointRadius: 2,
+            borderColor: "rgb(77, 135, 227)",
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            showLine: true,
+          },
+          {
+            label: "Average Client Latency",
+            borderCapStyle: "square",
+            pointHitRadius: 250,
+            pointRadius: 5,
+            fill: false,
+            borderColor: "rgb(107, 148, 214)",
             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             showLine: true,
           },
@@ -250,7 +275,7 @@
           },
         },
         scales: {
-          yAxes: [{ ticks: { min: 0, max: 250 } }],
+          yAxes: [{ ticks: { min: 0, max: 150 } }],
         },
       },
     });
@@ -260,13 +285,38 @@
         .then((response) => response.json())
         .then((data) => {
           const p = data.data.ping;
+          const db = data.data.db_ping;
 
-          lineChart.data.datasets[0].data.push({ x: 16, y: p.replace("-1", "1") });
-          lineChart.data.datasets[0].data.shift();    
+          const dataChart = lineChart.data.datasets[0].data;
+          const values =
+            dataChart
+              .map((point) => Number(point.y))
+              .reduce((acc, val) => acc + val, 0) /
+            dataChart.map((point) => Number(point.y)).length;
+          const average = values.toFixed();
+
+          lineChart.data.datasets[0].data.push({
+            x: 16,
+            y: p.replace("-1", "0"),
+          });
+          lineChart.data.datasets[0].data.shift();
+
+          lineChart.data.datasets[1].data.push({
+            x: 16,
+            y: db.replace("-1", "0"),
+          });
+          lineChart.data.datasets[1].data.shift();
+
+          lineChart.data.datasets[2].data.push({
+            x: 16,
+            y: average,
+          });
+          lineChart.data.datasets[2].data.shift();
+          lineChart.options.scales.yAxes[0].ticks.max = Math.round((Number(p) + 75) / 10) * 10;
 
           lineChart.update();
         })
         .catch((error) => console.error("Error:", error));
-    }, 2500);
+    }, 2900);
   </script>
 </html>

@@ -575,6 +575,7 @@ class Dashboard {
       res.status(200).send({
         data: {
           ping: JSON.stringify(this.client.ws.ping),
+          db_ping: JSON.stringify(this.client.db.ping),
           uptime: JSON.stringify(this.client.uptime),
         },
       });
