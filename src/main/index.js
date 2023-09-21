@@ -6,11 +6,11 @@ const session = require("express-session");
 const passport = require("passport");
 const ejs = require("ejs");
 const fs = require("fs");
-let dothesilly;
+let logging = true;
 
 class Dashboard {
   constructor(client, options) {
-    dothesilly = Boolean(options.logging) || true;
+    logging = options.logging;
     this.client = client;
     this.port = options.port || 3000;
     this.redirectURL = options.url + "/auth/callback";
@@ -40,7 +40,7 @@ class Dashboard {
       invite: { title: "Invite", to: "/invite" },
     };
     return (
-      defaultComponents[to.toLowerCase().replace("/", "")] || {
+      defaultComponents[to.toLowerCase()] || {
         title: title,
         to: `/${to}`,
       }
@@ -66,7 +66,7 @@ class Dashboard {
       }, 100);
     };
     let loading;
-    if (dothesilly) {
+    if (logging) {
       loading = animateLoading();
     }
     const guilds = this.client.guilds.cache;
@@ -95,7 +95,7 @@ class Dashboard {
         );
       }
     }
-    if (dothesilly) {
+    if (logging) {
       clearInterval(loading);
       process.stdout.clearLine();
     }
@@ -191,9 +191,13 @@ class Dashboard {
     const app = express();
     await new Promise((resolve) => {
       this.client.once("ready", () => {
-        setTimeout(() => {
-          resolve();
-        }, 4000); // delay due to aoi.js logging or user logging (ignore)
+        if (logging) {
+          setTimeout(() => {
+            resolve();
+          }, 4000); // delay due to aoi.js logging or user logging (ignore)
+        } else {
+          resolve(); // skip delay (no logging)
+        }
       });
     });
     this.client.on("guildCreate", async (guild) => {
@@ -440,6 +444,20 @@ class Dashboard {
       );
     });
 
+
+    app.get("/assets/style.css", (req, res) => {    
+        res.sendFile(path.join(__dirname, "../", "dashboard/html/assets/style.css"), {
+            headers: {
+                'Content-Type': 'text/css'
+            }
+        }, (err) => {
+            if (err) {
+                log(`Failed to load Dashboard with reason: ${err}`, "error", "[SERVER] [css]");
+                this.client.destroy();
+            }
+        });
+    });
+    
     app.get("/status", async (req, res) => {
       const data = {
         client: this.client,
@@ -784,7 +802,7 @@ function log(message, level = "default", tag = "") {
   let logFunction;
   let logColor;
 
-  if (dothesilly) {
+  if (logging) {
     switch (level.toLowerCase()) {
       case "error":
         logFunction = console.error;
