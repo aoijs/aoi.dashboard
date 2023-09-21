@@ -213,10 +213,14 @@
   </head>
   <body>
     <div class="navbar">
-      <div class="avatar-container-navbar">
+      <a
+        href="/"
+        style="color: #fff; text-decoration: none"
+        class="avatar-container-navbar"
+      >
         <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
         <div class="avatar-text"><%=data.username %></div>
-      </div>
+      </a>
       <div class="navbar-links">
         <% for (const item of sidebar) { %> <% const { title, to, href, html } =
         item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
