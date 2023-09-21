@@ -1,26 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="../assets/style.css" />
     <title><%=data.username %> | Commands</title>
     <link
       href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <meta content="<%=data.username %> Commands" property="og:title" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
-      body {
-        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
-          "Lucida Sans", sans-serif;
-        background-color: #424549;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
       .container {
         width: 90%;
         margin: 0 auto;
@@ -30,136 +19,72 @@
         margin: 50px 0;
       }
       .command-container {
+        transition: all 0.3;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 20px;
         padding: 20px;
       }
       .command {
-        background-color: #555;
+        background-color: #36393e;
         border-radius: 10px;
         padding: 20px;
         color: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        transition: box-shadow 0.3s ease;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
       }
       .command:hover {
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        background-color: #5a68a5;
+        transition: all 0.2s;
       }
       .command-header {
         display: grid;
+        position: relative;
       }
       .command-title {
         font-size: 24px;
         margin-bottom: 10px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 1;
+      }
+      .command:hover .command-title {
+        transition: all 0.3;
+        font-size: 30px;
+        text-align: center;
+        margin: 0;
+        z-index: 2;
       }
       .command-description {
         font-size: 16px;
         color: #999;
-      }
-      .avatar-text {
-        font-family: "Allerta Stencil";
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .navbar {
-        display: flex;
-        align-items: center;
-        border-radius: 0.3rem;
-        justify-content: space-between;
-        background-color: #36393e;
-        padding: 10px;
-        color: #fff;
-        z-index: 5;
-      }
-      .avatar-container-navbar {
-        display: flex;
-        align-items: center;
-      }
-      .avatar-navbar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-left: 15px;
-        margin-right: 10px;
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
-      }
-      .navbar-links {
-        display: flex;
-        align-items: center;
-      }
-      .navbar-link {
-        color: #fff;
-        text-decoration: none;
-        margin-right: 20px;
+        margin-top: 3px;
+        transition: opacity 0.2s ease, margin 0.2s ease;
         position: relative;
-        margin-top: 2px;
-        border-bottom: 0 solid transparent;
-        transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 1;
+        opacity: 1;
       }
-      .navbar-link:hover {
-        border-bottom: 3px solid #5a68a5;
-      }
-      .avatar-navbar-small {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 8px;
-        vertical-align: middle;
-        -webkit-box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
-        -moz-box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
-        box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
-      }
-      .login-button {
-        padding: 6px 4px;
-        background-color: #7289da;
-        color: #fff;
-        margin-right: 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: color 0.3s;
-        transition: background-color 0.3s;
+
+      .command:hover .command-description {
         text-align: center;
-      }
-      .login-button:hover {
-        background-color: #5a68a5;
-        transition: background-color 0.3s;
-      }
-      .footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding: 20px;
-        background-color: #36393e;
-        text-align: center;
-      }
-      .brand {
-        font-size: 18px;
-        font-weight: 700;
-        margin: 10px 0;
-      }
-      .copyright {
-        font-size: 14px;
-        color: #777;
-      }
-      .text {
-        color: #000;
+        z-index: 2;
       }
     </style>
   </head>
   <body>
     <div class="navbar">
-      <div class="avatar-container-navbar">
+      <a
+        href="/"
+        style="color: #fff; text-decoration: none"
+        class="avatar-container-navbar"
+      >
         <img class="avatar-navbar" src="<%=data.avatar %>" alt="Avatar" />
         <div class="avatar-text"><%=data.username %></div>
-      </div>
+      </a>
       <div class="navbar-links">
         <% for (const item of sidebar) { %> <% const { title, to, href, html
         }=item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
@@ -173,11 +98,13 @@
           <a
             class="login-button"
             style="vertical-align: middle"
-            href="/auth/logout">
+            href="/auth/logout"
+          >
             <img
               class="avatar-navbar-small"
               src="<%=data.user.avatar %>"
-              alt="Avatar" />
+              alt="Avatar"
+            />
             Logout
           </a>
         </div>
@@ -190,8 +117,19 @@
       <div class="text-container">
         <div style="font-size: 40px">
           <strong>Commands</strong>
+          <div class="search-container">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search for commands..."
+            />
+            <button onclick="searchCommands()" id="searchButton">Search</button>
+          </div>
         </div>
       </div>
+    </div>
+    <div id="noResults" style="display: none; text-align: center">
+      <p>No results match your keyword.</p>
     </div>
     <div class="command-container">
       <% const commands=data.commands.text.split(', '); const descriptions =
@@ -199,11 +137,9 @@
       data.client.cmd.default.map((x) => x.exclude); for (let i = 0; i <
       commands.length; i++) { const command = commands[i]; const description =
       descriptions[i] || "No description available"; if (!exclude[i]) { %>
-      <div class="command">
+      <div class="command" onclick="copyCommandToClipboard(this)">
         <div class="command-header">
-          <div class="command-title" onclick="copyToClipboard(this)">
-            <%= data.client.prefix + command %>
-          </div>
+          <div class="command-title"><%= data.client.prefix + command %></div>
           <div class="command-description"><%= description %></div>
         </div>
       </div>
@@ -217,4 +153,74 @@
       </div>
     </footer>
   </body>
+  <script>
+    async function copyCommandToClipboard(element) {
+      var commandHeader = element.querySelector(".command-title");
+      try {
+        await navigator.clipboard.writeText(commandHeader.textContent);
+      } catch (err) {
+        return;
+      }
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "k") {
+        event.preventDefault();
+        document.getElementById("searchInput").focus();
+      }
+    });
+
+    document
+      .getElementById("searchInput")
+      .addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          searchCommands();
+        }
+      });
+
+    function searchCommands() {
+      var input,
+        filter,
+        commands,
+        commandContainer,
+        command,
+        i,
+        txtValue,
+        description;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      commandContainer =
+        document.getElementsByClassName("command-container")[0];
+      commands = commandContainer.getElementsByClassName("command");
+      var noResultsMessage = document.getElementById("noResults");
+
+      var found = false;
+
+      for (i = 0; i < commands.length; i++) {
+        command = commands[i].getElementsByClassName("command-title")[0];
+        description = commands[i].getElementsByClassName(
+          "command-description"
+        )[0];
+        txtValue = command.textContent || command.innerText;
+        var descriptionText = description.textContent || description.innerText;
+
+        if (
+          txtValue.toUpperCase().indexOf(filter) > -1 ||
+          descriptionText.toUpperCase().indexOf(filter) > -1
+        ) {
+          commands[i].style.display = "";
+          found = true;
+        } else {
+          commands[i].style.display = "none";
+        }
+      }
+
+      if (found) {
+        noResultsMessage.style.display = "none";
+      } else {
+        noResultsMessage.style.display = "block";
+      }
+    }
+  </script>
 </html>
