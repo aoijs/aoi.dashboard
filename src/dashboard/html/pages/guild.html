@@ -289,12 +289,10 @@
             });
 
             if (response.ok) {
-              console.log("Data updated successfully");
-            } else {
-              console.error("Failed to update data");
+              console.log("done");
             }
           } catch (error) {
-            console.error("An error occurred", error);
+            return;
           }
         });
     </script>

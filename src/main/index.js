@@ -627,6 +627,9 @@ class Dashboard {
       }
     });
     app.get("/dash/guilds/:guildid", ensureAuthenticated, async (req, res) => {
+      const mutualGuilds = this.client.guilds.cache.filter((guild) =>
+      req.user.guilds.some((userGuild) => userGuild.id === guild.id)
+    );
       const guildId = req.params.guildid;
       const guild = await this.client.guilds.fetch(guildId);
       const owner = await guild.fetchOwner();
@@ -654,6 +657,23 @@ class Dashboard {
         id: this.client.user.id,
         auth: req.isAuthenticated(),
       };
+      const guildData = mutualGuilds.map((guild) => {
+        const permissions = guild.members.cache.get(
+          this.client.user.id
+        )?.permissions;
+        const userpermissions = guild.members.cache.get(
+          req.user.id
+        )?.permissions;
+        return {
+          guildID: guild.id,
+          guildName: guild.name,
+          permissions: userpermissions ? userpermissions.toArray() : [],
+          botPermissions: permissions ? guild.me?.permissions?.toArray() : [],
+          iconURL:
+            guild.iconURL({ dynamic: true }) ||
+            "https://cdn.discordapp.com/embed/avatars/1.png",
+        };
+      });
       if (!guild) {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/401.html"),
@@ -683,6 +703,7 @@ class Dashboard {
         ejs.renderFile(
           path.join(__dirname, "../", "dashboard/html/pages/guild.html"),
           {
+            guildData: guildData,
             gobj: gobj,
             data: data,
             sidebar: this.sidebar,

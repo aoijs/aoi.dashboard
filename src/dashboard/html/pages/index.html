@@ -4,23 +4,12 @@
     <title><%=data.username %> | Dashboard</title>
     <link
       href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="../assets/style.css" />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
-      body {
-        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
-          "Lucida Sans", sans-serif;
-        background-color: #424549;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
       .container {
         display: flex;
         align-items: center;
@@ -117,9 +106,9 @@
         border-radius: 50%;
         margin-right: 8px;
         vertical-align: middle;
-        -webkit-box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
-        -moz-box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
-        box-shadow: 0px 0px 2px 2px rgba(255,255,255,0.72);
+        -webkit-box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
+        -moz-box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
+        box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
@@ -194,21 +183,6 @@
         line-height: 1.5;
         align-self: stretch;
       }
-      .footer {
-        margin: 0;
-        padding: 20px;
-        background-color: #36393e;
-        text-align: center;
-      }
-      .brand {
-        font-size: 18px;
-        font-weight: 700;
-        margin: 10px 0;
-      }
-      .copyright {
-        font-size: 14px;
-        color: #777;
-      }
     </style>
   </head>
   <body>
@@ -226,18 +200,21 @@
         item; %> <% if (html) { %> <%- html %> <% } else if (href) { %>
         <a class="navbar-link" href="<%= href %>"><%= title %></a>
         <% } else { %>
-        <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"><%=
-          title %></a>
+        <a class="navbar-link" href="<%= to.startsWith('/') ? to : '/' + to %>"
+          ><%= title %></a
+        >
         <% } %> <% } %> <% if (data.auth) { %>
         <div class="avatar-container-navbar">
           <a
             class="login-button"
             style="vertical-align: middle"
-            href="/auth/logout">
+            href="/auth/logout"
+          >
             <img
               class="avatar-navbar-small"
               src="<%=data.user.avatar %>"
-              alt="Avatar" />
+              alt="Avatar"
+            />
             Logout
           </a>
         </div>
@@ -276,7 +253,8 @@
         <img
           class="feature-image"
           src="<%= feature.preview %>"
-          alt="Preview Image" />
+          alt="Preview Image"
+        />
         <% } %>
         <div class="feature-details">
           <% if (feature.title) { %>

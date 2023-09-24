@@ -53,7 +53,7 @@
         justify-content: center;
         margin: 10px;
       }
-      .guild-container {
+      .guild-containers {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -65,7 +65,7 @@
         flex: 1;
         -webkit-user-drag: none;
       }
-      .guild-container:hover {
+      .guild-containers:hover {
         transform: scale(1.05);
         transition: all 0.3s;
         cursor: pointer;
@@ -80,6 +80,15 @@
       li h3 {
         margin: 0;
         font-size: 18px;
+      }
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        background-color: #36393e;
+        text-align: center;
       }
     </style>
     <link
@@ -132,7 +141,7 @@
       <li>
         <% if (guild.permissions.includes('Administrator') ||
         guild.permissions.includes('Manage Server')) { %>
-        <div class="guild-container" id="access-<%= guild.guildID %>">
+        <div class="guild-containers" id="access-<%= guild.guildID %>">
           <img
             class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('ManageGuild') ? 'green' : 'grey' %>"
             src="<%= guild.iconURL %>"
@@ -143,7 +152,7 @@
           </div>
         </div>
         <% } else { %>
-        <div class="guild-container" id="noaccess-<%= guild.guildID %>">
+        <div class="guild-containers" id="noaccess-<%= guild.guildID %>">
           <img
             class="avatar <%= guild.permissions.includes('Administrator') || guild.permissions.includes('ManageGuild') ? 'green' : 'grey' %>"
             src="<%= guild.iconURL %>"
@@ -168,7 +177,7 @@
   </body>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const guildContainers = document.querySelectorAll(".guild-container");
+      const guildContainers = document.querySelectorAll(".guild-containers");
       guildContainers.forEach((container) => {
         if (container.id.split("-")[0] === "noaccess") return;
         const guildId = container.id.split("-")[1];
