@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Quicksand", sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    a {
+      color: #5a68a5;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      position: relative;
+    }
+
+    .error-code {
+      font-family: "Quicksand", sans-serif;
+      font-size: 6rem;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .error-message {
+      font-family: "Quicksand", sans-serif;
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .error-description {
+      font-family: "Quicksand", sans-serif;
+      font-size: 1.2rem;
+      margin: 0 0 20px;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .error-code {
+        font-size: 4rem;
+      }
+      .error-message {
+        font-size: 1.5rem;
+      }
+      .error-description {
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Not Found</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="error-code">404</h1>
+      <h2 class="error-message">Did you forget to set up your commands?</h2>
+      <p class="error-description">
+        You need to properly set up your commands before using this feature, check out
+        the examples on the <a href="https://github.com/Faf4a/dashboard">GitHub
+          repository</a>.
+      </p>
+    </div>
+  </body>
+</html>

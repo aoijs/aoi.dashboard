@@ -26,6 +26,7 @@
         padding: 20px;
       }
       .command {
+        will-change: transition;
         background-color: #36393e;
         border-radius: 10px;
         padding: 20px;
@@ -36,6 +37,7 @@
         overflow: hidden;
       }
       .command:hover {
+        will-change: transition;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
         background-color: #5a68a5;
         transition: all 0.2s;
@@ -125,15 +127,18 @@
     </div>
     <div class="container">
       <div class="text-container">
-        <div style="font-size: 40px">
-          <strong>Commands</strong>
+        <div style="font-size: 35px">
+          <strong><%=data.username %> Commands</strong>
           <div class="search-container">
             <input
               type="text"
               id="searchInput"
               placeholder="Search for commands..."
             />
-            <button onclick="searchCommands()" id="searchButton">Search</button>
+            <button onclick="searchCommands()" id="searchButton">
+              <span style="vertical-align: middle;">Search</span>
+              <span class="key-combo">CTRL</span> <span style="color:#36393e">+</span> <span class="key-combo">K</span>
+            </button>
           </div>
         </div>
       </div>

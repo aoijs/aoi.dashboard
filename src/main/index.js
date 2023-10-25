@@ -51,7 +51,7 @@ class Dashboard {
     log(
       "Attempting to fetch all guilds, this may take a while.",
       "warn",
-      "[fetch]"
+      "[SERVER] [fetch]"
     );
     const animateLoading = () => {
       const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
@@ -59,7 +59,7 @@ class Dashboard {
       return setInterval(() => {
         process.stdout.write(
           `\r ${chalk.blue.bold(frames[i])} ${chalk.yellow.bold(
-            "[fetch]"
+            "[SERVER] [fetch]"
           )} [Dashboard]: Fetching guilds `
         );
         i = (i + 1) % frames.length;
@@ -68,6 +68,18 @@ class Dashboard {
     let loading;
     if (logging) {
       loading = animateLoading();
+    }
+    if (
+      !this.client.cmd.interaction.slash.length &&
+      !this.client.cmd["default"].length
+    ) {
+      log(
+        `No commands found, ensure you have the commands properties properly setup. Don't know how? ${chalk.blue.underline(
+          "https://github.com/Faf4a/dashboard#commands"
+        )}`,
+        "warn",
+        "[SERVER] [cmd]"
+      );
     }
     const guilds = this.client.guilds.cache;
     for (const guild of guilds.values()) {
@@ -207,7 +219,6 @@ class Dashboard {
       this.guilds["delete"](guild.id);
     });
     const allowedScopes = [
-      "identify",
       "guilds",
       "activities.read",
       "activities.write",
@@ -444,20 +455,27 @@ class Dashboard {
       );
     });
 
-
-    app.get("/assets/style.css", (req, res) => {    
-        res.sendFile(path.join(__dirname, "../", "dashboard/html/assets/style.css"), {
-            headers: {
-                'Content-Type': 'text/css'
-            }
-        }, (err) => {
-            if (err) {
-                log(`Failed to load Dashboard with reason: ${err}`, "error", "[SERVER] [css]");
-                this.client.destroy();
-            }
-        });
+    app.get("/assets/style.css", (req, res) => {
+      res.sendFile(
+        path.join(__dirname, "../", "dashboard/html/assets/style.css"),
+        {
+          headers: {
+            "Content-Type": "text/css",
+          },
+        },
+        (err) => {
+          if (err) {
+            log(
+              `Failed to load Dashboard with reason: ${err}`,
+              "error",
+              "[SERVER] [css]"
+            );
+            this.client.destroy();
+          }
+        }
+      );
     });
-    
+
     app.get("/status", async (req, res) => {
       const data = {
         client: this.client,
@@ -532,26 +550,51 @@ class Dashboard {
           .then((guilds) => guilds?.size),
         cachedUsers: this.client.users.cache?.size,
       };
-      ejs.renderFile(
-        path.join(__dirname, "../", "dashboard/html/pages/commands.html"),
-        {
-          data: data,
-          sidebar: this.navbar,
-          getDefaultComponent: this.getDefaultComponent,
-        },
-        (err, html) => {
-          if (err) {
-            log(
-              `Failed to load Dashboard with reason: ${err}`,
-              "error",
-              "[SERVER]"
-            );
-            this.client.destroy();
-          } else {
-            res.send(html);
+      if (
+        !this.client.cmd.interaction.slash.length &&
+        !this.client.cmd["default"].length
+      ) {
+        ejs.renderFile(
+          path.join(__dirname, "../dashboard/html/pages/commands-setup.html"),
+          {
+            sidebar: this.navbar,
+            getDefaultComponent: this.getDefaultComponent,
+          },
+          (err, html) => {
+            if (err) {
+              log(
+                "Failed to load dashboard with reason: One or multiple routes are invalid.",
+                "error",
+                "[SERVER] [ROUTES]"
+              );
+              return;
+            } else {
+              res.send(html);
+            }
           }
-        }
-      );
+        );
+      } else {
+        ejs.renderFile(
+          path.join(__dirname, "../", "dashboard/html/pages/commands.html"),
+          {
+            data: data,
+            sidebar: this.navbar,
+            getDefaultComponent: this.getDefaultComponent,
+          },
+          (err, html) => {
+            if (err) {
+              log(
+                `Failed to load Dashboard with reason: ${err}`,
+                "error",
+                "[SERVER]"
+              );
+              this.client.destroy();
+            } else {
+              res.send(html);
+            }
+          }
+        );
+      }
     });
 
     app.get("/invite", async (req, res) => {
@@ -628,8 +671,8 @@ class Dashboard {
     });
     app.get("/dash/guilds/:guildid", ensureAuthenticated, async (req, res) => {
       const mutualGuilds = this.client.guilds.cache.filter((guild) =>
-      req.user.guilds.some((userGuild) => userGuild.id === guild.id)
-    );
+        req.user.guilds.some((userGuild) => userGuild.id === guild.id)
+      );
       const guildId = req.params.guildid;
       const guild = await this.client.guilds.fetch(guildId);
       const owner = await guild.fetchOwner();
@@ -847,7 +890,7 @@ function log(message, level = "default", tag = "") {
     }
 
     logFunction(
-      `${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
+      `\r${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
     );
   }
 }

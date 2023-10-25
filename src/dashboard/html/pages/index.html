@@ -2,10 +2,6 @@
 <html>
   <head>
     <title><%=data.username %> | Dashboard</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" type="text/css" href="../assets/style.css" />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
@@ -14,33 +10,33 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 50vh;
+        height: 75vh;
         color: #fff;
+        margin-bottom: 5.5rem;
+        background-color: #36393e;
       }
       .avatar img {
         width: 240px;
         height: 240px;
         border-radius: 50%;
         margin-right: 30px;
+        z-index: 2;
         vertical-align: middle;
+        user-select: none;
         -webkit-box-shadow: 0 0 14px 6px rgba(255, 255, 255, 0.61);
         -moz-box-shadow: 0 0 14px 6px rgba(255, 255, 255, 0.61);
         box-shadow: 0 0 14px 6px rgba(255, 255, 255, 0.61);
         -webkit-user-drag: none;
         -webkit-user-select: none;
+        z-index: 2;
       }
       .text-container {
         display: flex;
         flex-direction: column;
+        z-index: 2;
       }
       .text-container strong {
         display: block;
-      }
-      .avatar-text {
-        font-family: "Allerta Stencil";
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
       }
       .navbar {
         display: flex;
@@ -57,11 +53,12 @@
         align-items: center;
       }
       .avatar-navbar {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
         border-radius: 50%;
         margin-left: 15px;
         margin-right: 10px;
+        user-select: none;
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
@@ -76,7 +73,7 @@
         position: relative;
         margin-top: 2px;
         border-bottom: 0 solid transparent;
-        transition: border-bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: border-bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
       .navbar-link:hover {
         border-bottom: 3px solid #5a68a5;
@@ -93,6 +90,7 @@
         cursor: pointer;
         text-decoration: none;
         transition: all 0.3s;
+        z-index: 2;
       }
       .manage-button:hover {
         background-color: #5a68a5;
@@ -106,6 +104,7 @@
         border-radius: 50%;
         margin-right: 8px;
         vertical-align: middle;
+        user-select: none;
         -webkit-box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
         -moz-box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
         box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.72);
@@ -130,29 +129,54 @@
       }
       .features-list {
         display: flex;
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        padding: 0 150px;
+        height: 100%;
+        overflow: hidden;
+        padding: 0 125px;
         box-sizing: border-box;
       }
+
+      .feature-container {
+        flex: 1;
+        overflow: auto;
+        margin-bottom: 40px;
+      }
+
       .features-header {
+        opacity: 0;
         font-size: 28px;
         font-weight: 700;
         margin-bottom: 20px;
+        transition: all 1s ease-in-out;
+        transform: translateY(22px);
       }
+
+      .features-header.in-view {
+        opacity: 1;
+        transform: translateY(-25px);
+        transition: all 1s ease-in-out;
+      }
+
       .feature-container {
+        opacity: 0;
         width: calc(100% - 60px);
         margin: 20px 0;
+        margin-top: 2rem;
         padding: 20px;
         background-color: #36393e;
         border-radius: 10px;
         display: flex;
         flex-direction: row-reverse;
-        justify-content: space-between;
         align-items: center;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: opacity 1s ease-in-out;
+      }
+      .feature-container.in-view {
+        opacity: 1;
       }
       .feature-image {
         width: 250px;
@@ -160,6 +184,7 @@
         border-radius: 5px;
         margin-right: 20px;
         object-fit: cover;
+        user-select: none;
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
@@ -279,4 +304,31 @@
       </div>
     </footer>
   </body>
+  <script>
+    const featureContainers = document.querySelectorAll(".feature-container");
+
+    const featuresHeader = document.querySelector(".features-header");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 0) {
+        featuresHeader.classList.add("in-view");
+      } else if (window.scrollY === 0) {
+        featuresHeader.classList.remove("in-view");
+      }
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+        } else {
+          entry.target.classList.remove("in-view");
+        }
+      });
+    });
+
+    featureContainers.forEach((featureContainer) => {
+      observer.observe(featureContainer);
+    });
+  </script>
 </html>
