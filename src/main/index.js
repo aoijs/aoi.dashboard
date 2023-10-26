@@ -1,10 +1,11 @@
 const { startServer, log, animateLoading } = require("./start.js")
 
 const DiscordStrategy = require("passport-discord").Strategy;
-const express = require("express");
-const path = require("path");
-const chalk = require("chalk");
+const session = require("express-session");
 const passport = require("passport");
+const express = require("express");
+const chalk = require("chalk");
+const path = require("path");
 const ejs = require("ejs");
 const fs = require("fs");
 let logging = true;

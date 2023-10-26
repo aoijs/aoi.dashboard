@@ -1,7 +1,4 @@
 const chalk = require("chalk");
-const express = require("express");
-const session = require("express-session");
-const passport = require("passport");
 
 const animateLoading = (text, type) => {
   const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
