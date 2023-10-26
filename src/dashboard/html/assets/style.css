@@ -25,16 +25,20 @@ body {
 .navbar {
   display: flex;
   align-items: center;
-  border-radius: 0.3rem;
   justify-content: space-between;
   background-color: #36393e;
   padding: 10px;
   color: #fff;
   z-index: 5;
+  transition: transform 0.3s ease;
 }
-.avatar-container-navbar {
-  display: flex;
-  align-items: center;
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  transform: translateY(-10);
 }
 .avatar-navbar {
   width: 30px;
@@ -62,6 +66,10 @@ body {
 .navbar-link:hover {
   border-bottom: 3px solid #5a68a5;
 }
+.avatar-container-navbar {
+  display: flex;
+  align-items: center;
+}
 .avatar-navbar-small {
   width: 20px;
   height: 20px;
@@ -75,21 +83,38 @@ body {
   -webkit-user-drag: none;
   -webkit-user-select: none;
 }
-.login-button {
-  padding: 6px 4px;
+.rounded-border {
+  position: relative;
+  border-radius: 2px;
+  border-left: 1px #fff solid;
+  padding-left: 1rem;
+  vertical-align: middle;
+}
+.rounded-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px; 
+  width: 2.5px;
+  background-color: #424549;
+  border-radius: 5px;
+}
+.login-button {/* testing how it looks */
+  display: flex;
+  align-items: center;
+  padding: 5px 16px;
   background-color: #7289da;
   color: #fff;
   margin-right: 20px;
   border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
-  transition: color 0.3s;
-  transition: background-color 0.3s;
+  transition: color 0.3s, background-color 0.3s;
   text-align: center;
 }
 .login-button:hover {
   background-color: #5a68a5;
-  transition: background-color 0.3s;
 }
 .footer {
   margin: 0;

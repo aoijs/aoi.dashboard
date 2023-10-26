@@ -3,10 +3,6 @@
   <head>
     <link rel="stylesheet" type="text/css" href="../assets/style.css" />
     <title><%=data.username %> | Server Picker</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
     <meta content="<%=data.username %> Dashboard" property="og:title" />
     <meta
       content="Login with Discord to view this page."
@@ -26,13 +22,11 @@
         border: 3px solid grey;
       }
       .avatar-text {
-        font-family: "Allerta Stencil";
         display: flex;
         flex-direction: column;
         justify-content: center;
       }
       .avatar-text {
-        font-family: "Allerta Stencil";
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -115,22 +109,26 @@
           ><%= title %></a
         >
         <% } %> <% } %> <% if (data.auth) { %>
-        <div class="avatar-container-navbar">
-          <a
-            class="login-button"
-            style="vertical-align: middle"
-            href="/auth/logout"
-          >
-            <img
-              class="avatar-navbar-small"
-              src="<%=data.user.avatar %>"
-              alt="Avatar"
-            />
-            Logout
-          </a>
+        <div class="rounded-border">
+          <div class="avatar-container-navbar">
+            <a
+              class="login-button"
+              style="vertical-align: middle"
+              href="/auth/logout"
+            >
+              <img
+                class="avatar-navbar-small"
+                src="<%=data.user.avatar %>"
+                alt="Avatar"
+              />
+              <%= data.user.username %>
+            </a>
+          </div>
         </div>
         <% } else { %>
-        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <div class="rounded-border">
+          <a class="login-button" href="/auth/login">Login with Discord</a>
+        </div>
         <% } %>
       </div>
     </div>

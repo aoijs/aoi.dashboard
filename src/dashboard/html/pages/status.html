@@ -3,10 +3,6 @@
   <head>
     <link rel="stylesheet" type="text/css" href="../assets/style.css" />
     <title><%=data.username %> | Status</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
     <meta content="<%=data.username %> Status" property="og:title" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
@@ -61,22 +57,26 @@
           <%= title %>
         </a>
         <% } %> <% } %> <% if (data.auth) { %>
-        <div class="avatar-container-navbar">
-          <a
-            class="login-button"
-            style="vertical-align: middle"
-            href="/auth/logout"
-          >
-            <img
-              class="avatar-navbar-small"
-              src="<%=data.user.avatar %>"
-              alt="Avatar"
-            />
-            Logout
-          </a>
+        <div class="rounded-border">
+          <div class="avatar-container-navbar">
+            <a
+              class="login-button"
+              style="vertical-align: middle"
+              href="/auth/logout"
+            >
+              <img
+                class="avatar-navbar-small"
+                src="<%=data.user.avatar %>"
+                alt="Avatar"
+              />
+              <%= data.user.username %>
+            </a>
+          </div>
         </div>
         <% } else { %>
-        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <div class="rounded-border">
+          <a class="login-button" href="/auth/login">Login with Discord</a>
+        </div>
         <% } %>
       </div>
     </div>
@@ -209,7 +209,8 @@
             y: average,
           });
           lineChart.data.datasets[2].data.shift();
-          lineChart.options.scales.yAxes[0].ticks.max = Math.round((Number(p) + 75) / 10) * 10;
+          lineChart.options.scales.yAxes[0].ticks.max =
+            Math.round((Number(p) + 75) / 10) * 10;
 
           lineChart.update();
         })

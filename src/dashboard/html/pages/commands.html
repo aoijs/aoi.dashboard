@@ -3,10 +3,6 @@
   <head>
     <link rel="stylesheet" type="text/css" href="../assets/style.css" />
     <title><%=data.username %> | Commands</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
     <meta content="<%=data.username %> Commands" property="og:title" />
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
@@ -106,22 +102,26 @@
           <%= title %>
         </a>
         <% } %> <% } %> <% if (data.auth) { %>
-        <div class="avatar-container-navbar">
-          <a
-            class="login-button"
-            style="vertical-align: middle"
-            href="/auth/logout"
-          >
-            <img
-              class="avatar-navbar-small"
-              src="<%=data.user.avatar %>"
-              alt="Avatar"
-            />
-            Logout
-          </a>
+        <div class="rounded-border">
+          <div class="avatar-container-navbar">
+            <a
+              class="login-button"
+              style="vertical-align: middle"
+              href="/auth/logout"
+            >
+              <img
+                class="avatar-navbar-small"
+                src="<%=data.user.avatar %>"
+                alt="Avatar"
+              />
+              <%= data.user.username %>
+            </a>
+          </div>
         </div>
         <% } else { %>
-        <a class="login-button" href="/auth/login">Login with Discord</a>
+        <div class="rounded-border">
+          <a class="login-button" href="/auth/login">Login with Discord</a>
+        </div>
         <% } %>
       </div>
     </div>
@@ -136,8 +136,10 @@
               placeholder="Search for commands..."
             />
             <button onclick="searchCommands()" id="searchButton">
-              <span style="vertical-align: middle;">Search</span>
-              <span class="key-combo">CTRL</span> <span style="color:#36393e">+</span> <span class="key-combo">K</span>
+              <span style="vertical-align: middle">Search</span>
+              <span class="key-combo">CTRL</span>
+              <span style="color: #36393e">+</span>
+              <span class="key-combo">K</span>
             </button>
           </div>
         </div>

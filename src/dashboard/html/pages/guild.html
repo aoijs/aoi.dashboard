@@ -3,10 +3,6 @@
   <head>
     <title><%=data.username %> | Dashboard</title>
     <link
-      href="https://fonts.googleapis.com/css?family=Allerta Stencil"
-      rel="stylesheet"
-    />
-    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
@@ -18,8 +14,7 @@
     <meta content="#7289da" data-react-helmet="true" name="theme-color" />
     <style>
       body {
-        font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
-          "Lucida Sans", sans-serif;
+        font-family: sans-serif;
         background-color: #424549;
         color: #fff;
         margin: 0;
@@ -34,10 +29,6 @@
         top: 0;
         left: 0;
       }
-      .avatar-container-navbar {
-        display: flex;
-        align-items: center;
-      }
       .avatar-navbar {
         width: 30px;
         height: 30px;
@@ -50,7 +41,6 @@
         -webkit-user-select: none;
       }
       .avatar-text {
-        font-family: "Allerta Stencil";
         margin-top: 10px;
         display: flex;
         flex-direction: column;
@@ -75,6 +65,10 @@
         border-bottom: none;
         text-indent: 12px;
       }
+      .avatar-container-navbar {
+        display: flex;
+        align-items: center;
+      }
       .avatar-navbar-small {
         width: 20px;
         height: 20px;
@@ -88,21 +82,38 @@
         -webkit-user-drag: none;
         -webkit-user-select: none;
       }
-      .login-button {
-        padding: 6px 4px;
+      .rounded-border {
+        position: relative;
+        border-radius: 2px;
+        border-left: 1px #fff solid;
+        padding-left: 1rem;
+        vertical-align: middle;
+      }
+      .rounded-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -1px; 
+        width: 2.5px;
+        background-color: #424549;
+        border-radius: 5px;
+      }
+      .login-button {/* testing how it looks */
+        display: flex;
+        align-items: center;
+        padding: 5px 16px;
         background-color: #7289da;
         color: #fff;
         margin-right: 20px;
         border-radius: 4px;
         cursor: pointer;
         text-decoration: none;
-        transition: color 0.3s;
-        transition: background-color 0.3s;
+        transition: color 0.3s, background-color 0.3s;
         text-align: center;
       }
       .login-button:hover {
         background-color: #5a68a5;
-        transition: background-color 0.3s;
       }
       .footer {
         position: fixed;
