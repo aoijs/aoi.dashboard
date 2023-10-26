@@ -1,3 +1,5 @@
+const { startServer, log, animateLoading } = require("./start.js")
+
 const DiscordStrategy = require("passport-discord").Strategy;
 const express = require("express");
 const path = require("path");
@@ -46,34 +48,23 @@ class Dashboard {
       }
     );
   }
+
   async fetchGuilds() {
     let start = new Date();
-    log(
+    log(logging, 
       "Attempting to fetch all guilds, this may take a while.",
       "warn",
       "[SERVER] [fetch]"
     );
-    const animateLoading = () => {
-      const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
-      let i = 0;
-      return setInterval(() => {
-        process.stdout.write(
-          `\r ${chalk.blue.bold(frames[i])} ${chalk.yellow.bold(
-            "[SERVER] [fetch]"
-          )} [Dashboard]: Fetching guilds `
-        );
-        i = (i + 1) % frames.length;
-      }, 100);
-    };
     let loading;
     if (logging) {
-      loading = animateLoading();
+      loading = animateLoading("Fetching guilds", "fetch");
     }
     if (
       !this.client.cmd.interaction.slash.length &&
       !this.client.cmd["default"].length
     ) {
-      log(
+      log(logging, 
         `No commands found, ensure you have the commands properties properly setup. Don't know how? ${chalk.blue.underline(
           "https://github.com/Faf4a/dashboard#commands"
         )}`,
@@ -93,7 +84,7 @@ class Dashboard {
             ownerTag: owner.user.tag,
           });
         } else {
-          log(
+          log(logging, 
             `Error fetching owner for guild with ID ${fetched.id}`,
             "error",
             "[fetch]"
@@ -108,8 +99,7 @@ class Dashboard {
       }
     }
     if (logging) {
-      clearInterval(loading);
-      process.stdout.clearLine();
+      (await loading).stop();
     }
     for (const item of this.navbar) {
       if (!("title" in item && ("to" in item || "href" in item))) {
@@ -161,14 +151,14 @@ class Dashboard {
     }
     for (const feature of this.features) {
       if (!("title" in feature)) {
-        log(
+        log(logging, 
           `Feature has an empty or missing title. Therefore it may not display correctly.`,
           "warn",
           "\r[SERVER] [features]"
         );
       }
       if (!("description" in feature) || feature.description.length === 0) {
-        log(
+        log(logging, 
           `Feature "${feature.title}" has an empty or missing descriptions. Therefore it may not display correctly.`,
           "warn",
           "\r[SERVER] [features]"
@@ -178,14 +168,14 @@ class Dashboard {
         !("preview" in feature) ||
         (feature.preview && feature.preview.trim() === "")
       ) {
-        log(
+        log(logging, 
           `Feature "${feature.title}" has an empty or missing preview image. Therefore it may not display correctly.`,
           "warn",
           "\r[SERVER] [features]"
         );
       }
     }
-    log(
+    log(logging, 
       `Fetched all guilds in ${(new Date() - start) / 1e3} seconds.`,
       "success",
       "[SERVER] [fetch]"
@@ -250,7 +240,7 @@ class Dashboard {
       "webhook.incoming",
     ];
     if (!this.scopes || !Array.isArray(this.scopes)) {
-      log(
+      log(logging, 
         "Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty.",
         "error",
         "[SERVER] [scopes]"
@@ -261,7 +251,7 @@ class Dashboard {
       (scope) => !allowedScopes.includes(scope)
     );
     if (invalidScopes.length > 0) {
-      log(
+      log(logging, 
         `Failed to load dashboard with reason: Scopes must contain only allowed scopes or be non-empty. Invalid scopes: "${chalk.redBright.bold(
           invalidScopes.join(chalk.white(`", "`))
         )}"`,
@@ -271,7 +261,7 @@ class Dashboard {
       process.exit(1);
     }
     if (!this.secret) {
-      log(
+      log(logging, 
         "Failed to load dashboard with reason: Invalid or no clientSecret was provided. Don't know what that is? Check this: https://support.heateor.com/discord-client-id-discord-client-secret/",
         "error",
         "[SERVER] [clientSecret]"
@@ -283,7 +273,7 @@ class Dashboard {
       (!this.redirectURL.startsWith("https://") &&
         !this.redirectURL.startsWith("http://"))
     ) {
-      log(
+      log(logging, 
         `Failed to load dashboard with reason: Invalid or no ${chalk.yellow.bold(
           "redirectURL"
         )} was provided. ${chalk.yellow.bold(
@@ -348,7 +338,7 @@ class Dashboard {
     if (this.routes) {
       this.routes.forEach((route) => {
         if (!route.name) {
-          log(
+          log(logging, 
             `Failed to load dashboard with reason: One or multiple routes are missing the name property. \n\r${chalk.grey(
               `Line: ${JSON.stringify(route)}`
             )}`,
@@ -373,7 +363,7 @@ class Dashboard {
                 },
                 (err, html) => {
                   if (err) {
-                    log(
+                    log(logging, 
                       "Failed to load dashboard with reason: One or multiple routes are invalid.",
                       "error",
                       "[SERVER] [ROUTES]"
@@ -393,7 +383,7 @@ class Dashboard {
                 },
                 (err, html) => {
                   if (err) {
-                    log(
+                    log(logging, 
                       "Failed to load dashboard with reason: One or multiple routes are invalid.",
                       "error",
                       "[SERVER] [ROUTES]"
@@ -442,7 +432,7 @@ class Dashboard {
         },
         (err, html) => {
           if (err) {
-            log(
+            log(logging, 
               `Failed to load Dashboard with reason: ${err}`,
               "error",
               "[SERVER]"
@@ -465,7 +455,7 @@ class Dashboard {
         },
         (err) => {
           if (err) {
-            log(
+            log(logging, 
               `Failed to load Dashboard with reason: ${err}`,
               "error",
               "[SERVER] [css]"
@@ -508,7 +498,7 @@ class Dashboard {
         },
         (err, html) => {
           if (err) {
-            log(
+            log(logging, 
               `Failed to load Dashboard with reason: ${err}`,
               "error",
               "[SERVER]"
@@ -562,7 +552,7 @@ class Dashboard {
           },
           (err, html) => {
             if (err) {
-              log(
+              log(logging, 
                 "Failed to load dashboard with reason: One or multiple routes are invalid.",
                 "error",
                 "[SERVER] [ROUTES]"
@@ -583,7 +573,7 @@ class Dashboard {
           },
           (err, html) => {
             if (err) {
-              log(
+              log(logging, 
                 `Failed to load Dashboard with reason: ${err}`,
                 "error",
                 "[SERVER]"
@@ -619,7 +609,7 @@ class Dashboard {
         },
         (err, html) => {
           if (err) {
-            log(
+            log(logging, 
               `Failed to load Dashboard with reason: ${err}`,
               "error",
               "[SERVER]"
@@ -658,7 +648,7 @@ class Dashboard {
           );
           res.status(200).json({ message: "Data updated successfully" });
         } catch (err) {
-          log(
+          log(logging, 
             `Failed to update data with reason: ${err}`,
             "error",
             "[SERVER] [API]"
@@ -726,7 +716,7 @@ class Dashboard {
           },
           async (err, html) => {
             if (err) {
-              log(
+              log(logging, 
                 `Failed to load Dashboard with reason: ${err}`,
                 "error",
                 "[SERVER]"
@@ -754,7 +744,7 @@ class Dashboard {
           },
           (err, html) => {
             if (err) {
-              log(
+              log(logging, 
                 `Failed to load Dashboard with reason: ${err}`,
                 "error",
                 "[SERVER]"
@@ -775,7 +765,7 @@ class Dashboard {
           },
           (err, html) => {
             if (err) {
-              log(
+              log(logging, 
                 `Failed to load Dashboard with reason: ${err}`,
                 "error",
                 "[SERVER]"
@@ -838,7 +828,7 @@ class Dashboard {
         },
         async (err, html) => {
           if (err) {
-            log(
+            log(logging, 
               `Failed to load Dashboard with reason: ${err}`,
               "error",
               "[SERVER]"
@@ -856,43 +846,8 @@ class Dashboard {
         .sendFile(path.join(__dirname, "../", "dashboard/html/pages/404.html"));
     });
     await this.fetchGuilds();
-    app.listen(this.port, () => {
-      log("Marked Dashboard as Running", "success", "[SERVER]");
-    });
+    startServer(app, this.port);
   };
-}
-
-function log(message, level = "default", tag = "") {
-  let logFunction;
-  let logColor;
-
-  if (logging) {
-    switch (level.toLowerCase()) {
-      case "error":
-        logFunction = console.error;
-        logColor = chalk.red.bold;
-        tag = tag || "[ERR]";
-        break;
-      case "warn":
-        logFunction = console.warn;
-        logColor = chalk.yellow.bold;
-        tag = tag || "[WARN]";
-        break;
-      case "success":
-        logFunction = console.log;
-        logColor = chalk.green.bold;
-        tag = tag || "[SUCCESS]";
-        break;
-      default:
-        logFunction = console.log;
-        logColor = chalk.white;
-        tag = tag || "";
-    }
-
-    logFunction(
-      `\r${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
-    );
-  }
 }
 
 module.exports = { Dashboard };
