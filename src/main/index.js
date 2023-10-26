@@ -190,6 +190,12 @@ class Dashboard {
   }
   connect = async () => {
     const app = express();
+    app.use(
+      session({ secret: this.secret, resave: true, saveUninitialized: false })
+    );
+    app.use(express.json());
+    app.use(passport.initialize());
+    app.use(passport.session());
     await new Promise((resolve) => {
       this.client.once("ready", () => {
         if (logging) {
