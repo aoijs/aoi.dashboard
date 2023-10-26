@@ -74,13 +74,7 @@ const tryListen = (app, port) => {
   });
 };
 
-const startServer = async (app, port, secret) => {
-  app.use(
-    session({ secret, resave: true, saveUninitialized: false })
-  );
-  app.use(express.json());
-  app.use(passport.initialize());
-  app.use(passport.session());
+const startServer = async (app, port) => {
   const maxAttempts = 5;
   let attempt = 0;
 
