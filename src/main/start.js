@@ -1,4 +1,7 @@
 const chalk = require("chalk");
+const express = require("express");
+const session = require("express-session");
+const passport = require("passport");
 
 const animateLoading = (text, type) => {
   const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
@@ -57,7 +60,7 @@ const log = (logging, message, level = "default", tag = "") => {
       `\r${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
     );
   }
-}
+};
 
 const tryListen = (app, port) => {
   return new Promise((resolve, reject) => {
@@ -71,7 +74,13 @@ const tryListen = (app, port) => {
   });
 };
 
-const startServer = async (app, port) => {
+const startServer = async (app, port, secret) => {
+  app.use(
+    session({ secret, resave: true, saveUninitialized: false })
+  );
+  app.use(express.json());
+  app.use(passport.initialize());
+  app.use(passport.session());
   const maxAttempts = 5;
   let attempt = 0;
 
@@ -91,7 +100,8 @@ const startServer = async (app, port) => {
       attempt++;
       port = Math.floor(Math.random() * 5000) + 3000;
       if (attempt === maxAttempts)
-        log(true,
+        log(
+          true,
           `Failed to load dashboard with reason: port ${chalk.yellow.bold(
             this.port
           )} already in use.`,
@@ -100,6 +110,6 @@ const startServer = async (app, port) => {
         );
     }
   }
-}
+};
 
 module.exports = { animateLoading, log, startServer };

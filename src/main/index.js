@@ -4,7 +4,6 @@ const DiscordStrategy = require("passport-discord").Strategy;
 const express = require("express");
 const path = require("path");
 const chalk = require("chalk");
-const session = require("express-session");
 const passport = require("passport");
 const ejs = require("ejs");
 const fs = require("fs");
@@ -286,12 +285,6 @@ class Dashboard {
       );
       process.exit(1);
     }
-    app.use(
-      session({ secret: this.secret, resave: true, saveUninitialized: false })
-    );
-    app.use(express.json());
-    app.use(passport.initialize());
-    app.use(passport.session());
     passport.use(
       new DiscordStrategy(
         {
@@ -846,7 +839,7 @@ class Dashboard {
         .sendFile(path.join(__dirname, "../", "dashboard/html/pages/404.html"));
     });
     await this.fetchGuilds();
-    startServer(app, this.port);
+    startServer(app, this.port, this.secret);
   };
 }
 
