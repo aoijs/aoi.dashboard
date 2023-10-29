@@ -20,15 +20,10 @@
         height: 240px;
         border-radius: 50%;
         margin-right: 30px;
-        z-index: 2;
         vertical-align: middle;
         user-select: none;
-        -webkit-box-shadow: 0 0 14px 6px rgba(255, 255, 255, 0.61);
-        -moz-box-shadow: 0 0 14px 6px rgba(255, 255, 255, 0.61);
-        box-shadow: 0 0 14px 6px rgba(255, 255, 255, 0.61);
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
-        z-index: 2;
+        box-shadow: 0 0 0 5px #424549;
+        z-index: 1;
       }
       .text-container {
         display: flex;
@@ -67,18 +62,12 @@
         align-items: center;
         height: 100%;
         overflow: hidden;
-        padding: 0 125px;
+        padding: auto;
         box-sizing: border-box;
-      }
-      .feature-container {
-        flex: 1;
-        overflow: auto;
-        margin-bottom: 40px;
       }
       .features-header {
         opacity: 0;
         font-size: 28px;
-        font-weight: 700;
         margin-bottom: 20px;
         transition: all 1s ease-in-out;
         transform: translateY(22px);
@@ -88,10 +77,20 @@
         transform: translateY(-25px);
         transition: all 1s ease-in-out;
       }
+      .feature-image {
+        user-select: none;
+        overflow: hidden;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+        transition: all 0.4s ease-in-out;
+        max-width: 100%;
+        max-height: 100%;
+      }
       .feature-container {
         opacity: 0;
-        width: calc(100% - 60px);
-        margin: 20px 0;
+        flex: 1;
+        width: 1200px;
+        margin: 40px;
         margin-top: 2rem;
         padding: 20px;
         background-color: #36393e;
@@ -104,16 +103,6 @@
       }
       .feature-container.in-view {
         opacity: 1;
-      }
-      .feature-image {
-        width: 250px;
-        height: 150px;
-        border-radius: 5px;
-        margin-right: 20px;
-        object-fit: cover;
-        user-select: none;
-        -webkit-user-drag: none;
-        -webkit-user-select: none;
       }
       .feature-details {
         flex: 1;
@@ -205,13 +194,7 @@
       <h2 class="features-header">Why choose <%= data.username %>?</h2>
       <% for (const feature of data.features) { %>
       <div class="feature-container">
-        <% if (feature.preview) { %>
-        <img
-          class="feature-image"
-          src="<%= feature.preview %>"
-          alt="Preview Image"
-        />
-        <% } %>
+        <% if (feature.preview) { %> <% } %>
         <div class="feature-details">
           <% if (feature.title) { %>
           <h3 class="feature-title"><%= feature.title %></h3>
@@ -222,7 +205,16 @@
             <li><%= point %></li>
             <% } %>
           </ul>
-          <% } %>
+          <% if (feature.preview?.image && feature.preview?.image?.length > 0) {
+          %>
+          <img
+            src="<%= feature.preview.image %>"
+            width="<%= feature.preview.width %>"
+            height="<%= feature.preview.height %>"
+            alt="<%= feature.preview.alt %>"
+            class="feature-image"
+          />
+          <% } %> <% } %>
         </div>
       </div>
       <% } %>
@@ -257,7 +249,7 @@
         clonedNavbar.style.top = "0";
       } else {
         clonedNavbar.style.transition = "top 0.01s ease";
-        originalNavbar.style.display = "flex";  
+        originalNavbar.style.display = "flex";
         clonedNavbar.style.top = "-100px";
       }
     });

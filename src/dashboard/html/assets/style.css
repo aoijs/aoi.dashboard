@@ -91,16 +91,17 @@ body {
   vertical-align: middle;
 }
 .rounded-border::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  left: -1px; 
+  left: -1px;
   width: 2.5px;
   background-color: #424549;
   border-radius: 5px;
 }
-.login-button {/* testing how it looks */
+.login-button {
+  /* testing how it looks */
   display: flex;
   align-items: center;
   padding: 5px 16px;

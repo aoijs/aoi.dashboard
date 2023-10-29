@@ -152,30 +152,34 @@ class Dashboard {
         }
       }
     }
-    for (const feature of this.features) {
+    for (const [index, feature] of this.features.entries()) {
+      const messages = [];
+
       if (!("title" in feature)) {
-        log(
-          logging,
-          `Feature has an empty or missing title. Therefore it may not display correctly.`,
-          "warn",
-          "\r[SERVER] [features]"
-        );
+        messages.push(`Feature Title`);
       }
       if (!("description" in feature) || feature.description.length === 0) {
-        log(
-          logging,
-          `Feature "${feature.title}" has an empty or missing descriptions. Therefore it may not display correctly.`,
-          "warn",
-          "\r[SERVER] [features]"
-        );
+        messages.push(`Feature Description`);
       }
       if (
         !("preview" in feature) ||
-        (feature.preview && feature.preview.trim() === "")
+        (feature.preview?.image && feature.preview?.image.trim() === "")
       ) {
+        messages.push(`Preview Image`);
+      }
+
+      if (messages.length > 0) {
         log(
           logging,
-          `Feature "${feature.title}" has an empty or missing preview image. Therefore it may not display correctly.`,
+          `Feature ${
+            !("title" in feature)
+              ? "[" + chalk.yellow.bold(index + 1) + "]"
+              : '"' + chalk.yellow.bold(feature.title) + '"'
+          } is missing the following ${
+            messages.length > 1 ? "properties" : "property"
+          }: ${chalk.yellow(
+            messages.join(chalk.grey(", "))
+          )}. Therefore it may not display correctly.`,
           "warn",
           "\r[SERVER] [features]"
         );
@@ -278,7 +282,11 @@ class Dashboard {
     if (!this.secret) {
       log(
         logging,
-        "Failed to load dashboard with reason: Invalid or no clientSecret was provided. Don't know what that is? Check this: https://support.heateor.com/discord-client-id-discord-client-secret/",
+        `Failed to load dashboard with reason: Invalid or no ${chalk.yellow(
+          "clientSecret"
+        )} was provided. Don't know what that is? Check this: ${chalk.blue(
+          "https://github.com/Faf4a/dashboard#clientSecret"
+        )}`,
         "error",
         "[SERVER] [clientSecret]"
       );
