@@ -4,7 +4,7 @@ Gives your users the ability to manage your bot in their guild.
 
 Follow the progress **[here](https://github.com/users/Faf4a/projects/2)**!
 
-## Setup
+## Setup (OUTDATED 29/10)
 
 ```js
 const dashboard = new Dashboard(bot, { // the client
