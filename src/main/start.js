@@ -28,7 +28,7 @@ const log = (logging, message, level = "default", tag = "") => {
     }
 
     logFunction(
-      `\r${logColor(tag.padEnd(22))} ${chalk.whiteBright("[Dashboard]")}: ${message}`
+      `\r${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
     );
   }
 };
