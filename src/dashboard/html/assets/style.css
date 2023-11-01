@@ -10,7 +10,6 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
-
 .avatar-text {
   font-weight: bolder;
   display: flex;
@@ -23,6 +22,8 @@ body {
   border-bottom: 3px solid #5a68a5;
 }
 .navbar {
+  position: fixed;
+  border-bottom: 1px solid #424549;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -30,15 +31,10 @@ body {
   padding: 10px;
   color: #fff;
   z-index: 5;
-  transition: transform 0.3s ease;
-}
-.fixed-navbar {
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10;
-  transform: translateY(-10);
+  transition: transform 0.3s ease;
 }
 .avatar-navbar {
   width: 30px;
@@ -53,6 +49,9 @@ body {
 .navbar-links {
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .navbar-link {
   color: #fff;

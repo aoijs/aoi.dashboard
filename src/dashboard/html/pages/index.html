@@ -228,32 +228,6 @@
     </footer>
   </body>
   <script>
-    const originalNavbar = document.querySelector(".navbar");
-    const clonedNavbar = originalNavbar.cloneNode(true);
-
-    const fixedNavbarStyle = `
-      position: fixed;
-      top: -100px;
-      transition: top 0.3s ease;
-    `;
-
-    clonedNavbar.classList.add("fixed-navbar");
-    clonedNavbar.style.cssText = fixedNavbarStyle;
-
-    document.body.appendChild(clonedNavbar);
-
-    window.addEventListener("scroll", () => {
-      if (window.scrollY >= 100) {
-        clonedNavbar.style.transition = "top 0.3s ease";
-        originalNavbar.style.display = "none";
-        clonedNavbar.style.top = "0";
-      } else {
-        clonedNavbar.style.transition = "top 0.01s ease";
-        originalNavbar.style.display = "flex";
-        clonedNavbar.style.top = "-100px";
-      }
-    });
-
     window.addEventListener("scroll", () => {
       if (window.scrollY > 0) {
         document.querySelector(".features-header").classList.add("in-view");

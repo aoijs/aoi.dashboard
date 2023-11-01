@@ -1,31 +1,5 @@
 const chalk = require("chalk");
 
-const animateLoading = (text, type) => {
-  const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
-  let i = 0;
-  let loadingInterval;
-
-  return {
-    start: () => {
-      loadingInterval = setInterval(() => {
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        process.stdout.write(
-          `\r ${chalk.blue.bold(frames[i])} ${chalk.yellow.bold(
-            `[SERVER] [${type}]`
-          )} [Dashboard]: ${text}`
-        );
-        i = (i + 1) % frames.length;
-      }, 100);
-    },
-    stop: () => {
-      clearInterval(loadingInterval);
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
-    },
-  };
-};
-
 const log = (logging, message, level = "default", tag = "") => {
   let logFunction;
   let logColor;
@@ -54,7 +28,7 @@ const log = (logging, message, level = "default", tag = "") => {
     }
 
     logFunction(
-      `\r${logColor(tag)} ${chalk.whiteBright("[Dashboard]")}: ${message}`
+      `\r${logColor(tag.padEnd(22))} ${chalk.whiteBright("[Dashboard]")}: ${message}`
     );
   }
 };
@@ -75,16 +49,9 @@ const startServer = async (app, port) => {
   const maxAttempts = 5;
   let attempt = 0;
 
-  const loadingInterval = animateLoading(
-    "Attempting to start the web server..",
-    "init"
-  );
-  loadingInterval.start();
-
   while (attempt < maxAttempts) {
     try {
       await tryListen(app, port);
-      (await loadingInterval).stop();
       log(true, "Marked Dashboard as Running", "success", "[SERVER]");
       break;
     } catch (error) {
@@ -103,4 +70,4 @@ const startServer = async (app, port) => {
   }
 };
 
-module.exports = { animateLoading, log, startServer };
+module.exports = { log, startServer };

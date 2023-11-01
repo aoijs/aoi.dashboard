@@ -1,4 +1,4 @@
-const { startServer, log, animateLoading } = require("./start.js");
+const { startServer, log } = require("./start.js");
 
 const DiscordStrategy = require("passport-discord").Strategy;
 const session = require("express-session");
@@ -49,6 +49,19 @@ class Dashboard {
     );
   }
 
+  animateLoading = (message) => {
+    const frames = ["⠙", "⠘", "⠰", "⠴", "⠤", "⠦", "⠆", "⠃", "⠋", "⠉"];
+    let i = 0;
+    return setInterval(() => {
+      process.stdout.write(
+        `\r ${chalk.blue.bold(frames[i])} ${chalk.yellow.bold(
+          "[fetch]"
+        )} [Dashboard]: ${message}`
+      );
+      i = (i + 1) % frames.length;
+    }, 100);
+  };
+
   async fetchGuilds() {
     let start = new Date();
     log(
@@ -59,7 +72,7 @@ class Dashboard {
     );
     let loading;
     if (logging) {
-      loading = animateLoading("Fetching guilds", "fetch");
+      loading = this.animateLoading("Fetching guilds..");
     }
     if (
       this.client.cmd.default === undefined &&
@@ -82,27 +95,37 @@ class Dashboard {
         if (owner) {
           this.guilds.set(fetched.id, {
             guildName: fetched.name,
-            ownerId: owner.user.id,
+            guildId: fetched.id,
             ownerTag: owner.user.tag,
+            ownerId: owner.user.id,
           });
         } else {
+          clearInterval(loading);
+          process.stdout.clearLine();
+          process.stdout.cursorTo(0);
           log(
-            logging,
-            `Error fetching owner for guild with ID ${fetched.id}`,
+            true,
+            `Error fetching owner for guild with ID: ${chalk.yellow(
+              guild.id
+            )}. Unable to find guild owner.`,
             "error",
-            "[fetch]"
+            "[SERVER] [fetch]"
           );
+          loading = this.animateLoading("Fetching guilds..");
         }
       } catch (err) {
-        console.error(
-          `${chalk.red.bold(
-            "[ERR]"
-          )} [Dashboard]: Error fetching owner for guild with ID ${guild.id}`
+        log(
+          true,
+          `Error fetching owner for guild with ID ${guild.id}: ${err}`,
+          "error",
+          "[SERVER] [fetch]"
         );
       }
     }
     if (logging) {
-      (await loading).stop();
+      clearInterval(loading);
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
     }
     for (const item of this.navbar) {
       if (!("title" in item && ("to" in item || "href" in item))) {
@@ -115,7 +138,7 @@ class Dashboard {
             "href"
           )} to work properly.`
         );
-        process.exit(1);
+        process.exit(0);
       }
     }
     for (const item of this.sidebar) {
@@ -128,7 +151,7 @@ class Dashboard {
               "category"
             )} requires ${chalk.yellow.bold("title")} to work properly.`
           );
-          process.exit(1);
+          process.exit(0);
         }
       } else {
         if (
@@ -148,7 +171,7 @@ class Dashboard {
               `Line: ${JSON.stringify(item)}`
             )}`
           );
-          process.exit(1);
+          process.exit(0);
         }
       }
     }
@@ -181,7 +204,7 @@ class Dashboard {
             messages.join(chalk.grey(", "))
           )}. Therefore it may not display correctly.`,
           "warn",
-          "\r[SERVER] [features]"
+          "[SERVER] [features]"
         );
       }
     }
@@ -263,7 +286,7 @@ class Dashboard {
         "error",
         "[SERVER] [scopes]"
       );
-      process.exit(1);
+      process.exit(0);
     }
     const invalidScopes = this.scopes.filter(
       (scope) => !allowedScopes.includes(scope)
@@ -277,7 +300,7 @@ class Dashboard {
         "error",
         "[SERVER] [scopes]"
       );
-      process.exit(1);
+      process.exit(0);
     }
     if (!this.secret) {
       log(
@@ -290,7 +313,7 @@ class Dashboard {
         "error",
         "[SERVER] [clientSecret]"
       );
-      process.exit(1);
+      process.exit(0);
     }
     if (
       !this.redirectURL ||
@@ -309,7 +332,7 @@ class Dashboard {
         "error",
         "[SERVER] [redirectURL]"
       );
-      process.exit(1);
+      process.exit(0);
     }
     passport.use(
       new DiscordStrategy(
@@ -363,9 +386,9 @@ class Dashboard {
               `Line: ${JSON.stringify(route)}`
             )}`,
             "error",
-            "[SERVER] [ROUTES]"
+            "[SERVER] [routes]"
           );
-          process.exit(1);
+          process.exit(0);
         }
         const { name, path: filePath, requireAuth } = route;
         app.get(
@@ -387,7 +410,7 @@ class Dashboard {
                       logging,
                       "Failed to load dashboard with reason: One or multiple routes are invalid.",
                       "error",
-                      "[SERVER] [ROUTES]"
+                      "[SERVER] [routes]"
                     );
                     return;
                   } else {
@@ -408,7 +431,7 @@ class Dashboard {
                       logging,
                       "Failed to load dashboard with reason: One or multiple routes are invalid.",
                       "error",
-                      "[SERVER] [ROUTES]"
+                      "[SERVER] [routes]"
                     );
                     return;
                   } else {
@@ -460,7 +483,7 @@ class Dashboard {
               "error",
               "[SERVER]"
             );
-            this.client.destroy();
+            process.exit(0);
           } else {
             res.send(html);
           }
@@ -484,7 +507,7 @@ class Dashboard {
               "error",
               "[SERVER] [css]"
             );
-            this.client.destroy();
+            process.exit(0);
           }
         }
       );
@@ -528,7 +551,7 @@ class Dashboard {
               "error",
               "[SERVER]"
             );
-            this.client.destroy();
+            process.exit(0);
           } else {
             res.send(html);
           }
@@ -581,7 +604,7 @@ class Dashboard {
                 logging,
                 "Failed to load dashboard with reason: One or multiple routes are invalid.",
                 "error",
-                "[SERVER] [ROUTES]"
+                "[SERVER] [routes]"
               );
               return;
             } else {
@@ -605,7 +628,7 @@ class Dashboard {
                 "error",
                 "[SERVER]"
               );
-              this.client.destroy();
+              process.exit(0);
             } else {
               res.send(html);
             }
@@ -642,7 +665,7 @@ class Dashboard {
               "error",
               "[SERVER]"
             );
-            this.client.destroy();
+            process.exit(0);
           } else {
             res.send(html);
           }
@@ -680,7 +703,7 @@ class Dashboard {
             logging,
             `Failed to update data with reason: ${err}`,
             "error",
-            "[SERVER] [API]"
+            "[SERVER] [api]"
           );
           res.status(500).json({ error: "Failed to update data" });
         }
@@ -751,7 +774,7 @@ class Dashboard {
                 "error",
                 "[SERVER]"
               );
-              this.client.destroy();
+              process.exit(0);
             } else {
               res.send(html);
             }
@@ -780,7 +803,7 @@ class Dashboard {
                 "error",
                 "[SERVER]"
               );
-              this.client.destroy();
+              process.exit(0);
             } else {
               res.send(html);
             }
@@ -802,7 +825,7 @@ class Dashboard {
                 "error",
                 "[SERVER]"
               );
-              this.client.destroy();
+              process.exit(0);
               return;
             } else {
               res.send(html);
@@ -816,6 +839,7 @@ class Dashboard {
       const mutualGuilds = this.client.guilds.cache.filter((guild) =>
         req.user.guilds.some((userGuild) => userGuild.id === guild.id)
       );
+
       const data = {
         user: {
           avatar:
@@ -833,23 +857,29 @@ class Dashboard {
         id: this.client.user.id,
         auth: req.isAuthenticated(),
       };
+
       const guildData = mutualGuilds.map((guild) => {
-        const permissions = guild.members.cache.get(
+        const permissions = guild.members.cache.get(req.user.id)?.permissions;
+        const userpermissions = guild.members.cache.get(
           this.client.user.id
         )?.permissions;
-        const userpermissions = guild.members.cache.get(
-          req.user.id
-        )?.permissions;
+
         return {
           guildID: guild.id,
           guildName: guild.name,
           permissions: userpermissions ? userpermissions.toArray() : [],
-          botPermissions: permissions ? guild.me?.permissions?.toArray() : [],
+          botPermissions: permissions ? permissions.toArray() : [],
           iconURL:
             guild.iconURL({ dynamic: true }) ||
             "https://cdn.discordapp.com/embed/avatars/1.png",
+          bannerURL:
+            guild.bannerURL({ dynamic: true }) ||
+            guild.iconURL({ dynamic: true }) ||
+            "https://cdn.discordapp.com/embed/avatars/1.png",
+          botInServer: this.client.guilds.cache.has(guild.id), //small double check
         };
       });
+
       ejs.renderFile(
         path.join(__dirname, "../", "dashboard/html/pages/dash.html"),
         {
@@ -866,7 +896,7 @@ class Dashboard {
               "error",
               "[SERVER]"
             );
-            this.client.destroy();
+            process.exit(0);
           } else {
             res.send(html);
           }
@@ -879,7 +909,7 @@ class Dashboard {
         .sendFile(path.join(__dirname, "../", "dashboard/html/pages/404.html"));
     });
     await this.fetchGuilds();
-    startServer(app, this.port, this.secret);
+    startServer(app, this.port /*, this.secret*/);
   };
 }
 
