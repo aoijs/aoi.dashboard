@@ -1,0 +1,22 @@
+{
+  "name": "dashboard",
+  "version": "0.0.1-beta",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "ora": "^5.4.1",
+    "passport": "^0.6.0",
+    "passport-discord": "^0.1.4",
+    "passport-oauth2-refresh": "^2.2.0"
+  }
+}

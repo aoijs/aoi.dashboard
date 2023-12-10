@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= client.user.username %> | Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      :root {
+        --light-background: #f8f9fa;
+        --light-text: #333;
+        --dark-background: #36393f;
+        --dark-text: #dcddde;
+        --link-text: #7289d7;
+      }
+
+      .light-mode {
+        --background: var(--light-background);
+        --navbar-background: #e1e1e1;
+        --text: var(--light-text);
+        --link-color: var(--light-text);
+      }
+
+      .dark-mode {
+        --background: var(--dark-background);
+        --navbar-background: #2f3136;
+        --text: var(--dark-text);
+        --link-color: var(--dark-text);
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .navbar {
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s ease;
+        background-color: var(--navbar-background);
+        z-index: 5;
+      }
+
+      .navbar a {
+        z-index: 5;
+        float: right;
+        color: var(--link-color);
+        border-bottom: 2px solid transparent;
+        text-align: center;
+        padding: 14px 16px;
+        align-self: flex-end !important;
+        vertical-align: middle !important;
+        text-decoration: none;
+        transition: color 0.3s ease, border-bottom 0.2s ease;
+      }
+
+      .navbar a:hover,
+      .navbar a.active {
+        transition: color 0.3s ease, border-bottom 0.2s ease;
+        border-bottom: 2px solid var(--text);
+        color: var(--text);
+      }
+
+      .icons-container {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+      }
+
+      .icons-container .icon {
+        border-bottom: none !important;
+      }
+
+      .icons-container .icon:hover {
+        cursor: pointer;
+        border-bottom: none !important;
+      }
+
+      .icons-container .discord-login {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .modal-avatar {
+        border-radius: 35%;
+        width: 75px;
+        height: 75px;
+      }
+
+      .navbar .icon {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar .hamburger {
+        display: none !important;
+        align-items: center;
+      }
+
+      .navbar-site-name {
+        float: left;
+        display: flex;
+        align-items: center;
+        align-self: flex-end !important;
+        padding: 14px 16px;
+      }
+
+      .avatar {
+        border-radius: 50%;
+        margin-right: 10px;
+        width: 20px;
+        height: auto;
+      }
+
+      .navbar .icon {
+        display: flex;
+        align-items: center;
+        margin: auto;
+        padding-right: auto;
+        align-self: flex-end !important;
+        vertical-align: middle !important;
+      }
+
+      .navbar-mobile {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        top: 60px;
+        right: 0;
+        width: 25%;
+        background-color: var(--navbar-background);
+        z-index: 2;
+        transform: translateX(25%);
+        transition: all 0.2s ease;
+      }
+
+      #navbar-links {
+        display: none;
+      }
+
+      .dim-overlay {
+        position: fixed;
+        top: 53px;
+        left: 0%;
+        width: 100%;
+        height: calc(100vh - 53px);
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 2;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+      }
+
+      .dim-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      @media screen and (max-width: 800px) {
+        .navbar a {
+          display: none;
+        }
+
+        .navbar.responsive {
+          height: 100vh;
+          overflow-y: auto;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          z-index: 5;
+          background-color: var(--navbar-background);
+        }
+
+        .navbar.responsive a {
+          display: block;
+          padding: 14px 16px;
+          text-align: left;
+          z-index: 5;
+          border-bottom: none;
+        }
+
+        .navbar .hamburger {
+          display: flex !important;
+          align-items: center;
+          margin-left: auto;
+          padding-right: 16px;
+        }
+
+        .hide {
+          display: none !important;
+        }
+
+        #navbar-links {
+          position: fixed;
+          top: 52px;
+          left: 0;
+          width: 75%;
+          height: calc(100vh - 53px);
+          background-color: var(--navbar-background);
+          padding: 20px;
+          overflow-y: auto;
+          display: flex !important;
+          z-index: 2;
+          transition: all 0.3s ease;
+        }
+
+        #navbar-links.hidden {
+          transform: translateX(-50%);
+          transition: all 0.3s ease;
+        }
+      }
+
+      .avatar {
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        object-fit: cover;
+        display: inline-block;
+        vertical-align: middle;
+        right: 0;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .footer {
+        background-color: var(--navbar-background);
+        color: var(--text);
+        text-align: center;
+        padding: 5px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .footer .links {
+        margin: 5px;
+      }
+
+      .mlink {
+        text-decoration: none;
+        padding: 15px 15px;
+        color: var(--text);
+        background-color: var(--background);
+        border-radius: 4px;
+        margin-top: 5px;
+        left: 0;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      .footer .links a,
+      .mlink {
+        color: var(--text);
+        text-decoration: none;
+        margin-right: 5px;
+        border-bottom: 2px solid transparent;
+        transition: color 0.2s ease, border-bottom 0.2s ease;
+      }
+
+      .footer .links a:hover,
+      .mlink:hover,
+      .mlink.active {
+        border-bottom: 2px solid var(--link-text);
+        transition: color 0.2s ease, border-bottom 0.2s ease;
+        color: var(--link-text);
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+      }
+
+      .user-info img {
+        border-radius: 25%;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        margin-right: 5px;
+      }
+
+      .user-details {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+      }
+
+      .user-details span {
+        display: block;
+        font-size: 16px;
+      }
+
+      .user-tag {
+        color: var(--link-text);
+        font-size: 12px !important;
+      }
+
+      .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+    </style>
+  </head>
+  <body class="light-mode">
+    <div class="dim-overlay" onclick="toggleNavbar()">
+      <div id="navbar-links" class="navbar-mobile">
+        <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+        <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"
+          ><%= x.title %></a
+        >
+        <% } else if (x.href) { %>
+        <a href="<%= x.href %>" class="mlink" target="_blank"><%= x.title %></a>
+        <% } %> <% }); %> <% if (global.auth) { %>
+        <a href="/auth/logout" style="margin-top: 35px" class="mlink">
+          <div class="user-info">
+            <img src="<%= user.avatar %>" alt="Avatar" class="modal-avatar" />
+            <div class="user-details">
+              <span><%= user.user.username %></span>
+              <span class="user-tag"><%= user.user.id %></span>
+            </div>
+            <i
+              class="fas fa-sign-out-alt"
+              style="width: 50%; margin-left: 1.2rem; align-self: center; display: flex; flex-direction: column;"
+            ></i>
+          </div>
+        </a>
+        <% } else { %>
+        <a href="/auth/login" style="margin-top: 35px" class="mlink icon">
+          <i class="fab fa-discord" style="margin-right: 5px"></i>
+          <span>Login</span>
+        </a>
+        <% } %>
+      </div>
+    </div>
+    <div class="navbar" id="navbar-data">
+      <div class="navbar-site-name">
+        <img src="<%= client.user.avatarURL() %>" alt="Avatar" class="avatar" />
+        <%= client.user.username %>
+      </div>
+
+      <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+      <a href="<%= x.to %>" class="<%= x.active ? 'active' : '' %>"
+        ><%= x.title %></a
+      >
+      <% } else if (x.href) { %>
+      <a href="<%= x.href %>" target="_blank"><%= x.title %></a>
+      <% } %> <% }); %>
+
+      <div class="icons-container">
+        <a class="icon" onclick="toggleDarkLightMode()">
+          <i class="far fa-sun sun-icon"></i>
+          <i class="far fa-moon moon-icon" style="display: none"></i>
+        </a>
+
+        <a class="icon hamburger" onclick="toggleNavbar()">
+          <i class="fas fa-bars"></i>
+        </a>
+
+        <% if (global.auth) { %>
+        <a href="/auth/logout" class="icon hide">
+          <img
+            src="<%= user.avatar %>"
+            alt="Avatar"
+            class="avatar rounded-icon"
+          />
+          <span class="hide">Logout</span>
+        </a>
+        <% } else { %>
+        <a href="/auth/login" class="icon discord-login">
+          <i class="fab fa-discord" style="margin-right: 5px"></i>
+          <span>Login</span>
+        </a>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="content">
+      <h2>Lorem ipsum dolor sit.</h2>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+        voluptatum, voluptate, hhh, quia voluptas quod quos dolorum voluptatibus
+        quae quas natus. Quisquam voluptatum, voluptate, quibusdam, quia
+        voluptas quod quos dolorum voluptatibus quae quas natus.
+      </p>
+    </div>
+
+    <div class="footer">
+      <div class="links">
+        <a href="#">Home</a> - <a href="#">Invite</a> -
+        <a href="#">Terms of Service</a>
+      </div>
+      <p>All rights reserved - © 2023 <%=client.user.username %></p>
+    </div>
+
+    <script>
+      function toggleDarkLightMode() {
+        var body = document.body;
+        var navbar = document.querySelector(".navbar");
+        var mobilenavbar = document.getElementById("navbar-links");
+        var link = document.querySelector(".mlink");
+        var footer = document.querySelector(".footer");
+        var currentMode = localStorage.getItem("mode");
+        var sunIcon = document.querySelector(".sun-icon");
+        var moonIcon = document.querySelector(".moon-icon");
+
+        if (currentMode === "dark") {
+          body.classList.remove("dark-mode");
+          body.classList.add("light-mode");
+          navbar.classList.remove("dark-mode");
+          mobilenavbar.classList.add("light-mode");
+          mobilenavbar.classList.remove("dark-mode");
+          link.classList.add("light-mode");
+          link.classList.remove("dark-mode");
+          navbar.classList.add("light-mode");
+          footer.classList.remove("dark-mode");
+          footer.classList.add("light-mode");
+          localStorage.setItem("mode", "light");
+          sunIcon.style.display = "none";
+          moonIcon.style.display = "block";
+        } else {
+          body.classList.remove("light-mode");
+          body.classList.add("dark-mode");
+          navbar.classList.remove("light-mode");
+          navbar.classList.add("dark-mode");
+          mobilenavbar.classList.remove("light-mode");
+          mobilenavbar.classList.add("dark-mode");
+          link.classList.remove("light-mode");
+          link.classList.add("dark-mode");
+          footer.classList.remove("light-mode");
+          footer.classList.add("dark-mode");
+          localStorage.setItem("mode", "dark");
+          sunIcon.style.display = "block";
+          moonIcon.style.display = "none";
+        }
+      }
+
+      if (localStorage.getItem("mode") === "dark") {
+        document.body.classList.add("dark-mode");
+        document.querySelector(".navbar").classList.add("dark-mode");
+        document.getElementById("navbar-links").classList.add("dark-mode");
+        document.querySelector(".footer").classList.add("dark-mode");
+        document.querySelector(".mlink").classList.add("dark-mode");
+      } else {
+        document.body.classList.add("light-mode");
+        document.querySelector(".navbar").classList.add("light-mode");
+        document.getElementById("navbar-links").classList.add("light-mode");
+        document.querySelector(".footer").classList.add("light-mode");
+        document.querySelector(".mlink").classList.add("light-mode");
+      }
+
+      function toggleNavbar() {
+        document.getElementById("navbar-links").classList.toggle("active");
+        document.querySelector(".dim-overlay").classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>
