@@ -93,6 +93,15 @@
         border-bottom: none !important;
       }
 
+      .user {
+        border-bottom: none !important;
+      }
+
+      .user:hover {
+        cursor: pointer;
+        border-bottom: none !important;
+      }
+
       .icons-container .discord-login {
         cursor: pointer;
         display: flex;
@@ -108,6 +117,11 @@
       }
 
       .navbar .icon {
+        display: flex;
+        align-items: center;
+      }
+
+      .user {
         display: flex;
         align-items: center;
       }
@@ -133,6 +147,14 @@
       }
 
       .navbar .icon {
+        display: flex;
+        align-items: center;
+        margin: auto;
+        align-self: flex-end !important;
+        vertical-align: middle !important;
+      }
+
+      .user {
         display: flex;
         align-items: center;
         margin: auto;
@@ -279,28 +301,6 @@
         color: var(--link-text);
       }
 
-      .user {
-        border-bottom: none !important;
-      }
-
-      .user:hover {
-        cursor: pointer;
-        border-bottom: none !important;
-      }
-
-      .user {
-        display: flex;
-        align-items: center;
-        margin: auto;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-      }
-
-      .user {
-        display: flex;
-        align-items: center;
-      }
-
       .user-info {
         display: flex;
         align-items: center;
@@ -331,38 +331,51 @@
         font-size: 12px !important;
       }
 
-      .header {
-        font-size: 32px;
-        margin-bottom: 5px;
-      }
-
-      .server-info {
-        font-size: 20px;
-        margin: 5px;
-        color: #888;
-      }
-
-      .hero {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: left;
-      }
-
-      .hero-details {
-        margin-left: 2rem;
-      }
-
       .clearfix::after {
         content: "";
         clear: both;
         display: table;
       }
 
+      #searchInput {
+        font-family: "Outfit", sans-serif;
+        text-align: center;
+        padding: 9px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        border-radius: 25px;
+        border: 1px solid var(--border);
+        background-color: var(--background-gray);
+        color: var(--text);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        width: calc(100% - 20px);
+        display: block;
+      }
+
       #navbar-data {
         cursor: pointer;
       }
 
+      .command-container {
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+        padding: 10px;
+      }
+
+      .command-category {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      .command-item {
+        text-decoration: none;
+        list-style: none;
+      }
+
+      .command-item.active {
+        display: block;
+      }
     </style>
   </head>
   <body data-theme="light">
@@ -448,24 +461,34 @@
     </div>
 
     <div class="content">
-      <div class="hero">
-        <img
-          class="rounded-icon"
-          src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>"
-          alt="Avatar Image"
-          draggable="false"
-          style="margin-top: 1rem"
-        />
-        <div class="hero-details">
-          <h2 class="header"><%= client.user.username %></h2>
-          <p class="server-info">
-            Serving in <%= global.guild_data.guilds.length %> Guilds
-          </p>
-          <p class="server-info">
-            And <%= global.guild_data.memberCount %> Members
-          </p>
+      <input type="text" id="searchInput" placeholder="Search commands..." />
+      <div id="noResults" style="display: none">
+        No results found for the given query
+        <div id="suggestions" style="display: none">
+          Did you mean...
+          <ul id="suggestionList"></ul>
         </div>
       </div>
+      <% let groupedCommands = client.cmd.default.reduce((groups, command) => {
+      let category = command.category || 'Uncategorized'; if (!groups[category])
+      { groups[category] = []; } groups[category].push(command); return groups;
+      }, {}); for (let category in groupedCommands) { let commands =
+      groupedCommands[category]; %>
+      <div class="command-container" data-category="<%= category %>">
+        <div class="command-category"><%= category %></div>
+        <ul>
+          <% commands.forEach(command => { %>
+          <li
+            class="command-item"
+            data-item="<%= command.name %>"
+            data-category="<%= category %>"
+          >
+            <%= command.name %>
+          </li>
+          <% }); %>
+        </ul>
+      </div>
+      <% } %>
     </div>
 
     <script>
@@ -516,6 +539,75 @@
             : "flex";
         }
       }
+
+      //searchbar
+      const search = document.getElementById("searchInput");
+      const commandContainers = document.querySelectorAll(".command-container");
+      const noResults = document.getElementById("noResults");
+      const commandNames = Array.from(
+        document.querySelectorAll(".command-item")
+      ).map((item) => item.dataset.item);
+
+      search.addEventListener("input", () => {
+        const input = search.value.trim().toLowerCase();
+        let visibleContainers = 0;
+
+        commandContainers.forEach((container) => {
+          const category = container.dataset.category.toLowerCase();
+          const items = container.querySelectorAll(".command-item");
+
+          let categoryShown = false;
+
+          items.forEach((item) => {
+            const name = item.dataset.item.toLowerCase();
+            const matches = name.includes(input);
+
+            if (input === "" || matches) {
+              item.style.display = "block";
+              categoryShown = true;
+            } else {
+              item.style.display = "none";
+            }
+          });
+
+          if (categoryShown) {
+            container.style.display = "block";
+            visibleContainers++;
+          } else if (category.includes(input)) {
+            container.style.display = "block";
+            items.forEach((item) => {
+              item.style.display = "block";
+            });
+            visibleContainers++;
+          } else {
+            container.style.display = "none";
+          }
+        });
+
+        if (visibleContainers === 0) {
+          noResults.style.display = "block";
+
+          // Find similar commands
+          const suggestions = commandNames.filter((command) =>
+            command.includes(input)
+          );
+
+          // Display the suggestions
+          const suggestionList = document.getElementById("suggestionList");
+          suggestionList.innerHTML = "";
+          suggestions.forEach((command) => {
+            const li = document.createElement("li");
+            li.textContent = command;
+            suggestionList.appendChild(li);
+          });
+
+          document.getElementById("suggestions").style.display =
+            suggestions.length > 0 ? "block" : "none";
+        } else {
+          noResults.style.display = "none";
+          document.getElementById("suggestions").style.display = "none";
+        }
+      });
 
       document
         .getElementById("navbar-data")

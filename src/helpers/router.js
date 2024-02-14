@@ -17,9 +17,7 @@ module.exports = (dashboard) => {
       const data = {
         user: {
           user: req?.user,
-          avatar:
-            `https://cdn.discordapp.com/avatars/${req?.user?.id}/${req?.user?.avatar}.png` ||
-            `https://cdn.discordapp.com/embed/avatars/${req?.user?.id % 5}.png`,
+          avatar: `https://cdn.discordapp.com/avatars/${req?.user?.id}/${req?.user?.avatar}.png` || `https://cdn.discordapp.com/embed/avatars/${req?.user?.id % 5}.png`,
         },
         client: {
           ...dashboard.client,
@@ -88,25 +86,8 @@ module.exports = (dashboard) => {
   router.use("/api", routes(dashboard.client));
 
   router.get("/", render("../public/main/index.html"));
-  router.get("/status", async (req, res) => {
-    await updateData();
-    render("../public/main/status.html")(req, res);
-  });
-
-  const updateData = async () => {
-    try {
-      shards =
-        (await dashboard.client.shard.broadcastEval((client) => [
-          client.ws.status,
-          client.ws.ping,
-          client.guilds.cache.size,
-          client.shard.count,
-        ])) || [];
-
-    } catch {
-      shards = [];
-    }
-  };
+  router.get("/commands", render("../public/main/commands.html"));
+  router.get("/status", render("../public/main/status.html"));
 
   return router;
 };

@@ -8,8 +8,8 @@ const ensureAuthenticated = (req, res, next) => {
 
 const hasPermission = (member) => {
   return (
-    member.permissions.has("MANAGE_GUILD") ||
-    member.permissions.has("ADMINISTRATOR")
+    member.permissions.has("ManageGuild") ||
+    member.permissions.has("Administrator")
   );
 };
 

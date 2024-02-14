@@ -1,10 +1,6 @@
-const { Checker } = require("./Check");
-const { Console } = require("./Log.js");
 const Guilds = require("./Fetch.js");
-
 const router = require("../helpers/router");
 const express = require("express");
-const net = require("net");
 
 class Dashboard {
   constructor(client, { secret, port, url, navbar }) {
@@ -36,30 +32,11 @@ class Dashboard {
       });
     });
 
-    // Check if the port is already in use
-    if ((await this.checkPort(this.port))) {
-      Console.log(`Port ${this.port} is already in use, skipping.`, "warn");
-      return;
-    }
-
-    try {
-      Checker.input({
-        secret: this.secret,
-        port: this.port,
-        url: this.callbackURL,
-        navbar: this.navbar,
-        client: this.client,
-      });
-    } catch (error) {
-      Console.log("Failed to initialize dashboard.", "error");
-      throw error;
-    }
-
     await Guilds.fetch(this.client);
 
     this.app.use("/", router(this));
     this.app.listen(this.port, () => {
-      Console.log(`Server is running on port ${this.port}`, "info");
+      console.log("running")
     });
   }
 
