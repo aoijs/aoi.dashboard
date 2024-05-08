@@ -1,527 +1,738 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= client.user.username %> | Dashboard</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <style>
-      :root {
-        --light-background: rgb(255, 255, 255);
-        --light-text: #333;
-        --dark-background: rgba(0, 0, 0);
-        --dark-text: #dcddde;
-        --link-text: #8097e1;
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><%= client.user.username %> | Dashboard</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+            rel="stylesheet"
+        />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <style>
+            :root {
+                --light-background: rgb(255, 255, 255);
+                --light-text: #333;
+                --dark-background: rgba(0, 0, 0);
+                --dark-text: #dcddde;
+                --link-text: #8097e1;
 
-      [data-theme="light"] {
-        --background: var(--light-background);
-        --navbar-background: rgb(255, 255, 255);
-        --background-gray: rgb(255, 255, 255, 0.6);
-        --text: var(--light-text);
-        --link-color: hsl(0, 0%, 50%);
-        --border: hsl(0, 0%, 75%);
-      }
+                /* Desert Khaki */
+                --bg-gradient-desert-khaki-1: hsl(var(--bg-gradient-desert-khaki-1-hsl) / 1);
+                --bg-gradient-desert-khaki-1-hsl: 29 32.4% 86.1%;
+                --bg-gradient-desert-khaki-2: hsl(var(--bg-gradient-desert-khaki-2-hsl) / 1);
+                --bg-gradient-desert-khaki-2-hsl: 40 41.3% 78.6%;
+                --bg-gradient-desert-khaki-3: hsl(var(--bg-gradient-desert-khaki-3-hsl) / 1);
+                --bg-gradient-desert-khaki-3-hsl: 50 49.6% 75.9%;
 
-      [data-theme="dark"] {
-        --background: var(--dark-background);
-        --navbar-background: rgba(0, 0, 0);
-        --background-gray: rgb(0, 0, 0, 0.6);
-        --text: var(--dark-text);
-        --link-color: hsl(0, 0%, 20%);
-        --border: hsl(0, 0%, 12%);
-      }
+                /* Crimson Moon */
+                --bg-gradient-crimson-moon-1: hsl(var(--bg-gradient-crimson-moon-1-hsl) / 1);
+                --bg-gradient-crimson-moon-1-hsl: 0 88.6% 31%;
+                --bg-gradient-crimson-moon-2: hsl(var(--bg-gradient-crimson-moon-2-hsl) / 1);
+                --bg-gradient-crimson-moon-2-hsl: 0 0% 0%;
 
-      body {
-        margin: 0;
-        font-family: "Outfit", sans-serif;
-        background-color: var(--background);
-        color: var(--text);
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
+                /* Memory Lane */
+                --bg-gradient-memory-lane-1: hsl(var(--bg-gradient-memory-lane-1-hsl) / 1);
+                --bg-gradient-memory-lane-1-hsl: 227 58.4% 65.1%;
+                --bg-gradient-memory-lane-2: hsl(var(--bg-gradient-memory-lane-2-hsl) / 1);
+                --bg-gradient-memory-lane-2-hsl: 227 31% 44.3%;
 
-      .navbar {
-        overflow: hidden;
-        display: flex;
-        position: relative;
-        align-items: center;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        background-color: var(--navbar-background);
-        border-bottom: 1px solid var(--border);
-        z-index: 5;
-      }
+                /* Primary */
+                --primary-color: hsl(var(--primary-color-hsl) / 1);
+                --primary-color-hsl: 228 5.2% 38%;
+            }
 
-      .navbar a {
-        z-index: 5;
-        float: right;
-        color: var(--link-color);
-        border-bottom: 1px solid transparent;
-        text-align: center;
-        padding: 14px 16px;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-        text-decoration: none;
-        transition: all 0.3s ease !important;
-      }
+            [data-theme="light"] {
+                --background: var(--light-background);
+                --background-muted: rgba(var(--background), 0.5);
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: rgb(255, 255, 255);
+                --background-gray: rgb(235, 235, 235, 0.5);
+                --text: var(--light-text);
+                --link-color: hsl(0, 0%, 50%);
+                --border: hsl(0, 0%, 75%);
+            }
 
-      .navbar a:hover,
-      .navbar a:active {
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        border-bottom: 1px solid var(--text);
-        color: var(--text);
-      }
+            [data-theme="Midnight"] {
+                --background: var(--dark-background);
+                --background-muted: rgba(var(--background), 0.5);
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: hsl(0, 0%, 5%);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: hsl(0, 0%, 100%);
+                --link-color: hsl(0, 0%, 80%);
+                --border: hsl(0, 0%, 12%);
+            }
 
-      .icons-container {
-        display: flex;
-        align-items: center;
-        margin-left: auto;
-      }
+            [data-theme="dark"] {
+                --background: hsl(0, 0%, 5%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: hsl(0, 0%, 5%);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: hsl(0, 0%, 95%);
+                --link-color: hsl(0, 0%, 50%);
+                --border: hsl(0, 0%, 12%);
+            }
 
-      .icons-container .icon {
-        border-bottom: none !important;
-      }
+            [data-theme="Desert Khaki"] {
+                --background: linear-gradient(0deg, var(--bg-gradient-desert-khaki-1) 20%, var(--bg-gradient-desert-khaki-2) 50%, var(--bg-gradient-desert-khaki-3) 80%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgb(255, 255, 255, 0.6);
+                --text: var(--primary-460);
+                --link-color: rgba(255, 255, 255, 0.8);
+                --border: rgba(128, 132, 142, 0.239);
+            }
 
-      .icons-container .icon:hover {
-        cursor: pointer;
-        border-bottom: none !important;
-      }
+            [data-theme="Crimson Moon"] {
+                --background: linear-gradient(305deg, var(--bg-gradient-crimson-moon-1) 16.17%, var(--bg-gradient-crimson-moon-2) 72%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgb(0, 0, 0, 0.6);
+                --text: var(--dark-text);
+                --link-color: hsl(0, 0%, 75%);
+                --border: #80848e3d;
+            }
 
-      .icons-container .discord-login {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        color: inherit;
-        text-decoration: none;
-      }
+            [data-theme="Memory Lane"] {
+                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%);
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgba(190, 190, 190, 0.4);
+                --text: rgba(255, 255, 255);
+                --link-color: rgba(255, 255, 255, 0.6);
+                --border: rgba(255, 255, 255, 0.6);
+            }
 
-      .modal-avatar {
-        border-radius: 35%;
-        width: 75px;
-        height: 75px;
-      }
+            body {
+                margin: 0;
+                font-family: "DM Sans", sans-serif;
+                background: var(--background);
+                background-size: cover;
+                color: var(--text);
+            }
 
-      .navbar .icon {
-        display: flex;
-        align-items: center;
-      }
+            body.no-scroll {
+                overflow: hidden;
+            }
 
-      .navbar .hamburger {
-        display: none !important;
-        align-items: center;
-      }
+            .navbar {
+                user-select: none;
+                overflow: hidden;
+                display: flex;
+                position: fixed;
+                top: 0;
+                width: 100%;
+                align-items: center;
+                background: var(--navbar-background);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border);
+                z-index: 5;
+            }
 
-      .navbar-site-name {
-        float: left;
-        display: flex;
-        align-items: center;
-        align-self: flex-end !important;
-        padding: 14px 16px;
-      }
+            .navbar a {
+                user-select: none;
+                z-index: 5;
+                float: right;
+                color: var(--link-color);
+                border-bottom: 1px solid transparent;
+                text-align: center;
+                padding: 14px 16px;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+                text-decoration: none;
+            }
 
-      .avatar {
-        border-radius: 50%;
-        margin-right: 10px;
-        width: 20px;
-        height: auto;
-      }
+            .navbar a:hover,
+            .navbar a:active {
+                border-bottom: 1px solid var(--text);
+                color: var(--text);
+            }
 
-      .navbar .icon {
-        display: flex;
-        align-items: center;
-        margin: auto;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-      }
+            .icons-container {
+                display: flex;
+                align-items: center;
+                margin-left: auto;
+            }
 
-      .navbar-mobile {
-        display: flex;
-        flex-direction: column;
-        top: 60px;
-        right: 0;
-        width: 25%;
-        background-color: var(--navbar-background) !important;
-        border-left: 1px solid var(--border) !important;
-        z-index: 4;
-        transform: translateX(25%);
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
+            .icons-container .icon {
+                border-bottom: none !important;
+            }
 
-      #navbar-links {
-        display: none;
-      }
+            .icons-container .icon:hover {
+                cursor: pointer;
+                border-bottom: none !important;
+            }
 
-      .dim-overlay {
-        position: fixed;
-        top: 53px;
-        left: 0%;
-        width: 100%;
-        height: calc(100vh - 53px);
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 2;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
+            .icons-container .discord-login {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                color: inherit;
+                text-decoration: none;
+            }
 
-      .dim-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
+            .modal-avatar {
+                border-radius: 35%;
+                width: 75px;
+                height: 75px;
+            }
 
-      @media screen and (max-width: 800px) {
-        .navbar a {
-          display: none;
-        }
+            .navbar .icon {
+                display: flex;
+                align-items: center;
+                user-select: none;
+            }
 
-        .navbar.responsive {
-          height: 100vh;
-          overflow-y: auto;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          z-index: 4;
-          background-color: var(--navbar-background);
-        }
+            .navbar .hamburger {
+                display: none !important;
+                align-items: center;
+            }
 
-        .navbar.responsive a {
-          display: block;
-          padding: 14px 16px;
-          text-align: left;
-          z-index: 4;
-          border-bottom: none;
-        }
+            .navbar-site-name {
+                float: left;
+                display: flex;
+                align-items: center;
+                align-self: flex-end !important;
+                padding: 14px 16px;
+            }
 
-        .hamburger.active {
-          color: var(--text);
-        }
+            .avatar {
+                border-radius: 50%;
+                margin-right: 10px;
+                width: 20px;
+                height: auto;
+            }
 
-        .navbar .hamburger {
-          display: flex !important;
-          align-items: center;
-          margin-left: auto;
-          padding-right: 16px;
-        }
+            .navbar .icon {
+                display: flex;
+                align-items: center;
+                margin: auto;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+            }
 
-        .fa-sign-out-alt {
-          position: absolute;
-          right: 3rem;
-        }
+            .navbar-mobile {
+                display: flex;
+                flex-direction: column;
+                top: 60px;
+                right: 0;
+                width: 25%;
+                background: var(--mobile-navbar-background) !important;
+                border-left: 1px solid var(--border) !important;
+                z-index: 4;
+                transform: translateX(25%);
+            }
 
-        .hide {
-          display: none !important;
-        }
+            #navbar-links {
+                display: none;
+            }
 
-        #navbar-links {
-          position: fixed;
-          top: 52px;
-          left: 0;
-          width: 75%;
-          height: calc(100vh - 53px);
-          padding: 20px;
-          overflow-y: auto;
-          display: flex !important;
-          z-index: 2;
-          transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        }
+            .dim-overlay {
+                position: fixed;
+                top: 53px;
+                left: 0%;
+                width: 100%;
+                height: calc(100vh - 53px);
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 2;
+                opacity: 0;
+                pointer-events: none;
+            }
 
-        #navbar-links.hidden {
-          transform: translateX(-50%);
-          transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        }
-      }
+            .dim-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
 
-      .avatar {
-        border-radius: 50%;
-        width: 25px;
-        height: 25px;
-        object-fit: cover;
-        display: inline-block;
-        vertical-align: middle;
-        right: 0;
-      }
+            @media screen and (max-width: 1100px) {
+                .features {
+                    padding: 15px !important;
+                    margin-top: 2rem !important;
+                }
 
-      .content {
-        padding: 20px;
-      }
+                .feature {
+                    width: 50rem !important;
+                }
+            }
 
-      .mlink {
-        text-decoration: none;
-        padding: 12px 12px;
-        color: var(--text);
-        border-bottom: 1px solid var(--border);
-        margin-top: 5px;
-        margin-right: 10px !important;
-        left: 0;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
+            @media screen and (max-width: 935px) {
+                .features {
+                    padding: 15px !important;
+                    margin-top: 2rem !important;
+                }
 
-      .links a,
-      .mlink {
-        color: var(--text);
-        text-decoration: none;
-        margin-right: 5px;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
+                .feature {
+                    width: 40rem !important;
+                }
+            }
 
-      .links a:hover,
-      .mlink:hover,
-      .mlink.active {
-        border-bottom: 1px solid var(--link-text);
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        color: var(--link-text);
-      }
+            @media screen and (max-width: 780px) {
+                .features {
+                    padding: 10px !important;
+                    margin-top: 1rem !important;
+                    width: 90% !important;
+                }
 
-      .user {
-        border-bottom: none !important;
-      }
+                .feature {
+                    box-sizing: border-box;
+                    width: 20rem !important;
+                }
+            }
 
-      .user:hover {
-        cursor: pointer;
-        border-bottom: none !important;
-      }
+            @media screen and (max-width: 855px) {
+                .fixed-avatar {
+                    width: 125px !important;
+                    height: 125px !important;
+                }
 
-      .user {
-        display: flex;
-        align-items: center;
-        margin: auto;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-      }
+                .navbar a {
+                    display: none;
+                }
 
-      .user {
-        display: flex;
-        align-items: center;
-      }
+                .user,
+                .discord-login {
+                    display: none !important;
+                }
 
-      .user-info {
-        display: flex;
-        align-items: center;
-        margin-left: 10px;
-      }
+                .navbar.responsive {
+                    height: 100vh;
+                    overflow-y: auto;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    z-index: 4;
+                    background-color: var(--navbar-background);
+                }
 
-      .user-info img {
-        border-radius: 25%;
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        margin-right: 5px;
-      }
+                .navbar.responsive a {
+                    display: block;
+                    padding: 14px 16px;
+                    text-align: left;
+                    z-index: 4;
+                    border-bottom: none;
+                }
 
-      .user-details {
-        display: flex;
-        flex-direction: column;
-        margin-left: 10px;
-      }
+                .hamburger.active {
+                    color: var(--text);
+                }
 
-      .user-details span {
-        display: block;
-        font-size: 16px;
-      }
+                .navbar .hamburger {
+                    display: flex !important;
+                    align-items: center;
+                    margin-left: auto;
+                    padding-right: 16px;
+                }
 
-      .user-tag {
-        color: var(--link-text);
-        font-size: 12px !important;
-      }
+                .hide {
+                    display: none !important;
+                }
 
-      .header {
-        font-size: 32px;
-        margin-bottom: 5px;
-      }
+                #navbar-links {
+                    position: fixed;
+                    top: 52px;
+                    left: 0;
+                    width: 75%;
+                    height: calc(100vh - 53px);
+                    padding: 20px;
+                    overflow-y: auto;
+                    display: flex !important;
+                    z-index: 2;
+                }
 
-      .server-info {
-        font-size: 20px;
-        margin: 5px;
-        color: #888;
-      }
+                #navbar-links.hidden {
+                    transform: translateX(-50%);
+                }
+            }
 
-      .hero {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: left;
-      }
+            .fixed-avatar {
+                width: 150px;
+                height: 150px;
+                margin-top: 2.5rem;
+            }
 
-      .hero-details {
-        margin-left: 2rem;
-      }
+            .avatar {
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                object-fit: cover;
+                display: inline-block;
+                vertical-align: middle;
+                right: 0;
+            }
 
-      .clearfix::after {
-        content: "";
-        clear: both;
-        display: table;
-      }
+            .content {
+                padding: 3rem 20px;
+            }
 
-      #navbar-data {
-        cursor: pointer;
-      }
+            .mlink {
+                text-decoration: none;
+                padding: 12px 12px;
+                color: var(--text);
+                border-bottom: 1px solid var(--border);
+                margin-top: 5px;
+                margin-right: 10px !important;
+                left: 0;
+            }
 
-    </style>
-  </head>
-  <body data-theme="light">
-    <div class="dim-overlay" onclick="toggleNavbar()">
-      <div id="navbar-links" class="navbar-mobile">
-        <% global.navbar.forEach(x => { %> <% if (x.to) { %>
-        <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"
-          ><%= x.title %></a
-        >
-        <% } else if (x.href) { %>
-        <a href="<%= x.href %>" class="mlink" target="_blank"><%= x.title %></a>
-        <% } %> <% }); %> <% if (global.auth) { %>
-        <a href="/auth/logout" style="margin-top: 35px" class="mlink">
-          <div class="user-info">
-            <img
-              src="<%= user.avatar %>"
-              alt="Avatar"
-              class="modal-avatar"
-              draggable="false"
-            />
-            <div class="user-details">
-              <span><%= user.user.username %></span>
-              <span class="user-tag"><%= user.user.id %></span>
+            .links a:hover,
+            .mlink:hover {
+                color: var(--link-text);
+            }
+
+            .active {
+                border-bottom: 1px solid var(--text) !important;
+                color: var(--text) !important;
+            }
+
+            .user {
+                border-bottom: none !important;
+            }
+
+            .user:hover {
+                cursor: pointer;
+                border-bottom: none !important;
+            }
+
+            .user {
+                display: flex;
+                align-items: center;
+                margin: auto;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+            }
+
+            .user {
+                display: flex;
+                align-items: center;
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-left: 10px;
+            }
+
+            .user-info img {
+                border-radius: 25%;
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                margin-right: 5px;
+            }
+
+            .user-details {
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+            }
+
+            .user-details span {
+                display: block;
+                font-size: 16px;
+            }
+
+            .user-tag {
+                color: var(--link-text);
+                font-size: 12px !important;
+            }
+
+            .header {
+                font-size: 3rem;
+                margin-bottom: 5px;
+            }
+
+            .server-info {
+                font-size: 1rem;
+                margin: 5px;
+                color: var(--text);
+            }
+
+            .hero {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: left;
+            }
+
+            .hero-details {
+                margin-left: 2rem;
+            }
+
+            .clearfix::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+
+            #navbar-data {
+                cursor: pointer;
+                text-wrap: nowrap;
+            }
+
+            .rounded-icon {
+                border-radius: 50%;
+            }
+            .features {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+                margin-top: 5rem;
+            }
+            .feature {
+                flex: 1 1 auto;
+                background-color: var(--background);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                color: var(--text);
+                padding: 20px;
+                margin: 10px;
+                width: 55rem;
+                text-align: center;
+            }
+            .feature h2 {
+                font-size: 24px;
+            }
+
+            .feature p {
+                color: var(--text);
+                font-size: 16px;
+            }
+
+            #toast-container > .toast {
+                box-shadow: none;
+            }
+
+            a.icon.hamburger > i {
+                transition: transform 0.1s ease-in-out;
+            }
+
+            a.icon.hamburger > i.rotated {
+                transform: rotate(90deg);
+            }
+
+            .d-flex {
+                display: flex;
+            }
+
+            .align-items-center {
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body data-theme="light">
+        <div class="dim-overlay" onclick="toggleNavbar()">
+            <div id="navbar-links" class="navbar-mobile">
+                <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+                <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"><%= x.title %></a>
+                <% } else if (x.href) { %>
+                <a href="<%= x.href %>" class="mlink" target="_blank"><%= x.title %></a>
+                <% } %> <% }); %> <% if (global.auth) { %>
+                <a href="/auth/logout" style="margin-top: 35px" class="mlink">
+                    <div class="user-info">
+                        <img src="<%= user.avatar %>" alt="Avatar" class="modal-avatar" draggable="false" />
+                        <div class="user-details">
+                            <span><%= user.user.username %></span>
+                            <span class="user-tag"><%= user.user.id %></span>
+                        </div>
+                        <i class="material-icons" style="margin-left: 20px">logout</i>
+                    </div>
+                </a>
+                <% } else { %>
+                <a href="/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
+                    <i class="material-icons" style="margin-right: 15px">login</i>
+                    <span>Login</span>
+                </a>
+                <% } %>
             </div>
-            <i class="fas fa-sign-out-alt"></i>
-          </div>
-        </a>
-        <% } else { %>
-        <a href="/auth/login" style="margin-top: 35px" class="mlink icon">
-          <i class="fab fa-discord" style="margin-right: 5px"></i>
-          <span>Login with Discord</span>
-        </a>
-        <% } %>
-      </div>
-    </div>
-    <div class="navbar">
-      <div class="navbar-site-name" id="navbar-data">
-        <img
-          src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>"
-          alt="Avatar"
-          class="avatar"
-          draggable="false"
-        />
-        <span><%= client.user.username %></span>
-      </div>
-
-      <% global.navbar.forEach(x => { %> <% if (x.to) { %>
-      <a href="<%= x.to %>" class="<%= x.active ? 'active' : '' %>"
-        ><%= x.title %></a
-      >
-      <% } else if (x.href) { %>
-      <a href="<%= x.href %>" target="_blank"><%= x.title %></a>
-      <% } %> <% }); %>
-
-      <div class="icons-container">
-        <a class="icon" onclick="toggleDarkLightMode()">
-          <i class="far fa-sun sun-icon"></i>
-          <i class="far fa-moon moon-icon" style="display: none"></i>
-        </a>
-
-        <a class="icon hamburger" onclick="toggleNavbar()">
-          <i class="fas fa-bars"></i>
-        </a>
-
-        <% if (global.auth) { %>
-        <a class="user" style="display: block" href="/auth/logout">
-          <img
-            src="<%= user.avatar %>"
-            alt="Avatar"
-            class="avatar rounded-icon"
-            style="margin-right: 5px; margin-left: 2px"
-            draggable="false"
-          />
-          <span class="hide">Logout</span>
-        </a>
-        <% } else { %>
-        <a href="/auth/login" class="icon discord-login">
-          <i class="fab fa-discord" style="margin-right: 5px"></i>
-          <span>Login</span>
-        </a>
-        <% } %>
-      </div>
-    </div>
-
-    <div class="content">
-      <div class="hero">
-        <img
-          class="rounded-icon"
-          src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>"
-          alt="Avatar Image"
-          draggable="false"
-          style="margin-top: 1rem"
-        />
-        <div class="hero-details">
-          <h2 class="header"><%= client.user.username %></h2>
-          <p class="server-info">
-            Serving in <%= global.guild_data.guilds.length %> Guilds
-          </p>
-          <p class="server-info">
-            And <%= global.guild_data.memberCount %> Members
-          </p>
         </div>
-      </div>
-    </div>
+        <div class="navbar">
+            <div class="navbar-site-name" id="navbar-data">
+                <img src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
+                <span><%= client.user.username %></span>
+            </div>
 
-    <script>
-      const sun = document.querySelector(".sun-icon");
-      const moon = document.querySelector(".moon-icon");
+            <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+            <a href="<%= x.to %>" class="<%= x.active ? 'active' : '' %> d-flex align-items-center"
+                ><%- x.to === '/admin' ? '<i class="material-icons" style="margin-right: 5px">manage_accounts</i>' : '' %><%= x.title %></a
+            >
+            <% } else if (x.href) { %>
+            <a href="<%= x.href %>" target="_blank"><%= x.title %></a>
+            <% } %> <% }); %>
 
-      function toggleDarkLightMode() {
-        var body = document.body;
-        var currentMode = localStorage.getItem("mode");
-        if (currentMode === "dark") {
-          body.setAttribute("data-theme", "light");
-          localStorage.setItem("mode", "light");
-          sun.style.display = "none";
-          moon.style.display = "block";
-        } else {
-          body.setAttribute("data-theme", "dark");
-          localStorage.setItem("mode", "dark");
-          sun.style.display = "block";
-          moon.style.display = "none";
-        }
-      }
+            <div class="icons-container">
+                <a class="icon" onclick="toggleDarkLightMode()">
+                    <i class="material-icons sun-icon">light_mode</i>
+                    <i class="material-icons moon-icon" style="display: none">nights_stay</i>
+                </a>
 
-      if (localStorage.getItem("mode") === "dark") {
-        document.body.setAttribute("data-theme", "dark");
-        sun.style.display = "block";
-        moon.style.display = "none";
-      } else {
-        document.body.setAttribute("data-theme", "light");
-        sun.style.display = "none";
-        moon.style.display = "block";
-      }
+                <a class="icon hamburger" onclick="toggleNavbar()">
+                    <i class="material-icons">more_vert</i>
+                </a>
 
-      function toggleNavbar() {
-        document.getElementById("navbar-links").classList.toggle("active");
-        document.querySelector(".dim-overlay").classList.toggle("active");
-        document.querySelector(".hamburger").classList.toggle("active");
-        try {
-          document.querySelector(".discord-login").style.display = document
-            .getElementById("navbar-links")
-            .classList.contains("active")
-            ? "none"
-            : "flex";
-        } catch {
-          document.querySelector(".user").style.display = document
-            .getElementById("navbar-links")
-            .classList.contains("active")
-            ? "none"
-            : "flex";
-        }
-      }
+                <% if (global.auth) { %>
+                <a class="user" style="display: block" href="/auth/logout">
+                    <img src="<%= user.avatar %>" alt="Avatar" class="avatar rounded-icon" style="margin-right: 10px; margin-left: 2px" draggable="false" />
+                    <span class="hide">Logout</span>
+                </a>
+                <% } else { %>
+                <a href="/login" class="icon discord-login">
+                    <i class="material-icons" style="margin-right: 5px">login</i>
+                    <span>Login</span>
+                </a>
+                <% } %>
+            </div>
+        </div>
 
-      document
-        .getElementById("navbar-data")
-        .addEventListener("click", function () {
-          window.location.href = "/";
-        });
-    </script>
-  </body>
+        <div class="content">
+            <div class="hero">
+                <img
+                    class="rounded-icon fixed-avatar"
+                    src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>"
+                    alt="Avatar Image"
+                    draggable="false"
+                />
+                <div class="hero-details">
+                    <h2 class="header"><%= client.user.username %></h2>
+                    <p class="server-info">Serving in <%= global.guild_data.guilds.length %> Guilds</p>
+                    <p class="server-info">And <%= global.guild_data.memberCount %> Members</p>
+                </div>
+            </div>
+            <div class="features">
+                <div class="feature">
+                    <h2>Feature 1</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tincidunt, nunc nec aliquam.</p>
+                </div>
+                <div class="feature">
+                    <h2>Feature 2</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tincidunt, nunc nec aliquam.</p>
+                </div>
+                <div class="feature">
+                    <h2>Feature 3</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tincidunt, nunc nec aliquam.</p>
+                </div>
+                <div class="feature">
+                    <h2>Feature 4</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tincidunt, nunc nec aliquam.</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const sun = document.querySelector(".sun-icon");
+            const moon = document.querySelector(".moon-icon");
+
+            fetch("/api/getTheme")
+                .then((res) => res.json())
+                .then((res) => {
+                    localStorage.setItem("themeData", JSON.stringify(res));
+                });
+            var themeData = JSON.parse(localStorage.getItem("themeData"));
+            try {
+                var themeDark = themeData.dark || "dark";
+                var themeLight = themeData.light || "light";
+            } catch {
+                var themeDark = "dark";
+                var themeLight = "light";
+            }
+
+            function toggleDarkLightMode() {
+                fetch("/api/getTheme")
+                    .then((res) => res.json())
+                    .then((res) => {
+                        localStorage.setItem("themeData", JSON.stringify(res));
+                    });
+                var themeData = JSON.parse(localStorage.getItem("themeData"));
+                try {
+                    var themeDark = themeData.dark || "dark";
+                    var themeLight = themeData.light || "light";
+                } catch {
+                    var themeDark = "dark";
+                    var themeLight = "light";
+                }
+
+                var body = document.body;
+                var currentMode = localStorage.getItem("mode");
+                if (currentMode === themeDark) {
+                    body.setAttribute("data-theme", themeLight);
+                    localStorage.setItem("mode", themeLight);
+                    sun.style.display = "none";
+                    moon.style.display = "block";
+                } else {
+                    body.setAttribute("data-theme", themeDark);
+                    localStorage.setItem("mode", themeDark);
+                    sun.style.display = "block";
+                    moon.style.display = "none";
+                }
+            }
+
+            if (themeLight === themeDark) {
+                const container = document.querySelector("div.icons-container > a:nth-child(1)");
+                container.style.display = "none";
+            }
+
+            if (localStorage.getItem("mode")) {
+                    document.body.setAttribute("data-theme", localStorage.getItem("mode"));
+                    sun.style.display = "block";
+                    moon.style.display = "none";
+                } else {
+                    document.body.setAttribute("data-theme", "light");
+                    sun.style.display = "none";
+                    moon.style.display = "block";
+            }
+
+            function toggleNavbar() {
+                document.getElementById("navbar-links").classList.toggle("active");
+                document.querySelector(".dim-overlay").classList.toggle("active");
+                document.querySelector(".hamburger").classList.toggle("active");
+                document.querySelector("a.icon.hamburger > i").classList.toggle("rotated");
+                document.body.classList.toggle("no-scroll");
+                try {
+                    document.querySelector(".discord-login").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                } catch {
+                    document.querySelector(".user").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                }
+            }
+
+            document.getElementById("navbar-data").addEventListener("click", function () {
+                window.location.href = "/";
+            });
+
+            if (window.location.search.includes("loginFailed=true")) {
+                toastr.options = {
+                    positionClass: "toast-bottom-right"
+                };
+                toastr.options.progressBar = true;
+                toastr.error("Login failed. You are not an admin.");
+                history.replaceState(null, null, window.location.pathname);
+            } else if (window.location.search.includes("loginFailed=false")) {
+                toastr.options = {
+                    positionClass: "toast-bottom-right"
+                };
+                toastr.options.progressBar = true;
+                toastr.success("You are now logged in.");
+                history.replaceState(null, null, window.location.pathname);
+            }
+
+            window.onload = async function () {
+                const links = document.querySelectorAll(".mlink");
+                links.forEach((link) => {
+                    if (link.href === window.location.href) {
+                        link.classList.add("active");
+                    }
+                });
+            };
+        </script>
+    </body>
 </html>

@@ -1,619 +1,711 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= client.user.username %> | Dashboard</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <style>
-      :root {
-        --light-background: rgb(255, 255, 255);
-        --light-text: #333;
-        --dark-background: rgba(0, 0, 0);
-        --dark-text: #dcddde;
-        --link-text: #8097e1;
-      }
-
-      [data-theme="light"] {
-        --background: var(--light-background);
-        --navbar-background: rgb(255, 255, 255);
-        --background-gray: rgb(255, 255, 255, 0.6);
-        --text: var(--light-text);
-        --link-color: hsl(0, 0%, 50%);
-        --border: hsl(0, 0%, 75%);
-      }
-
-      [data-theme="dark"] {
-        --background: var(--dark-background);
-        --navbar-background: rgba(0, 0, 0);
-        --background-gray: rgb(0, 0, 0, 0.6);
-        --text: var(--dark-text);
-        --link-color: hsl(0, 0%, 20%);
-        --border: hsl(0, 0%, 12%);
-      }
-
-      body {
-        margin: 0;
-        font-family: "Outfit", sans-serif;
-        background-color: var(--background);
-        color: var(--text);
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
-
-      .navbar {
-        overflow: hidden;
-        display: flex;
-        position: relative;
-        align-items: center;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        background-color: var(--navbar-background);
-        border-bottom: 1px solid var(--border);
-        z-index: 5;
-      }
-
-      .navbar a {
-        z-index: 5;
-        float: right;
-        color: var(--link-color);
-        border-bottom: 1px solid transparent;
-        text-align: center;
-        padding: 14px 16px;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-        text-decoration: none;
-        transition: all 0.3s ease !important;
-      }
-
-      .navbar a:hover,
-      .navbar a:active {
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        border-bottom: 1px solid var(--text);
-        color: var(--text);
-      }
-
-      .icons-container {
-        display: flex;
-        align-items: center;
-        margin-left: auto;
-      }
-
-      .icons-container .icon {
-        border-bottom: none !important;
-      }
-
-      .icons-container .icon:hover {
-        cursor: pointer;
-        border-bottom: none !important;
-      }
-
-      .user {
-        border-bottom: none !important;
-      }
-
-      .user:hover {
-        cursor: pointer;
-        border-bottom: none !important;
-      }
-
-      .icons-container .discord-login {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .modal-avatar {
-        border-radius: 35%;
-        width: 75px;
-        height: 75px;
-      }
-
-      .navbar .icon {
-        display: flex;
-        align-items: center;
-      }
-
-      .user {
-        display: flex;
-        align-items: center;
-      }
-
-      .navbar .hamburger {
-        display: none !important;
-        align-items: center;
-      }
-
-      .navbar-site-name {
-        float: left;
-        display: flex;
-        align-items: center;
-        align-self: flex-end !important;
-        padding: 14px 16px;
-      }
-
-      .avatar {
-        border-radius: 50%;
-        margin-right: 10px;
-        width: 20px;
-        height: auto;
-      }
-
-      .navbar .icon {
-        display: flex;
-        align-items: center;
-        margin: auto;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-      }
-
-      .user {
-        display: flex;
-        align-items: center;
-        margin: auto;
-        align-self: flex-end !important;
-        vertical-align: middle !important;
-      }
-
-      .navbar-mobile {
-        display: flex;
-        flex-direction: column;
-        top: 60px;
-        right: 0;
-        width: 25%;
-        background-color: var(--navbar-background) !important;
-        border-left: 1px solid var(--border) !important;
-        z-index: 4;
-        transform: translateX(25%);
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
-
-      #navbar-links {
-        display: none;
-      }
-
-      .dim-overlay {
-        position: fixed;
-        top: 53px;
-        left: 0%;
-        width: 100%;
-        height: calc(100vh - 53px);
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 2;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
-
-      .dim-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      @media screen and (max-width: 800px) {
-        .navbar a {
-          display: none;
-        }
-
-        .navbar.responsive {
-          height: 100vh;
-          overflow-y: auto;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          z-index: 4;
-          background-color: var(--navbar-background);
-        }
-
-        .navbar.responsive a {
-          display: block;
-          padding: 14px 16px;
-          text-align: left;
-          z-index: 4;
-          border-bottom: none;
-        }
-
-        .hamburger.active {
-          color: var(--text);
-        }
-
-        .navbar .hamburger {
-          display: flex !important;
-          align-items: center;
-          margin-left: auto;
-          padding-right: 16px;
-        }
-
-        .fa-sign-out-alt {
-          position: absolute;
-          right: 3rem;
-        }
-
-        .hide {
-          display: none !important;
-        }
-
-        #navbar-links {
-          position: fixed;
-          top: 52px;
-          left: 0;
-          width: 75%;
-          height: calc(100vh - 53px);
-          padding: 20px;
-          overflow-y: auto;
-          display: flex !important;
-          z-index: 2;
-          transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        }
-
-        #navbar-links.hidden {
-          transform: translateX(-50%);
-          transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        }
-      }
-
-      .avatar {
-        border-radius: 50%;
-        width: 25px;
-        height: 25px;
-        object-fit: cover;
-        display: inline-block;
-        vertical-align: middle;
-        right: 0;
-      }
-
-      .content {
-        padding: 20px;
-      }
-
-      .mlink {
-        text-decoration: none;
-        padding: 12px 12px;
-        color: var(--text);
-        border-bottom: 1px solid var(--border);
-        margin-top: 5px;
-        margin-right: 10px !important;
-        left: 0;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
-
-      .links a,
-      .mlink {
-        color: var(--text);
-        text-decoration: none;
-        margin-right: 5px;
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-      }
-
-      .links a:hover,
-      .mlink:hover,
-      .mlink.active {
-        border-bottom: 1px solid var(--link-text);
-        transition: all 0.3s cubic-bezier(0.16, 0.57, 0.43, 0.81);
-        color: var(--link-text);
-      }
-
-      .user-info {
-        display: flex;
-        align-items: center;
-        margin-left: 10px;
-      }
-
-      .user-info img {
-        border-radius: 25%;
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        margin-right: 5px;
-      }
-
-      .user-details {
-        display: flex;
-        flex-direction: column;
-        margin-left: 10px;
-      }
-
-      .user-details span {
-        display: block;
-        font-size: 16px;
-      }
-
-      .user-tag {
-        color: var(--link-text);
-        font-size: 12px !important;
-      }
-
-      .clearfix::after {
-        content: "";
-        clear: both;
-        display: table;
-      }
-
-      #searchInput {
-        font-family: "Outfit", sans-serif;
-        text-align: center;
-        padding: 9px;
-        font-size: 16px;
-        margin-bottom: 20px;
-        border-radius: 25px;
-        border: 1px solid var(--border);
-        background-color: var(--background-gray);
-        color: var(--text);
-        -webkit-backdrop-filter: blur(16px);
-        backdrop-filter: blur(16px);
-        width: calc(100% - 20px);
-        display: block;
-      }
-
-      #navbar-data {
-        cursor: pointer;
-      }
-
-      .command-container {
-        margin-bottom: 20px;
-        border-bottom: 1px solid var(--border);
-        padding: 10px;
-      }
-
-      .command-category {
-        font-size: 20px;
-        margin-bottom: 10px;
-      }
-
-      .command-item {
-        text-decoration: none;
-        list-style: none;
-      }
-
-      .command-item.active {
-        display: block;
-      }
-    </style>
-  </head>
-  <body data-theme="light">
-    <div class="dim-overlay" onclick="toggleNavbar()">
-      <div id="navbar-links" class="navbar-mobile">
-        <% global.navbar.forEach(x => { %> <% if (x.to) { %>
-        <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"
-          ><%= x.title %></a
-        >
-        <% } else if (x.href) { %>
-        <a href="<%= x.href %>" class="mlink" target="_blank"><%= x.title %></a>
-        <% } %> <% }); %> <% if (global.auth) { %>
-        <a href="/auth/logout" style="margin-top: 35px" class="mlink">
-          <div class="user-info">
-            <img
-              src="<%= user.avatar %>"
-              alt="Avatar"
-              class="modal-avatar"
-              draggable="false"
-            />
-            <div class="user-details">
-              <span><%= user.user.username %></span>
-              <span class="user-tag"><%= user.user.id %></span>
-            </div>
-            <i class="fas fa-sign-out-alt"></i>
-          </div>
-        </a>
-        <% } else { %>
-        <a href="/auth/login" style="margin-top: 35px" class="mlink icon">
-          <i class="fab fa-discord" style="margin-right: 5px"></i>
-          <span>Login with Discord</span>
-        </a>
-        <% } %>
-      </div>
-    </div>
-    <div class="navbar">
-      <div class="navbar-site-name" id="navbar-data">
-        <img
-          src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>"
-          alt="Avatar"
-          class="avatar"
-          draggable="false"
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><%= client.user.username %> | Dashboard</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+            rel="stylesheet"
         />
-        <span><%= client.user.username %></span>
-      </div>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <style>
+            :root {
+                --light-background: rgb(255, 255, 255);
+                --light-text: #333;
+                --dark-background: rgba(0, 0, 0);
+                --dark-text: #dcddde;
+                --link-text: #8097e1;
 
-      <% global.navbar.forEach(x => { %> <% if (x.to) { %>
-      <a href="<%= x.to %>" class="<%= x.active ? 'active' : '' %>"
-        ><%= x.title %></a
-      >
-      <% } else if (x.href) { %>
-      <a href="<%= x.href %>" target="_blank"><%= x.title %></a>
-      <% } %> <% }); %>
+                /* Desert Khaki */
+                --bg-gradient-desert-khaki-1: hsl(var(--bg-gradient-desert-khaki-1-hsl) / 1);
+                --bg-gradient-desert-khaki-1-hsl: 29 32.4% 86.1%;
+                --bg-gradient-desert-khaki-2: hsl(var(--bg-gradient-desert-khaki-2-hsl) / 1);
+                --bg-gradient-desert-khaki-2-hsl: 40 41.3% 78.6%;
+                --bg-gradient-desert-khaki-3: hsl(var(--bg-gradient-desert-khaki-3-hsl) / 1);
+                --bg-gradient-desert-khaki-3-hsl: 50 49.6% 75.9%;
 
-      <div class="icons-container">
-        <a class="icon" onclick="toggleDarkLightMode()">
-          <i class="far fa-sun sun-icon"></i>
-          <i class="far fa-moon moon-icon" style="display: none"></i>
-        </a>
+                /* Crimson Moon */
+                --bg-gradient-crimson-moon-1: hsl(var(--bg-gradient-crimson-moon-1-hsl) / 1);
+                --bg-gradient-crimson-moon-1-hsl: 0 88.6% 31%;
+                --bg-gradient-crimson-moon-2: hsl(var(--bg-gradient-crimson-moon-2-hsl) / 1);
+                --bg-gradient-crimson-moon-2-hsl: 0 0% 0%;
 
-        <a class="icon hamburger" onclick="toggleNavbar()">
-          <i class="fas fa-bars"></i>
-        </a>
+                /* Memory Lane */
+                --bg-gradient-memory-lane-1: hsl(var(--bg-gradient-memory-lane-1-hsl) / 1);
+                --bg-gradient-memory-lane-1-hsl: 227 58.4% 65.1%;
+                --bg-gradient-memory-lane-2: hsl(var(--bg-gradient-memory-lane-2-hsl) / 1);
+                --bg-gradient-memory-lane-2-hsl: 227 31% 44.3%;
 
-        <% if (global.auth) { %>
-        <a class="user" style="display: block" href="/auth/logout">
-          <img
-            src="<%= user.avatar %>"
-            alt="Avatar"
-            class="avatar rounded-icon"
-            style="margin-right: 5px; margin-left: 2px"
-            draggable="false"
-          />
-          <span class="hide">Logout</span>
-        </a>
-        <% } else { %>
-        <a href="/auth/login" class="icon discord-login">
-          <i class="fab fa-discord" style="margin-right: 5px"></i>
-          <span>Login</span>
-        </a>
-        <% } %>
-      </div>
-    </div>
-
-    <div class="content">
-      <input type="text" id="searchInput" placeholder="Search commands..." />
-      <div id="noResults" style="display: none">
-        No results found for the given query
-        <div id="suggestions" style="display: none">
-          Did you mean...
-          <ul id="suggestionList"></ul>
-        </div>
-      </div>
-      <% let groupedCommands = client.cmd.default.reduce((groups, command) => {
-      let category = command.category || 'Uncategorized'; if (!groups[category])
-      { groups[category] = []; } groups[category].push(command); return groups;
-      }, {}); for (let category in groupedCommands) { let commands =
-      groupedCommands[category]; %>
-      <div class="command-container" data-category="<%= category %>">
-        <div class="command-category"><%= category %></div>
-        <ul>
-          <% commands.forEach(command => { %>
-          <li
-            class="command-item"
-            data-item="<%= command.name %>"
-            data-category="<%= category %>"
-          >
-            <%= command.name %>
-          </li>
-          <% }); %>
-        </ul>
-      </div>
-      <% } %>
-    </div>
-
-    <script>
-      const sun = document.querySelector(".sun-icon");
-      const moon = document.querySelector(".moon-icon");
-
-      function toggleDarkLightMode() {
-        var body = document.body;
-        var currentMode = localStorage.getItem("mode");
-        if (currentMode === "dark") {
-          body.setAttribute("data-theme", "light");
-          localStorage.setItem("mode", "light");
-          sun.style.display = "none";
-          moon.style.display = "block";
-        } else {
-          body.setAttribute("data-theme", "dark");
-          localStorage.setItem("mode", "dark");
-          sun.style.display = "block";
-          moon.style.display = "none";
-        }
-      }
-
-      if (localStorage.getItem("mode") === "dark") {
-        document.body.setAttribute("data-theme", "dark");
-        sun.style.display = "block";
-        moon.style.display = "none";
-      } else {
-        document.body.setAttribute("data-theme", "light");
-        sun.style.display = "none";
-        moon.style.display = "block";
-      }
-
-      function toggleNavbar() {
-        document.getElementById("navbar-links").classList.toggle("active");
-        document.querySelector(".dim-overlay").classList.toggle("active");
-        document.querySelector(".hamburger").classList.toggle("active");
-        try {
-          document.querySelector(".discord-login").style.display = document
-            .getElementById("navbar-links")
-            .classList.contains("active")
-            ? "none"
-            : "flex";
-        } catch {
-          document.querySelector(".user").style.display = document
-            .getElementById("navbar-links")
-            .classList.contains("active")
-            ? "none"
-            : "flex";
-        }
-      }
-
-      //searchbar
-      const search = document.getElementById("searchInput");
-      const commandContainers = document.querySelectorAll(".command-container");
-      const noResults = document.getElementById("noResults");
-      const commandNames = Array.from(
-        document.querySelectorAll(".command-item")
-      ).map((item) => item.dataset.item);
-
-      search.addEventListener("input", () => {
-        const input = search.value.trim().toLowerCase();
-        let visibleContainers = 0;
-
-        commandContainers.forEach((container) => {
-          const category = container.dataset.category.toLowerCase();
-          const items = container.querySelectorAll(".command-item");
-
-          let categoryShown = false;
-
-          items.forEach((item) => {
-            const name = item.dataset.item.toLowerCase();
-            const matches = name.includes(input);
-
-            if (input === "" || matches) {
-              item.style.display = "block";
-              categoryShown = true;
-            } else {
-              item.style.display = "none";
+                /* Primary */
+                --primary-color: hsl(var(--primary-color-hsl) / 1);
+                --primary-color-hsl: 228 5.2% 38%;
             }
-          });
 
-          if (categoryShown) {
-            container.style.display = "block";
-            visibleContainers++;
-          } else if (category.includes(input)) {
-            container.style.display = "block";
-            items.forEach((item) => {
-              item.style.display = "block";
+            [data-theme="light"] {
+                --background: var(--light-background);
+                --background-muted: rgba(var(--background), 0.5);
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: rgb(255, 255, 255);
+                --background-gray: rgb(235, 235, 235, 0.5);
+                --text: var(--light-text);
+                --link-color: hsl(0, 0%, 50%);
+                --border: hsl(0, 0%, 75%);
+            }
+
+            [data-theme="Midnight"] {
+                --background: var(--dark-background);
+                --background-muted: rgba(var(--background), 0.5);
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: rgba(0, 0, 0);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: var(--dark-text);
+                --link-color: hsl(0, 0%, 20%);
+                --border: hsl(0, 0%, 12%);
+            }
+
+            [data-theme="dark"] {
+                --background: hsl(0, 0%, 5%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: hsl(0, 0%, 5%);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: hsl(0, 0%, 95%);
+                --link-color: hsl(0, 0%, 50%);
+                --border: hsl(0, 0%, 12%);
+            }
+
+            [data-theme="Desert Khaki"] {
+                --background: linear-gradient(0deg, var(--bg-gradient-desert-khaki-1) 20%, var(--bg-gradient-desert-khaki-2) 50%, var(--bg-gradient-desert-khaki-3) 80%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgb(255, 255, 255, 0.6);
+                --text: var(--primary-460);
+                --link-color: rgba(255, 255, 255, 0.8);
+                --border: rgba(128, 132, 142, 0.239);
+            }
+
+            [data-theme="Crimson Moon"] {
+                --background: linear-gradient(305deg, var(--bg-gradient-crimson-moon-1) 16.17%, var(--bg-gradient-crimson-moon-2) 72%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgb(0, 0, 0, 0.6);
+                --text: var(--dark-text);
+                --link-color: hsl(0, 0%, 75%);
+                --border: #80848e3d;
+            }
+
+            [data-theme="Memory Lane"] {
+                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%);
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgba(190, 190, 190, 0.4);
+                --text: rgba(255, 255, 255);
+                --link-color: rgba(255, 255, 255, 0.6);
+                --border: rgba(255, 255, 255, 0.6);
+            }
+
+            body {
+                margin: 0;
+                font-family: "DM Sans", sans-serif;
+                background: var(--background);
+                background-size: cover;
+                color: var(--text);
+            }
+
+            body.no-scroll {
+                overflow: hidden;
+            }
+
+            .navbar {
+                overflow: hidden;
+                display: flex;
+                position: fixed;
+                top: 0;
+                width: 100%;
+                user-select: none;
+                align-items: center;
+                background: var(--navbar-background);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border);
+                z-index: 5;
+            }
+
+            .navbar a {
+                z-index: 5;
+                float: right;
+                user-select: none;
+                color: var(--link-color);
+                border-bottom: 1px solid transparent;
+                text-align: center;
+                padding: 14px 16px;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+                text-decoration: none;
+            }
+
+            .navbar a:hover,
+            .navbar a:active {
+                border-bottom: 1px solid var(--text);
+                color: var(--text);
+            }
+
+            .icons-container {
+                display: flex;
+                align-items: center;
+                margin-left: auto;
+            }
+
+            .icons-container .icon {
+                border-bottom: none !important;
+            }
+
+            .icons-container .icon:hover {
+                cursor: pointer;
+                border-bottom: none !important;
+            }
+
+            .icons-container .discord-login {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .modal-avatar {
+                border-radius: 35%;
+                width: 75px;
+                height: 75px;
+            }
+
+            .navbar .icon {
+                display: flex;
+                align-items: center;
+                user-select: none;
+            }
+
+            .navbar .hamburger {
+                display: none !important;
+                align-items: center;
+            }
+
+            .navbar-site-name {
+                float: left;
+                display: flex;
+                align-items: center;
+                align-self: flex-end !important;
+                padding: 14px 16px;
+            }
+
+            .avatar {
+                border-radius: 50%;
+                margin-right: 10px;
+                width: 20px;
+                height: auto;
+            }
+
+            .navbar .icon {
+                display: flex;
+                align-items: center;
+                margin: auto;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+            }
+
+            .navbar-mobile {
+                display: flex;
+                flex-direction: column;
+                top: 60px;
+                right: 0;
+                width: 25%;
+                background: var(--mobile-navbar-background) !important;
+                border-left: 1px solid var(--border) !important;
+                z-index: 4;
+                transform: translateX(25%);
+            }
+
+            #navbar-links {
+                display: none;
+            }
+
+            .dim-overlay {
+                position: fixed;
+                top: 53px;
+                left: 0%;
+                width: 100%;
+                height: calc(100vh - 53px);
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 2;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .dim-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            @media screen and (max-width: 1100px) {
+                .features {
+                    padding: 15px !important;
+                    margin-top: 2rem !important;
+                }
+
+                .feature {
+                    width: 50rem !important;
+                }
+            }
+
+            @media screen and (max-width: 935px) {
+                .features {
+                    padding: 15px !important;
+                    margin-top: 2rem !important;
+                }
+
+                .feature {
+                    width: 40rem !important;
+                }
+            }
+
+            @media screen and (max-width: 780px) {
+                .features {
+                    padding: 10px !important;
+                    margin-top: 1rem !important;
+                    width: 90% !important;
+                }
+
+                .feature {
+                    box-sizing: border-box;
+                    width: 20rem !important;
+                }
+            }
+
+            @media screen and (max-width: 855px) {
+                .fixed-avatar {
+                    width: 125px !important;
+                    height: 125px !important;
+                }
+
+                .navbar a {
+                    display: none;
+                }
+
+                .user,
+                .discord-login {
+                    display: none !important;
+                }
+
+                .navbar.responsive {
+                    height: 100vh;
+                    overflow-y: auto;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    z-index: 4;
+                    background-color: var(--navbar-background);
+                }
+
+                .navbar.responsive a {
+                    display: block;
+                    padding: 14px 16px;
+                    text-align: left;
+                    z-index: 4;
+                    border-bottom: none;
+                }
+
+                .hamburger.active {
+                    color: var(--text);
+                }
+
+                .navbar .hamburger {
+                    display: flex !important;
+                    align-items: center;
+                    margin-left: auto;
+                    padding-right: 16px;
+                }
+
+                .hide {
+                    display: none !important;
+                }
+
+                #navbar-links {
+                    position: fixed;
+                    top: 52px;
+                    left: 0;
+                    width: 75%;
+                    height: calc(100vh - 53px);
+                    padding: 20px;
+                    overflow-y: auto;
+                    display: flex !important;
+                    z-index: 2;
+                }
+
+                #navbar-links.hidden {
+                    transform: translateX(-50%);
+                }
+            }
+
+            .fixed-avatar {
+                width: 150px;
+                height: 150px;
+                margin-top: 2.5rem;
+            }
+
+            .avatar {
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                object-fit: cover;
+                display: inline-block;
+                vertical-align: middle;
+                right: 0;
+            }
+
+            .content {
+                padding: 3rem 20px;
+                margin-top: 2rem;
+                background: transparent !important;
+            }
+
+            .mlink {
+                text-decoration: none;
+                padding: 12px 12px;
+                color: var(--text);
+                border-bottom: 1px solid var(--border);
+                margin-top: 5px;
+                margin-right: 10px !important;
+                left: 0;
+            }
+
+            .links a:hover,
+            .mlink:hover {
+                color: var(--link-text);
+            }
+
+            .active {
+                border-bottom: 1px solid var(--text) !important;
+                color: var(--text) !important;
+            }
+
+            .user {
+                border-bottom: none !important;
+            }
+
+            .user:hover {
+                cursor: pointer;
+                border-bottom: none !important;
+            }
+
+            .user {
+                display: flex;
+                align-items: center;
+                margin: auto;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+            }
+
+            .user {
+                display: flex;
+                align-items: center;
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-left: 10px;
+            }
+
+            .user-info img {
+                border-radius: 25%;
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                margin-right: 5px;
+            }
+
+            .user-details {
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+            }
+
+            .user-details span {
+                display: block;
+                font-size: 16px;
+            }
+
+            .user-tag {
+                color: var(--link-text);
+                font-size: 12px !important;
+            }
+
+            .header {
+                font-size: 3rem;
+                margin-bottom: 5px;
+            }
+
+            .server-info {
+                font-size: 1rem;
+                margin: 5px;
+                color: #888;
+            }
+
+            .hero {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: left;
+            }
+
+            .hero-details {
+                margin-left: 2rem;
+            }
+
+            .clearfix::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+
+            #navbar-data {
+                cursor: pointer;
+                text-wrap: nowrap;
+            }
+
+            .rounded-icon {
+                border-radius: 50%;
+            }
+
+            #commands {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .command {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                background-color: var(--background-gray);
+                margin-right: 15px;
+                margin-bottom: 10px;
+                padding: 2rem;
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                flex: 1 0 10%;
+            }
+
+            #command-title {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .content h1:not(#commands) {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            code {
+                background-color: var(--background-gray);
+                padding: 10px;
+                border-radius: 5px;
+                font-family: "JetBrains Mono", monospace;
+            }
+
+            a.icon.hamburger > i {
+                transition: transform 0.1s ease-in-out;
+            }
+
+            a.icon.hamburger > i.rotated {
+                transform: rotate(90deg);
+            }
+
+            .d-flex {
+                display: flex;
+            }
+
+            .align-items-center {
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body data-theme="light">
+        <div class="dim-overlay" onclick="toggleNavbar()">
+            <div id="navbar-links" class="navbar-mobile">
+                <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+                <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"><%= x.title %></a>
+                <% } else if (x.href) { %>
+                <a href="<%= x.href %>" class="mlink" target="_blank"><%= x.title %></a>
+                <% } %> <% }); %> <% if (global.auth) { %>
+                <a href="/auth/logout" style="margin-top: 35px" class="mlink">
+                    <div class="user-info">
+                        <img src="<%= user.avatar %>" alt="Avatar" class="modal-avatar" draggable="false" />
+                        <div class="user-details">
+                            <span><%= user.user.username %></span>
+                            <span class="user-tag"><%= user.user.id %></span>
+                        </div>
+                        <i class="material-icons" style="margin-left: 20px">logout</i>
+                    </div>
+                </a>
+                <% } else { %>
+                <a href="/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
+                    <i class="material-icons" style="margin-right: 15px">login</i>
+                    <span>Login</span>
+                </a>
+                <% } %>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-site-name" id="navbar-data">
+                <img src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
+                <span><%= client.user.username %></span>
+            </div>
+
+            <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+            <a href="<%= x.to %>" class="<%= x.active ? 'active' : '' %> d-flex align-items-center"
+                ><%- x.to === '/admin' ? '<i class="material-icons" style="margin-right: 5px">manage_accounts</i>' : '' %><%= x.title %></a
+            >
+            <% } else if (x.href) { %>
+            <a href="<%= x.href %>" target="_blank"><%= x.title %></a>
+            <% } %> <% }); %>
+
+            <div class="icons-container">
+                <a class="icon" onclick="toggleDarkLightMode()">
+                    <i class="material-icons sun-icon">light_mode</i>
+                    <i class="material-icons moon-icon" style="display: none">nights_stay</i>
+                </a>
+
+                <a class="icon hamburger" onclick="toggleNavbar()">
+                    <i class="material-icons">more_vert</i>
+                </a>
+
+                <% if (global.auth) { %>
+                <a class="user" style="display: block" href="/auth/logout">
+                    <img src="<%= user.avatar %>" alt="Avatar" class="avatar rounded-icon" style="margin-right: 10px; margin-left: 2px" draggable="false" />
+                    <span class="hide">Logout</span>
+                </a>
+                <% } else { %>
+                <a href="/login" class="icon discord-login">
+                    <i class="material-icons" style="margin-right: 5px">login</i>
+                    <span>Login</span>
+                </a>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="content">
+            <h1>Commands</h1>
+            <div id="commands">
+                <% client.cmd.default.forEach(x => { %>
+                <div class="command">
+                    <p id="command-title"><%= client.prefix %><%= x.name %></p>
+                    <h3>Description</h3>
+                    <p id="command-description"><%= x?.description %></p>
+                    <h3>Example Usage</h3>
+                    <code id="command-usage">
+                        <p><%= x?.usage %></p>
+                    </code>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <script>
+            const sun = document.querySelector(".sun-icon");
+            const moon = document.querySelector(".moon-icon");
+
+            fetch("/api/getTheme")
+                .then((res) => res.json())
+                .then((res) => {
+                    localStorage.setItem("themeData", JSON.stringify(res));
+                });
+            var themeData = JSON.parse(localStorage.getItem("themeData"));
+            try {
+                var themeDark = themeData.dark || "dark";
+                var themeLight = themeData.light || "light";
+            } catch {
+                var themeDark = "dark";
+                var themeLight = "light";
+            }
+
+            function toggleDarkLightMode() {
+                fetch("/api/getTheme")
+                    .then((res) => res.json())
+                    .then((res) => {
+                        localStorage.setItem("themeData", JSON.stringify(res));
+                    });
+                var themeData = JSON.parse(localStorage.getItem("themeData"));
+                try {
+                    var themeDark = themeData.dark || "dark";
+                    var themeLight = themeData.light || "light";
+                } catch {
+                    var themeDark = "dark";
+                    var themeLight = "light";
+                }
+
+                var body = document.body;
+                var currentMode = localStorage.getItem("mode");
+                if (currentMode === themeDark) {
+                    body.setAttribute("data-theme", themeLight);
+                    localStorage.setItem("mode", themeLight);
+                    sun.style.display = "none";
+                    moon.style.display = "block";
+                } else {
+                    body.setAttribute("data-theme", themeDark);
+                    localStorage.setItem("mode", themeDark);
+                    sun.style.display = "block";
+                    moon.style.display = "none";
+                }
+            }
+
+            if (themeLight === themeDark) {
+                const container = document.querySelector("div.icons-container > a:nth-child(1)");
+                container.style.display = "none";
+            }
+
+            if (localStorage.getItem("mode")) {
+                    document.body.setAttribute("data-theme", localStorage.getItem("mode"));
+                    sun.style.display = "block";
+                    moon.style.display = "none";
+                } else {
+                    document.body.setAttribute("data-theme", "light");
+                    sun.style.display = "none";
+                    moon.style.display = "block";
+            }
+
+            function toggleNavbar() {
+                document.getElementById("navbar-links").classList.toggle("active");
+                document.querySelector(".dim-overlay").classList.toggle("active");
+                document.querySelector(".hamburger").classList.toggle("active");
+                document.querySelector("a.icon.hamburger > i").classList.toggle("rotated");
+                document.body.classList.toggle("no-scroll");
+                try {
+                    document.querySelector(".discord-login").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                } catch {
+                    document.querySelector(".user").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                }
+            }
+
+            document.getElementById("navbar-data").addEventListener("click", function () {
+                window.location.href = "/";
             });
-            visibleContainers++;
-          } else {
-            container.style.display = "none";
-          }
-        });
 
-        if (visibleContainers === 0) {
-          noResults.style.display = "block";
-
-          // Find similar commands
-          const suggestions = commandNames.filter((command) =>
-            command.includes(input)
-          );
-
-          // Display the suggestions
-          const suggestionList = document.getElementById("suggestionList");
-          suggestionList.innerHTML = "";
-          suggestions.forEach((command) => {
-            const li = document.createElement("li");
-            li.textContent = command;
-            suggestionList.appendChild(li);
-          });
-
-          document.getElementById("suggestions").style.display =
-            suggestions.length > 0 ? "block" : "none";
-        } else {
-          noResults.style.display = "none";
-          document.getElementById("suggestions").style.display = "none";
-        }
-      });
-
-      document
-        .getElementById("navbar-data")
-        .addEventListener("click", function () {
-          window.location.href = "/";
-        });
-    </script>
-  </body>
+            window.onload = async function () {
+                const links = document.querySelectorAll(".mlink");
+                links.forEach((link) => {
+                    if (link.href === window.location.href) {
+                        link.classList.add("active");
+                    }
+                });
+            };
+        </script>
+    </body>
 </html>

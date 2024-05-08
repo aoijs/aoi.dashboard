@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><%= client.user.username %> | Dashboard</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+        <script src="https://unpkg.com/tippy.js@6"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+            rel="stylesheet"
+        />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <style>
+            :root {
+                --light-background: rgb(255, 255, 255);
+                --light-text: #333;
+                --dark-background: rgba(0, 0, 0);
+                --dark-text: #dcddde;
+                --link-text: #8097e1;
+                /* Desert Khaki */
+                --bg-gradient-desert-khaki-1: hsl(var(--bg-gradient-desert-khaki-1-hsl) / 1);
+                --bg-gradient-desert-khaki-1-hsl: 29 32.4% 86.1%;
+                --bg-gradient-desert-khaki-2: hsl(var(--bg-gradient-desert-khaki-2-hsl) / 1);
+                --bg-gradient-desert-khaki-2-hsl: 40 41.3% 78.6%;
+                --bg-gradient-desert-khaki-3: hsl(var(--bg-gradient-desert-khaki-3-hsl) / 1);
+                --bg-gradient-desert-khaki-3-hsl: 50 49.6% 75.9%;
+                /* Crimson Moon */
+                --bg-gradient-crimson-moon-1: hsl(var(--bg-gradient-crimson-moon-1-hsl) / 1);
+                --bg-gradient-crimson-moon-1-hsl: 0 88.6% 31%;
+                --bg-gradient-crimson-moon-2: hsl(var(--bg-gradient-crimson-moon-2-hsl) / 1);
+                --bg-gradient-crimson-moon-2-hsl: 0 0% 0%;
+                /* Memory Lane */
+                --bg-gradient-memory-lane-1: hsl(var(--bg-gradient-memory-lane-1-hsl) / 1);
+                --bg-gradient-memory-lane-1-hsl: 227 58.4% 65.1%;
+                --bg-gradient-memory-lane-2: hsl(var(--bg-gradient-memory-lane-2-hsl) / 1);
+                --bg-gradient-memory-lane-2-hsl: 227 31% 44.3%;
+                /* Primary */
+                --primary-color: hsl(var(--primary-color-hsl) / 1);
+                --primary-color-hsl: 228 5.2% 38%;
+            }
+            [data-theme="light"] {
+                --background: var(--light-background);
+                --background-muted: rgba(var(--background), 0.5);
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: rgb(255, 255, 255);
+                --background-gray: rgb(235, 235, 235, 0.5);
+                --text: var(--light-text);
+                --link-color: hsl(0, 0%, 50%);
+                --border: hsl(0, 0%, 75%);
+            }
+            [data-theme="Midnight"] {
+                --background: var(--dark-background);
+                --background-muted: rgba(var(--background), 0.5);
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: rgba(0, 0, 0);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: var(--dark-text);
+                --link-color: hsl(0, 0%, 20%);
+                --border: hsl(0, 0%, 12%);
+            }
+            [data-theme="dark"] {
+                --background: hsl(0, 0%, 5%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--navbar-background);
+                --navbar-background: hsl(0, 0%, 5%);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: hsl(0, 0%, 95%);
+                --link-color: hsl(0, 0%, 50%);
+                --border: hsl(0, 0%, 12%);
+            }
+            [data-theme="Desert Khaki"] {
+                --background: linear-gradient(0deg, var(--bg-gradient-desert-khaki-1) 20%, var(--bg-gradient-desert-khaki-2) 50%, var(--bg-gradient-desert-khaki-3) 80%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgb(255, 255, 255, 0.6);
+                --text: var(--primary-color);
+                --link-color: rgba(255, 255, 255, 0.8);
+                --border: rgba(128, 132, 142, 0.239);
+            }
+            [data-theme="Crimson Moon"] {
+                --background: linear-gradient(305deg, var(--bg-gradient-crimson-moon-1) 16.17%, var(--bg-gradient-crimson-moon-2) 72%) no-repeat center center fixed;
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgb(0, 0, 0, 0.6);
+                --text: var(--dark-text);
+                --link-color: hsl(0, 0%, 75%);
+                --border: #80848e3d;
+            }
+            [data-theme="Memory Lane"] {
+                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%);
+                --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
+                --mobile-navbar-background: var(--background);
+                --navbar-background: transparent;
+                --background-gray: rgba(190, 190, 190, 0.4);
+                --text: rgba(255, 255, 255);
+                --link-color: rgba(255, 255, 255, 0.6);
+                --border: rgba(255, 255, 255, 0.6);
+            }
+            body.no-scroll {
+                overflow: hidden;
+            }
+            body {
+                margin: 0;
+                font-family: "DM Sans", sans-serif;
+                background: var(--background);
+                background-size: cover;
+                color: var(--text);
+            }
+            .navbar {
+                user-select: none;
+                overflow: hidden;
+                display: flex;
+                position: fixed;
+                top: 0;
+                width: 100%;
+                align-items: center;
+                background: var(--navbar-background);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border);
+                z-index: 5;
+            }
+            .navbar a {
+                user-select: none;
+                z-index: 5;
+                float: right;
+                color: var(--link-color);
+                border-bottom: 1px solid transparent;
+                text-align: center;
+                padding: 14px 16px;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+                text-decoration: none;
+            }
+            .navbar a:hover,
+            .navbar a:active {
+                border-bottom: 1px solid var(--text);
+                color: var(--text);
+            }
+            .icons-container {
+                display: flex;
+                align-items: center;
+                margin-left: auto;
+            }
+            .icons-container .icon {
+                border-bottom: none !important;
+            }
+            .icons-container .icon:hover {
+                cursor: pointer;
+                border-bottom: none !important;
+            }
+            .icons-container .discord-login {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                color: inherit;
+                text-decoration: none;
+            }
+            .modal-avatar {
+                border-radius: 35%;
+                width: 75px;
+                height: 75px;
+            }
+            .navbar .icon {
+                display: flex;
+                align-items: center;
+                user-select: none;
+            }
+            .navbar .hamburger {
+                display: none !important;
+                align-items: center;
+            }
+            .navbar-site-name {
+                float: left;
+                display: flex;
+                align-items: center;
+                align-self: flex-end !important;
+                padding: 14px 16px;
+            }
+            .avatar {
+                border-radius: 50%;
+                margin-right: 10px;
+                width: 20px;
+                height: auto;
+            }
+            .navbar .icon {
+                display: flex;
+                align-items: center;
+                margin: auto;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+            }
+            .navbar-mobile {
+                display: flex;
+                flex-direction: column;
+                top: 60px;
+                right: 0;
+                width: 25%;
+                background: var(--mobile-navbar-background) !important;
+                border-left: 1px solid var(--border) !important;
+                z-index: 4;
+                transform: translateX(25%);
+            }
+            #navbar-links {
+                display: none;
+            }
+            .dim-overlay {
+                position: fixed;
+                top: 53px;
+                left: 0%;
+                width: 100%;
+                height: calc(100vh - 53px);
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 2;
+                opacity: 0;
+                pointer-events: none;
+            }
+            .dim-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            @media screen and (max-width: 1100px) {
+                .features {
+                    padding: 15px !important;
+                    margin-top: 2rem !important;
+                }
+                .feature {
+                    width: 50rem !important;
+                }
+            }
+            @media screen and (max-width: 935px) {
+                .features {
+                    padding: 15px !important;
+                    margin-top: 2rem !important;
+                }
+                .feature {
+                    width: 40rem !important;
+                }
+            }
+            @media screen and (max-width: 780px) {
+                .features {
+                    padding: 10px !important;
+                    margin-top: 1rem !important;
+                    width: 90% !important;
+                }
+                .feature {
+                    box-sizing: border-box;
+                    width: 20rem !important;
+                }
+            }
+            @media screen and (max-width: 855px) {
+                .fixed-avatar {
+                    width: 125px !important;
+                    height: 125px !important;
+                }
+                .navbar a {
+                    display: none;
+                }
+                .user,
+                .discord-login {
+                    display: none !important;
+                }
+                .navbar.responsive {
+                    height: 100vh;
+                    overflow-y: auto;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    z-index: 4;
+                    background: var(--mobile-navbar-background);
+                }
+                .navbar.responsive a {
+                    display: block;
+                    padding: 14px 16px;
+                    text-align: left;
+                    z-index: 4;
+                    border-bottom: none;
+                }
+                .hamburger.active {
+                    color: var(--text);
+                }
+                .navbar .hamburger {
+                    display: flex !important;
+                    align-items: center;
+                    margin-left: auto;
+                    padding-right: 16px;
+                }
+                .hide {
+                    display: none !important;
+                }
+                #navbar-links {
+                    position: fixed;
+                    top: 52px;
+                    left: 0;
+                    width: 75%;
+                    height: calc(100vh - 53px);
+                    padding: 20px;
+                    overflow-y: auto;
+                    display: flex !important;
+                    z-index: 2;
+                }
+                #navbar-links.hidden {
+                    transform: translateX(-50%);
+                }
+            }
+            .fixed-avatar {
+                width: 150px;
+                height: 150px;
+                margin-top: 2.5rem;
+            }
+            .avatar {
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                object-fit: cover;
+                display: inline-block;
+                vertical-align: middle;
+                right: 0;
+            }
+            .content {
+                padding: 3rem 20px;
+            }
+            .mlink {
+                text-decoration: none;
+                padding: 12px 12px;
+                color: var(--text);
+                border-bottom: 1px solid var(--border);
+                margin-top: 5px;
+                margin-right: 10px !important;
+                left: 0;
+            }
+            .links a:hover,
+            .mlink:hover {
+                color: var(--link-text);
+            }
+            .active {
+                border-bottom: 1px solid var(--text) !important;
+                color: var(--text) !important;
+            }
+            .user {
+                border-bottom: none !important;
+            }
+            .user:hover {
+                cursor: pointer;
+                border-bottom: none !important;
+            }
+            .user {
+                display: flex;
+                align-items: center;
+                margin: auto;
+                align-self: flex-end !important;
+                vertical-align: middle !important;
+            }
+            .user {
+                display: flex;
+                align-items: center;
+            }
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-left: 10px;
+            }
+            .user-info img {
+                border-radius: 25%;
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                margin-right: 5px;
+            }
+            .user-details {
+                display: flex;
+                flex-direction: column;
+                margin-left: 10px;
+            }
+            .user-details span {
+                display: block;
+                font-size: 16px;
+            }
+            .user-tag {
+                color: var(--link-text);
+                font-size: 12px !important;
+            }
+            .header {
+                font-size: 3rem;
+                margin-bottom: 5px;
+            }
+            .server-info {
+                font-size: 1rem;
+                margin: 5px;
+                color: #888;
+            }
+            .hero {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: left;
+            }
+            .hero-details {
+                margin-left: 2rem;
+            }
+            .clearfix::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+            #navbar-data {
+                cursor: pointer;
+                text-wrap: nowrap;
+            }
+            .rounded-icon {
+                border-radius: 50%;
+            }
+            .features {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+                margin-top: 5rem;
+            }
+            .feature {
+                flex: 1 1 auto;
+                background: var(--background);
+                border: 1px solid var(--border);
+                color: var(--text);
+                padding: 20px;
+                margin: 10px;
+                width: 55rem;
+                text-align: center;
+            }
+            .feature h2 {
+                font-size: 24px;
+            }
+            .feature p {
+                color: #333;
+                font-size: 16px;
+            }
+            /* Theme Selector */
+            #theme-selector {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            @media (max-width: 600px) {
+                #theme-selector {
+                    flex-direction: column;
+                }
+            }
+            .theme {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-sizing: border-box;
+                padding: 25px;
+                border: 1px solid var(--border);
+                background-color: var(--background-gray);
+                border-radius: 5px;
+                flex: 1 0 auto;
+            }
+            .preview {
+                flex: 1 0 auto;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                height: 75px;
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                margin-bottom: 10px;
+                align-self: stretch;
+            }
+            .theme h2 {
+                margin: 10px 0;
+                text-align: center;
+            }
+            .theme button {
+                margin-top: 10px;
+                padding: 10px 15px 10px 15px;
+                color: var(--text);
+                font-family: "DM Sans", sans-serif;
+                background: var(--background-gray);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                width: calc(100% - 10px);
+                box-sizing: border-box;
+                cursor: pointer;
+            }
+            .button-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .button-container button {
+                width: calc(50% - 10px);
+            }
+            .button-container .full-width {
+                width: 100%;
+                clear: both;
+            }
+            #theme-header {
+                text-align: start;
+            }
+            .tags {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .tag {
+                padding: 5px 10px;
+                background: var(--background-gray);
+                border-radius: 5px;
+                font-size: 0.8em;
+                color: var(--text);
+            }
+            #toast-container > .toast {
+                box-shadow: none;
+            }
+            a.icon.hamburger > i {
+                transition: transform 0.1s ease-in-out;
+            }
+            a.icon.hamburger > i.rotated {
+                transform: rotate(90deg);
+            }
+            .d-flex {
+                display: flex;
+            }
+            .align-items-center {
+                align-items: center;
+            }
+            #sub-header {
+                background: var(--background-gray);
+                font-size: 16px;
+                display: inline-block;
+                margin-top: -1.5rem;
+                padding: 8px;
+                border-radius: 5px;
+            }
+            .manage-users {
+                margin-top: 15px;
+                background: var(--background-gray);
+                padding: 10px;
+                width: calc(100% - 20px);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+            }
+            .manage-users .search-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .input-icon-container {
+                position: relative;
+                width: 60%;
+            }
+            .input-icon-container .material-icons {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 20px;
+            }
+            .manage-users input {
+                padding: 10px 15px;
+                padding-left: 35px;
+                color: var(--text);
+                font-family: "DM Sans", sans-serif;
+                background: var(--background-gray);
+                border: 1px solid var(--border);
+                width: calc(100% - 5px);
+                margin-right: 5px;
+                border-radius: 5px;
+                box-sizing: border-box;
+                cursor: text;
+            }
+            .manage-users button {
+                padding: 10px 15px;
+                color: var(--text);
+                font-family: "DM Sans", sans-serif;
+                background: var(--background-gray);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                box-sizing: border-box;
+                cursor: pointer;
+                width: 20%;
+            }
+            .select-wrapper {
+                position: relative;
+                display: inline-block;
+                width: 40%;
+                padding: 0;
+                margin-right: 5px;
+                background: var(--background-gray);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                box-sizing: border-box;
+                -moz-appearance: none;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+            .select-wrapper select {
+                width: 100%;
+                padding: 10px 10px;
+                margin: 0;
+                border: none;
+                background: transparent;
+                color: var(--text);
+                font-family: "DM Sans", sans-serif;
+                -moz-appearance: none;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+            #role-select {
+                color: var(--text) !important;
+                background: var(--background-gray);
+                border: 1px solid var(--border);
+                padding: 10px;
+                border-radius: 5px;
+                box-sizing: border-box;
+                font-family: "DM Sans", sans-serif;
+                -moz-appearance: none;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+            #role-select select option:disabled,
+            #role-select select option {
+                -moz-appearance: none;
+                appearance: none;
+                -webkit-appearance: none;
+                color: var(--text) !important;
+                background: var(--background);
+            }
+            .select-wrapper select option:disabled,
+            .select-wrapper select option {
+                -moz-appearance: none;
+                appearance: none;
+                -webkit-appearance: none;
+                color: var(--text) !important;
+                background: var(--background);
+            }
+            @media screen and (max-width: 855px) {
+                .manage-users .search-container {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                .manage-users input,
+                .manage-users select,
+                .manage-users button,
+                .select-wrapper {
+                    width: calc(100% - 5px);
+                }
+                .input-icon-container {
+                    width: 100%;
+                }
+            }
+
+            .dashboard-user-info {
+                margin-top: 15px;
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: space-between;
+                position: relative;
+                background: var(--background-gray);
+                padding: 10px;
+                width: calc(100% - 20px);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+                gap: 5px;
+            }
+
+            .dashboard-user-info .user-details {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                flex-grow: 1;
+                gap: 5px;
+            }
+
+            .dashboard-user-info img {
+                border-radius: 25%;
+                width: 50px;
+                height: 50px;
+                flex-shrink: 0;
+                object-fit: cover;
+                margin-right: 5px;
+            }
+
+            .dashboard-user-info button {
+                padding: 10px;
+                color: var(--text);
+                font-family: "DM Sans", sans-serif;
+                background: transparent;
+                border: 1px solid transparent !important;
+                position: absolute;
+                right: 10px;
+                top: 25%;
+                transform: translateY(-50%);
+                border-radius: 5px;
+                align-self: flex-end;
+                box-sizing: border-box;
+                cursor: pointer;
+                width: initial !important;
+            }
+
+            .dashboard-user-info #user-name-info,
+            .dashboard-user-info #user-id-info {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                width: 100%;
+            }
+
+            .dashboard-user-info #user-name-info {
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 5px;
+                margin-bottom: 0;
+            }
+
+            .dashboard-user-info #user-id-info {
+                font-size: 14px;
+                margin-top: 0;
+                margin-bottom: 5px;
+                color: var(--link-color);
+            }
+
+            .dashboard-user-info-not-found {
+                margin-top: 15px;
+                display: flex;
+                justify-content: center;
+                position: relative;
+                background: var(--background-gray);
+                padding: 10px;
+                width: calc(100% - 20px);
+                border: 1px solid var(--border);
+                border-radius: 5px;
+            }
+
+            .tippy-box {
+                background: var(--mobile-navbar-background);
+                color: var(--text);
+                border: 1px solid var(--border);
+            }
+
+            hr {
+                display: block;
+                height: 1px;
+                border: 0;
+                border-top: 1px solid var(--border);
+                margin: 1em 0;
+                padding: 0;
+            }
+
+            .loader-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            .loader {
+                border: 8px solid var(--border);
+                border-radius: 50%;
+                border-top: 8px solid var(--link-color);
+                width: 25px;
+                height: 25px;
+                margin: 20px;
+                margin-bottom: 10px;
+                animation: spin 1.4s linear infinite;
+                display: none;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body data-theme="light">
+        <div class="dim-overlay" onclick="toggleNavbar()">
+            <div id="navbar-links" class="navbar-mobile">
+                <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+                <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"><%= x.title %></a>
+                <% } else if (x.href) { %>
+                <a href="<%= x.href %>" class="mlink" target="_blank"><%= x.title %></a>
+                <% } %> <% }); %> <% if (global.auth) { %>
+                <a href="/auth/logout" style="margin-top: 35px" class="mlink">
+                    <div class="user-info">
+                        <img src="<%= user.avatar %>" alt="Avatar" class="modal-avatar" draggable="false" />
+                        <div class="user-details">
+                            <span><%= user.user.username %></span>
+                            <span class="user-tag"><%= user.user.id %></span>
+                        </div>
+                        <i class="material-icons" style="margin-left: 20px">logout</i>
+                    </div>
+                </a>
+                <% } else { %>
+                <a href="/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
+                    <i class="material-icons" style="margin-right: 15px">login</i>
+                    <span>Login</span>
+                </a>
+                <% } %>
+            </div>
+        </div>
+        <div class="navbar">
+            <div class="navbar-site-name" id="navbar-data">
+                <img src="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
+                <span><%= client.user.username %></span>
+            </div>
+            <% global.navbar.forEach(x => { %> <% if (x.to) { %>
+            <a href="<%= x.to %>" class="<%= x.active ? 'active' : '' %> d-flex align-items-center"
+                ><%- x.to === '/admin' ? '<i class="material-icons" style="margin-right: 5px">manage_accounts</i>' : '' %><%= x.title %></a
+            >
+            <% } else if (x.href) { %>
+            <a href="<%= x.href %>" target="_blank"><%= x.title %></a>
+            <% } %> <% }); %>
+            <div class="icons-container">
+                <a class="icon" onclick="toggleDarkLightMode()">
+                    <i class="material-icons sun-icon">light_mode</i>
+                    <i class="material-icons moon-icon" style="display: none">nights_stay</i>
+                </a>
+                <a class="icon hamburger" onclick="toggleNavbar()">
+                    <i class="material-icons">more_vert</i>
+                </a>
+                <% if (global.auth) { %>
+                <a class="user" style="display: block" href="/auth/logout">
+                    <img src="<%= user.avatar %>" alt="Avatar" class="avatar rounded-icon" style="margin-right: 10px; margin-left: 2px" draggable="false" />
+                    <span class="hide">Logout</span>
+                </a>
+                <% } else { %>
+                <a href="/login" class="icon discord-login">
+                    <i class="material-icons" style="margin-right: 5px">login</i>
+                    <span>Login</span>
+                </a>
+                <% } %>
+            </div>
+        </div>
+        <div class="content">
+            <h1>Admin Dashboard</h1>
+            <hr />
+            <h1>Dashboard Theme</h1>
+            <h2 id="theme-header">Light Themes</h2>
+            <div id="theme-selector">
+                <div class="theme">
+                    <div class="preview" style="background: white"></div>
+                    <h2>Light Theme</h2>
+                    <div class="tags">
+                        <span class="tag">Light</span>
+                        <span class="tag">Default</span>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="setTheme('light', 'light', false)">Set Light Mode</button>
+                        <button onclick="setTheme('light', 'light', true)">Set Both Themes</button>
+                        <button onclick="setPreview('light', 'light')" class="full-width">Preview Locally</button>
+                    </div>
+                </div>
+                <div class="theme">
+                    <div class="preview" style="background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%)"></div>
+                    <h2>Memory Lane</h2>
+                    <div class="tags">
+                        <span class="tag">Light</span>
+                        <span class="tag">Preset</span>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="setTheme('light', 'Memory Lane', false)">Set Light Mode</button>
+                        <button onclick="setTheme('light', 'Memory Lane', true)">Set Both Themes</button>
+                        <button onclick="setPreview('light', 'Memory Lane')" class="full-width">Preview Locally</button>
+                    </div>
+                </div>
+                <div class="theme">
+                    <div
+                        class="preview"
+                        style="background: linear-gradient(38.99deg, var(--bg-gradient-desert-khaki-1) 12.92%, var(--bg-gradient-desert-khaki-2) 32.92%, var(--bg-gradient-desert-khaki-3) 52.11%)"
+                    ></div>
+                    <h2>Desert Khaki</h2>
+                    <div class="tags">
+                        <span class="tag">Light</span>
+                        <span class="tag">Preset</span>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="setTheme('light', 'Desert Khaki', false)">Set Light Mode</button>
+                        <button onclick="setTheme('light', 'Desert Khaki', true)">Set Both Themes</button>
+                        <button onclick="setPreview('light', 'Desert Khaki')" class="full-width">Preview Locally</button>
+                    </div>
+                </div>
+            </div>
+            <h2 id="theme-header">Dark Themes</h2>
+            <div id="theme-selector">
+                <div class="theme">
+                    <div class="preview" style="background: hsl(0, 0%, 5%)"></div>
+                    <h2>Dark Theme</h2>
+                    <div class="tags">
+                        <span class="tag">Dark</span>
+                        <span class="tag">Default</span>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="setTheme('dark', 'dark', false)">Set Dark Mode</button>
+                        <button onclick="setTheme('dark', 'dark', true)">Set Both Themes</button>
+                        <button onclick="setPreview('dark', 'dark')" class="full-width">Preview Locally</button>
+                    </div>
+                </div>
+                <div class="theme">
+                    <div class="preview" style="background: rgba(0, 0, 0)"></div>
+                    <h2>Midnight Theme</h2>
+                    <div class="tags">
+                        <span class="tag">Dark</span>
+                        <span class="tag">Preset</span>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="setTheme('dark', 'Midnight', false)">Set Dark Mode</button>
+                        <button onclick="setTheme('dark', 'Midnight', true)">Set Both Themes</button>
+                        <button onclick="setPreview('dark', 'Midnight')" class="full-width">Preview Locally</button>
+                    </div>
+                </div>
+                <div class="theme">
+                    <div class="preview" style="background: linear-gradient(305deg, var(--bg-gradient-crimson-moon-1) 16.17%, var(--bg-gradient-crimson-moon-2) 72%)"></div>
+                    <h2>Crimson Moon</h2>
+                    <div class="tags">
+                        <span class="tag">Dark</span>
+                        <span class="tag">Preset</span>
+                    </div>
+                    <div class="button-container">
+                        <button onclick="setTheme('dark', 'Crimson Moon', false)">Set Dark Mode</button>
+                        <button onclick="setTheme('dark', 'Crimson Moon', true)">Set Both Themes</button>
+                        <button onclick="setPreview('dark', 'Crimson Moon')" class="full-width">Preview Locally</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <h1>Dashboard Admins</h1>
+            <div class="manage-users">
+                <form id="search-form" action="/manage/users/find" method="POST">
+                    <div class="search-container">
+                        <div class="input-icon-container">
+                            <input type="text" name="search" class="search-bar" placeholder="Enter Discord User ID..." />
+                            <i class="material-icons">search</i>
+                        </div>
+                        <div class="select-wrapper">
+                            <select name="options" id="options">
+                                <option value="Manager" selected disabled>Select a Role</option>
+                                <option value="Owner" disabled>Owner</option>
+                                <option value="Administrator">Administrator</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                        </div>
+                        <button type="submit">Add User</button>
+                    </div>
+                </form>
+                <div id="user-list">
+                    <div class="loader-container">
+                        <div id="loading" class="loader" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const sun = document.querySelector(".sun-icon");
+            const moon = document.querySelector(".moon-icon");
+            document.getElementById("loading").style.display = "flex";
+
+            fetch("/api/getTheme")
+                .then((res) => res.json())
+                .then((res) => {
+                    localStorage.setItem("themeData", JSON.stringify(res));
+                });
+            var themeData = JSON.parse(localStorage.getItem("themeData"));
+            try {
+                var themeDark = themeData.dark || "dark";
+                var themeLight = themeData.light || "light";
+            } catch {
+                var themeDark = "dark";
+                var themeLight = "light";
+            }
+
+            function toggleDarkLightMode() {
+                fetch("/api/getTheme")
+                    .then((res) => res.json())
+                    .then((res) => {
+                        localStorage.setItem("themeData", JSON.stringify(res));
+                    });
+                var themeData = JSON.parse(localStorage.getItem("themeData"));
+                try {
+                    var themeDark = themeData.dark || "dark";
+                    var themeLight = themeData.light || "light";
+                } catch {
+                    var themeDark = "dark";
+                    var themeLight = "light";
+                }
+
+                var body = document.body;
+                var currentMode = localStorage.getItem("mode");
+                if (currentMode === themeDark) {
+                    body.setAttribute("data-theme", themeLight);
+                    localStorage.setItem("mode", themeLight);
+                    sun.style.display = "none";
+                    moon.style.display = "block";
+                } else {
+                    body.setAttribute("data-theme", themeDark);
+                    localStorage.setItem("mode", themeDark);
+                    sun.style.display = "block";
+                    moon.style.display = "none";
+                }
+            }
+
+            if (themeLight === themeDark) {
+                const container = document.querySelector("div.icons-container > a:nth-child(1)");
+                container.style.display = "none";
+            }
+
+            if (localStorage.getItem("mode")) {
+                document.body.setAttribute("data-theme", localStorage.getItem("mode"));
+                sun.style.display = "block";
+                moon.style.display = "none";
+            } else {
+                document.body.setAttribute("data-theme", "light");
+                sun.style.display = "none";
+                moon.style.display = "block";
+            }
+
+            function toggleNavbar() {
+                document.getElementById("navbar-links").classList.toggle("active");
+                document.querySelector(".dim-overlay").classList.toggle("active");
+                document.querySelector(".hamburger").classList.toggle("active");
+                document.querySelector("a.icon.hamburger > i").classList.toggle("rotated");
+                document.body.classList.toggle("no-scroll");
+                try {
+                    document.querySelector(".discord-login").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                } catch {
+                    document.querySelector(".user").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                }
+            }
+
+            document.getElementById("navbar-data").addEventListener("click", function () {
+                window.location.href = "/";
+            });
+
+            function setTheme(type, theme, both) {
+                document.body.setAttribute("data-theme", theme);
+                localStorage.setItem("mode", theme);
+
+                toastr.options = {
+                    positionClass: "toast-bottom-right",
+                    progressBar: true,
+                    newestOnTop: false
+                };
+
+                toastr.clear();
+                toastr.info("Attempting to set theme..");
+
+                if (both) {
+                    fetch("/api/theme", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ type: type === "dark" ? "light" : "dark", theme })
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            toastr.success(`${type === "dark" ? "Light" : "Dark"} Theme set to '${theme}' successfully`);
+                        })
+                        .catch((error) => {
+                            toastr.options.closeButton = true;
+                            toastr.error(`An error occurred while setting the theme. \n\n ${error}`);
+                        });
+
+                    toastr.warning(`The switcher for dark & light mode is now disabled.`);
+                }
+
+                fetch("/api/theme", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ type, theme })
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        toastr.clear();
+                        toastr.success(`${type === "dark" ? "Dark" : "Light"} Theme set to '${theme}' successfully`);
+                    })
+                    .catch((data, error) => {
+                        toastr.options.closeButton = true;
+                        toastr.clear();
+                        toastr.error(`An error occurred while setting the theme. \n\n ${data.error || error}`);
+                    });
+            }
+
+            document.getElementById("search-form").addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                var select = document.getElementById("options");
+                var selectedRole = select.options[select.selectedIndex].value;
+
+                var value = document.querySelector(".search-bar").value;
+
+                if (!value) {
+                    toastr.options = {
+                        positionClass: "toast-bottom-right",
+                        progressBar: true,
+                        newestOnTop: false
+                    };
+                    toastr.clear();
+                    toastr.warning("Please enter a valid user ID.");
+                    return;
+                }
+
+                const currentUsers = await fetch("/api/manage/users/get")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        return data.users;
+                    });
+
+                if (currentUsers.find((user) => user.id === value)) {
+                    toastr.options = {
+                        positionClass: "toast-bottom-right",
+                        progressBar: true,
+                        newestOnTop: false
+                    };
+                    toastr.clear();
+                    toastr.error("User is already a dashboard admin.");
+                    return;
+                }
+
+                fetch("/api/manage/users/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ role: selectedRole, user: value })
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        toastr.options = {
+                            positionClass: "toast-bottom-right",
+                            progressBar: true,
+                            newestOnTop: false
+                        };
+                        toastr.clear();
+                        toastr.success(`Added ${data.user.username} as dashboard admin.`);
+
+                        const notFoundElement = document.querySelector("div.dashboard-user-info-not-found");
+                        if (notFoundElement) {
+                            notFoundElement.remove();
+                        }
+                        const userList = document.getElementById("user-list");
+
+                        var roles = ["Owner", "Administrator", "Manager"];
+
+                        const userElement = document.createElement("div");
+                        let isOwner = data.owner.id === data.user.id;
+                        let isRoleAboveCurrentUser = roles.indexOf(data.user.role) < roles.indexOf(data.user.role);
+
+                        let shouldDisableButton = (isRoleAboveCurrentUser && !isOwner) || (data.user.role === "Owner" && !isOwner);
+
+                        let optionsHTML = "";
+                        for (let i = 0; i < roles.length; i++) {
+                            let isRoleAboveCurrentUserOption = roles.indexOf(data.user.role) < i;
+                            let shouldDisableOption = (isRoleAboveCurrentUserOption && !isOwner) || (roles[i] === "Owner" && !isOwner);
+                            optionsHTML += `<option value="${roles[i]}" ${data.user.role === roles[i] ? "selected" : ""} ${shouldDisableOption ? "disabled" : ""}>${roles[i]}</option>`;
+                        }
+
+                        userElement.innerHTML = `
+                        <div class="dashboard-user-info" data-id="${data.user.id}">
+                                <img src="${data.user.avatar}" alt="${data.user.username}'s avatar">
+                                <div class="user-details">
+                                    <p id="user-name-info">${data.user.username}</p>
+                                    <p id="user-id-info">${data.user.id}</p>
+                                    <select id="role-select">${optionsHTML}</select>
+                                </div>
+                                <button id="remove-user-tooltip" onclick="removeUser('${data.user.id}')" ${shouldDisableButton ? "disabled" : ""}>
+                                    <i class="material-icons">close</i>
+                                </button>
+                            </div>
+                            `;
+
+                        userList.appendChild(userElement);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        toastr.clear();
+                        toastr.error("Failed to add user as dashboard admin. Either your session expired or the user does not exist.");
+                    });
+            });
+
+            function setPreview(type, theme) {
+                if (document.body.getAttribute("data-theme") === theme) {
+                    toastr.options = {
+                        positionClass: "toast-bottom-right",
+                        progressBar: true,
+                        newestOnTop: false
+                    };
+
+                    toastr.clear();
+                    toastr.warning(`Theme is already set to '${theme}'.`);
+                } else {
+                    toastr.options = {
+                        positionClass: "toast-bottom-right",
+                        progressBar: true,
+                        newestOnTop: false
+                    };
+
+                    toastr.success(`Theme set to '${theme}'.`);
+                }
+
+                document.body.setAttribute("data-theme", theme);
+            }
+
+            setTimeout(() => {
+                fetch("/api/manage/users/get")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                        const userList = document.getElementById("user-list");
+                        const roles = ["Owner", "Administrator", "Manager"];
+
+                        if (data.users.length === 0) {
+                            const userElement = document.createElement("div");
+                            userElement.innerHTML = `
+        <div class="dashboard-user-info-not-found">
+            <p id="user-not-found">No users found.</p>
+        </div>
+        `;
+
+                            userList.appendChild(userElement);
+                        } else {
+                            data.users.forEach((user) => {
+                                let isOwner = data.owner.id === user.id;
+                                let isRoleAboveCurrentUser = roles.indexOf(user.role) < roles.indexOf(data.user.role);
+
+                                let shouldDisableButton = (isRoleAboveCurrentUser && !isOwner) || (user.role === "Owner" && !isOwner);
+
+                                let optionsHTML = "";
+                                for (let i = 0; i < roles.length; i++) {
+                                    let isRoleAboveCurrentUserOption = roles.indexOf(user.role) < i;
+                                    let shouldDisableOption = (isRoleAboveCurrentUserOption && !isOwner) || (roles[i] === "Owner" && !isOwner);
+                                    optionsHTML += `<option value="${roles[i]}" ${user.role === roles[i] ? "selected" : ""} ${shouldDisableOption ? "disabled" : ""}>${roles[i]}</option>`;
+                                }
+
+                                const userElement = document.createElement("div");
+                                userElement.innerHTML = `
+                                    <div class="dashboard-user-info" data-id="${user.id}">
+                                        <img src="${user.avatar}" alt="${user.username}'s avatar">
+                                        <div class="user-details">
+                                            <p id="user-name-info">${user.username}</p>
+                                            <p id="user-id-info">${user.id}</p>
+                                            <select id="role-select">${optionsHTML}</select>
+                                        </div>
+                                        <button id="remove-user-tooltip" onclick="removeUser('${user.id}')" ${shouldDisableButton ? "disabled" : ""}><i class="material-icons">close</i></button>
+                                    </div>
+                                    `;
+
+                                userList.appendChild(userElement);
+                            });
+
+                            tippy("#remove-user-tooltip", {
+                                content: "Removes the access of the user from the dashboard.",
+                                followCursor: true,
+                                animation: "shift-away-subtle",
+                                arrow: false,
+                                delay: [1e3, null]
+                            });
+                        }
+
+                        document.getElementById("loading").style.display = "none";
+                    });
+            }, 2e3);
+
+            function removeUser(userId) {
+                fetch("/api/manage/users/remove", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ user: userId })
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const userElement = document.querySelector(`div div[data-id='${userId}']`);
+                        userElement.remove();
+
+                        const userList = document.getElementById("user-list");
+
+                        if (!userList.querySelector(".dashboard-user-info")) {
+                            const element = document.createElement("div");
+                            element.innerHTML = `
+                                <div class="dashboard-user-info-not-found">
+                                    <p id="user-not-found">No users found.</p>
+                                </div>
+                            `;
+                            userList.appendChild(element);
+                        }
+
+                        toastr.clear();
+                        toastr.options = {
+                            positionClass: "toast-bottom-right",
+                            progressBar: true,
+                            newestOnTop: false
+                        };
+
+                        toastr.success(`Removed '${userId}' as dashboard admin.`);
+                    });
+            }
+        </script>
+    </body>
+</html>
