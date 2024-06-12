@@ -1,4 +1,4 @@
-const Guilds = require("./Fetch.js");
+const Count = require("./Count.js");
 const router = require("../helpers/router");
 const express = require("express");
 const { KeyValue } = require("@akarui/aoi.db");
@@ -35,11 +35,11 @@ class Dashboard {
             });
         });
 
-        await Guilds.fetch(this.client);
+        await Count.fetch(this.client);
 
         this.app.use("/", router(this));
         this.app.listen(this.port, () => {
-            console.log("hi");
+            console.log("Dashboard is ready!");
         });
     }
 }
