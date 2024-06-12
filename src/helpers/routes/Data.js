@@ -140,6 +140,25 @@ module.exports = (d) => {
             return admins.includes(user);
         }
     }
+    
+    function formatUptime(ms) {
+        let seconds = Math.floor(ms / 1000);
+        let minutes = Math.floor(seconds / 60);
+        let hours = Math.floor(minutes / 60);
+    
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+    
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    router.get('/status', (req, res) => {
+        res.json({
+            status: d.client.uptime ? 'Online' : 'Offline',
+            ping: d.client.ws.ping + 'ms',
+            uptime: d.client.uptime ? formatUptime(d.client.uptime) : 'N/A',
+        });
+    });
 
     return router;
 };
