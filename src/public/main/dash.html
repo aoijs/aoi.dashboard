@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title><%= client.user.username %> | Status</title>
+        <title><%= client.user.username %> | Dashboard</title>
         <link rel="icon" type="favicon" href="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
@@ -339,11 +339,6 @@
                 padding: 3rem 20px;
             }
 
-            .content h1 {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-
             .mlink {
                 text-decoration: none;
                 padding: 12px 12px;
@@ -472,14 +467,106 @@
             .align-items-center {
                 align-items: center;
             }
+            .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #fff;
+            font-size: 1.5em;
+            }
+
+            .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .guilds {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .guild-card {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            height: 250px;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            background-color: #2c2f33;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: #fff;
+			font-family: "DM Sans", sans-serif;
+            user-select: none !important;
+        }
+        .guild-card img.banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        .guild-info {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            background: rgba(96, 79, 79, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(96, 79, 79, 0.3);
+            display: flex;
+            align-items: center;
+        }
+        .guild-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 20px;
+            background-color: #7289da;
+        }
+        .guild-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .guild-actions {
+            margin-left: auto;
+            background-size: 200% 200%;
+        }
+        .manage-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+			background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.5s;
+            margin-left: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            }
+        .manage-link:hover {
+            background: rgb(23,158,255);
+        }
         </style>
     </head>
-    <script>
-        setTimeout(function() {
-        window.location.reload(1);
-        }, 5000);
-    </script>
-    <body data-theme="light">
+    <body data-theme="light" onload="myFunction()">
+        <div class="loading-overlay" id="loading-overlay">Loading...</div>
         <div class="dim-overlay" onclick="toggleNavbar()">
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>
@@ -544,11 +631,18 @@
         </div>
 
         <div class="content">
-            <h1>Status</h1>
-            <p>Status: <span id="status"></span></p>
-            <p>Ping: <span id="ping"></span></p>
-            <p>Uptime: <span id="uptime"></span></p>
+            <center>
+                <h1>Server List</h1>
+            </center>
+        <div class="container" draggable="false">
+            <div id="guilds" class="guilds">
+                <!-- fufu guilds -->
+                <!-- horror -->
+                <!-- XD -->
+            </div>
         </div>
+        </div>
+
         <script>
             const sun = document.querySelector(".sun-icon");
             const moon = document.querySelector(".moon-icon");
@@ -603,25 +697,160 @@
             }
 
             if (localStorage.getItem("mode")) {
-                document.body.setAttribute("data-theme", localStorage.getItem("mode"));
-                sun.style.display = "block";
-                moon.style.display = "none";
-            } else {
-                document.body.setAttribute("data-theme", "light");
-                sun.style.display = "none";
-                moon.style.display = "block";
+                    document.body.setAttribute("data-theme", localStorage.getItem("mode"));
+                    sun.style.display = "block";
+                    moon.style.display = "none";
+                } else {
+                    document.body.setAttribute("data-theme", "light");
+                    sun.style.display = "none";
+                    moon.style.display = "block";
             }
 
-            fetch('/api/status')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('status').textContent = data.status;
-                document.getElementById('uptime').textContent = data.uptime;
-                document.getElementById('ping').textContent = data.ping;
-            }).catch (error => {
-                console.error('Error fetching status:', error)
+            function toggleNavbar() {
+                document.getElementById("navbar-links").classList.toggle("active");
+                document.querySelector(".dim-overlay").classList.toggle("active");
+                document.querySelector(".hamburger").classList.toggle("active");
+                document.querySelector("a.icon.hamburger > i").classList.toggle("rotated");
+                document.body.classList.toggle("no-scroll");
+                try {
+                    document.querySelector(".discord-login").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                } catch {
+                    document.querySelector(".user").style.display = document.getElementById("navbar-links").classList.contains("active") ? "none" : "flex";
+                }
+            }
+
+            document.getElementById("navbar-data").addEventListener("click", function () {
+                window.location.href = "/";
             });
 
+            if (window.location.search.includes("loginFailed=true")) {
+                toastr.options = {
+                    positionClass: "toast-bottom-right"
+                };
+                toastr.options.progressBar = true;
+                toastr.error("Login failed. You are not an admin.");
+                history.replaceState(null, null, window.location.pathname);
+            } else if (window.location.search.includes("loginFailed=false")) {
+                toastr.options = {
+                    positionClass: "toast-bottom-right"
+                };
+                toastr.options.progressBar = true;
+                toastr.success("You are now logged in.");
+                history.replaceState(null, null, window.location.pathname);
+            }
+
+            window.onload = async function () {
+                const links = document.querySelectorAll(".mlink");
+                links.forEach((link) => {
+                    if (link.href === window.location.href) {
+                        link.classList.add("active");
+                    }
+                });
+            };
+            
+            document.addEventListener('DOMContentLoaded', () => {
+		const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+            
+            const bannerUrls = [
+            'https://i.imgur.com/2cFM3cW.jpg',
+            'https://i.imgur.com/PT5JJH2.png',
+            'https://i.imgur.com/5i4mc5V.png',
+			'https://i.imgur.com/rXM9O7z.png',
+            'https://i.imgur.com/JuJ3Np0.png',
+            'https://i.imgur.com/AS7Ucu8.png',
+            'https://i.imgur.com/7pcjhrQ.png',
+            'https://i.imgur.com/jSOhl5D.png',
+            'https://i.imgur.com/ckQg9uG.png',
+            'https://i.imgur.com/bf7ovJd.png',
+            'https://i.imgur.com/v4K87q8.png',
+            'https://i.imgur.com/LAFH3iy.png'
+        ];
+
+			let shuffledUrls = [...bannerUrls];
+            let currentIndex = 0;
+
+            const shuffleArray = (array) => {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            };
+
+            shuffleArray(shuffledUrls);
+
+            const getRandomBannerUrl = () => {
+                if (currentIndex >= shuffledUrls.length) {
+                    shuffleArray(shuffledUrls);
+                    currentIndex = 0;
+                }
+                return shuffledUrls[currentIndex++];
+            };
+
+            fetch('api/user/guilds')
+            .then(response => response.json())
+            .then(data => {
+                const fetchedGuilds = data.fetchedGuilds;
+                const guildsContainer = document.getElementById('guilds');
+
+                fetchedGuilds.forEach(entry => {
+                    const guild = entry.guild;
+                    const guildCard = document.createElement('div');
+                    guildCard.classList.add('guild-card');
+
+                    const banner = getRandomBannerUrl()
+                    const bannerElement = document.createElement('img');
+                    bannerElement.src = guild.banner ? guild.banner : banner;
+                    bannerElement.classList.add('banner');
+                    guildCard.appendChild(bannerElement);
+
+                    const guildInfo = document.createElement('div');
+                    guildInfo.classList.add('guild-info');
+
+                    const guildIcon = document.createElement('img');
+                    guildIcon.classList.add('guild-icon');
+                    guildIcon.src = guild.icon ? guild.icon : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                    guildInfo.appendChild(guildIcon);
+                    
+                    const guildName = document.createElement('div');
+                    guildName.classList.add('guild-name');
+                    guildName.textContent = guild.name;
+                    guildInfo.appendChild(guildName);
+                    function calculateMaxWidth() {
+                    const screenWidth = window.innerWidth;
+                    const availableWidth = screenWidth * 0.8;
+                    return availableWidth + 'px';
+                    }
+                    guildName.style.maxWidth = calculateMaxWidth();
+                    window.addEventListener('resize', function() {
+                    guildName.style.maxWidth = calculateMaxWidth();
+                    });
+
+                    const actionsContainer = document.createElement('div');
+                    actionsContainer.classList.add('guild-actions');
+
+                    const manageLink = document.createElement('a');
+                    manageLink.classList.add('manage-link');
+                    manageLink.href = `/guild/settings/${guild.id}`;
+                    manageLink.textContent = 'Manage Guild';
+                    actionsContainer.appendChild(manageLink);
+
+                    guildInfo.appendChild(actionsContainer);
+                    guildCard.appendChild(guildInfo);
+                    guildsContainer.appendChild(guildCard);
+                });
+
+                loadingOverlay.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error fetching guilds:', error);
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = 'Failed to fetch guilds. Please try again later.';
+                document.body.appendChild(errorMessage);
+
+                loadingOverlay.style.display = 'none';
+            });
+            })
         </script>
     </body>
 </html>

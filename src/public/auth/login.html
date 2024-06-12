@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title><%= client.user.username %> | Dashboard</title>
+        <title><%= client.user.username %> | Login</title>
+        <link rel="icon" type="favicon" href="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -22,13 +23,11 @@
                 --dark-text: #dcddde;
                 --link-text: #8097e1;
 
-                /* Desert Khaki */
-                --bg-gradient-desert-khaki-1: hsl(var(--bg-gradient-desert-khaki-1-hsl) / 1);
-                --bg-gradient-desert-khaki-1-hsl: 29 32.4% 86.1%;
-                --bg-gradient-desert-khaki-2: hsl(var(--bg-gradient-desert-khaki-2-hsl) / 1);
-                --bg-gradient-desert-khaki-2-hsl: 40 41.3% 78.6%;
-                --bg-gradient-desert-khaki-3: hsl(var(--bg-gradient-desert-khaki-3-hsl) / 1);
-                --bg-gradient-desert-khaki-3-hsl: 50 49.6% 75.9%;
+                /* Blurple Twilight */
+                --bg-gradient-blurple-twilight-1: hsl(var(--bg-gradient-blurple-twilight-1-hsl) / 1);
+                --bg-gradient-blurple-twilight-1-hsl: 234 calc(1 * 79.6%) 53.9%;
+                --bg-gradient-blurple-twilight-2: hsl(var(--bg-gradient-blurple-twilight-2-hsl) / 1);
+                --bg-gradient-blurple-twilight-2-hsl: 245 calc(1 * 63.7%) 31.4%;
 
                 /* Crimson Moon */
                 --bg-gradient-crimson-moon-1: hsl(var(--bg-gradient-crimson-moon-1-hsl) / 1);
@@ -80,13 +79,13 @@
                 --border: hsl(0, 0%, 12%);
             }
 
-            [data-theme="Desert Khaki"] {
-                --background: linear-gradient(0deg, var(--bg-gradient-desert-khaki-1) 20%, var(--bg-gradient-desert-khaki-2) 50%, var(--bg-gradient-desert-khaki-3) 80%) no-repeat center center fixed;
+            [data-theme="Blurple Twilight"] {
+                --background: linear-gradient(47.61deg, var(--bg-gradient-blurple-twilight-1) 11.18%, var(--bg-gradient-blurple-twilight-2) 64.54%) no-repeat center center fixed;
                 --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
                 --mobile-navbar-background: var(--background);
                 --navbar-background: transparent;
-                --background-gray: rgb(255, 255, 255, 0.6);
-                --text: var(--primary-460);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: hsl(0, 0%, 95%);
                 --link-color: rgba(255, 255, 255, 0.8);
                 --border: rgba(128, 132, 142, 0.239);
             }

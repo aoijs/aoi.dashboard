@@ -1,3 +1,4 @@
+const Guilds = require("../../classes/Fetch.js");
 const express = require("express");
 const router = express.Router();
 
@@ -120,6 +121,16 @@ module.exports = (d) => {
         }
     });
 
+    router.get('/user/guilds', ensureAuthenticated, async (req, res) => {
+        try {
+            const userGuilds = await Guilds.fetch(d.client, req.user.id);
+            res.json(userGuilds);
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ error: "Couldn't fetch guilds" });
+        }
+    });
+    
     async function getDashboardAdmins(user) {
         if (user === (await d.client.application.fetch()).owner.id) return true;
         if (!user) {
@@ -129,6 +140,25 @@ module.exports = (d) => {
             return admins.includes(user);
         }
     }
+    
+    function formatUptime(ms) {
+        let seconds = Math.floor(ms / 1000);
+        let minutes = Math.floor(seconds / 60);
+        let hours = Math.floor(minutes / 60);
+    
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+    
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    router.get('/status', (req, res) => {
+        res.json({
+            status: d.client.uptime ? 'Online' : 'Offline',
+            ping: d.client.ws.ping + 'ms',
+            uptime: d.client.uptime ? formatUptime(d.client.uptime) : 'N/A',
+        });
+    });
 
     return router;
 };

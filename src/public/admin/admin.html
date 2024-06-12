@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title><%= client.user.username %> | Dashboard</title>
+        <title><%= client.user.username %> | Admin</title>
+        <link rel="icon" type="favicon" href="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -23,23 +24,25 @@
                 --dark-background: rgba(0, 0, 0);
                 --dark-text: #dcddde;
                 --link-text: #8097e1;
-                /* Desert Khaki */
-                --bg-gradient-desert-khaki-1: hsl(var(--bg-gradient-desert-khaki-1-hsl) / 1);
-                --bg-gradient-desert-khaki-1-hsl: 29 32.4% 86.1%;
-                --bg-gradient-desert-khaki-2: hsl(var(--bg-gradient-desert-khaki-2-hsl) / 1);
-                --bg-gradient-desert-khaki-2-hsl: 40 41.3% 78.6%;
-                --bg-gradient-desert-khaki-3: hsl(var(--bg-gradient-desert-khaki-3-hsl) / 1);
-                --bg-gradient-desert-khaki-3-hsl: 50 49.6% 75.9%;
+
+                /* Blurple Twilight */
+                --bg-gradient-blurple-twilight-1: hsl(var(--bg-gradient-blurple-twilight-1-hsl) / 1);
+                --bg-gradient-blurple-twilight-1-hsl: 234 calc(1 * 79.6%) 53.9%;
+                --bg-gradient-blurple-twilight-2: hsl(var(--bg-gradient-blurple-twilight-2-hsl) / 1);
+                --bg-gradient-blurple-twilight-2-hsl: 245 calc(1 * 63.7%) 31.4%;
+
                 /* Crimson Moon */
                 --bg-gradient-crimson-moon-1: hsl(var(--bg-gradient-crimson-moon-1-hsl) / 1);
                 --bg-gradient-crimson-moon-1-hsl: 0 88.6% 31%;
                 --bg-gradient-crimson-moon-2: hsl(var(--bg-gradient-crimson-moon-2-hsl) / 1);
                 --bg-gradient-crimson-moon-2-hsl: 0 0% 0%;
+
                 /* Memory Lane */
                 --bg-gradient-memory-lane-1: hsl(var(--bg-gradient-memory-lane-1-hsl) / 1);
                 --bg-gradient-memory-lane-1-hsl: 227 58.4% 65.1%;
                 --bg-gradient-memory-lane-2: hsl(var(--bg-gradient-memory-lane-2-hsl) / 1);
                 --bg-gradient-memory-lane-2-hsl: 227 31% 44.3%;
+
                 /* Primary */
                 --primary-color: hsl(var(--primary-color-hsl) / 1);
                 --primary-color-hsl: 228 5.2% 38%;
@@ -74,13 +77,13 @@
                 --link-color: hsl(0, 0%, 50%);
                 --border: hsl(0, 0%, 12%);
             }
-            [data-theme="Desert Khaki"] {
-                --background: linear-gradient(0deg, var(--bg-gradient-desert-khaki-1) 20%, var(--bg-gradient-desert-khaki-2) 50%, var(--bg-gradient-desert-khaki-3) 80%) no-repeat center center fixed;
+            [data-theme="Blurple Twilight"] {
+                --background: linear-gradient(47.61deg, var(--bg-gradient-blurple-twilight-1) 11.18%, var(--bg-gradient-blurple-twilight-2) 64.54%) no-repeat center center fixed;
                 --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
                 --mobile-navbar-background: var(--background);
                 --navbar-background: transparent;
-                --background-gray: rgb(255, 255, 255, 0.6);
-                --text: var(--primary-color);
+                --background-gray: rgb(32, 32, 32, 0.6);
+                --text: hsl(0, 0%, 95%);
                 --link-color: rgba(255, 255, 255, 0.8);
                 --border: rgba(128, 132, 142, 0.239);
             }
@@ -881,17 +884,17 @@
                 <div class="theme">
                     <div
                         class="preview"
-                        style="background: linear-gradient(38.99deg, var(--bg-gradient-desert-khaki-1) 12.92%, var(--bg-gradient-desert-khaki-2) 32.92%, var(--bg-gradient-desert-khaki-3) 52.11%)"
+                        style="background: linear-gradient(47.61deg, var(--bg-gradient-blurple-twilight-1) 11.18%, var(--bg-gradient-blurple-twilight-2) 64.54%);"
                     ></div>
-                    <h2>Desert Khaki</h2>
+                    <h2>Blurple Twilight</h2>
                     <div class="tags">
                         <span class="tag">Light</span>
                         <span class="tag">Preset</span>
                     </div>
                     <div class="button-container">
-                        <button onclick="setTheme('light', 'Desert Khaki', false)">Set Light Mode</button>
-                        <button onclick="setTheme('light', 'Desert Khaki', true)">Set Both Themes</button>
-                        <button onclick="setPreview('light', 'Desert Khaki')" class="full-width">Preview Locally</button>
+                        <button onclick="setTheme('light', 'Blurple Twilight', false)">Set Light Mode</button>
+                        <button onclick="setTheme('light', 'Blurple Twilight', true)">Set Both Themes</button>
+                        <button onclick="setPreview('light', 'Blurple Twilight')" class="full-width">Preview Locally</button>
                     </div>
                 </div>
             </div>
