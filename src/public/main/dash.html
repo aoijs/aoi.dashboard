@@ -787,70 +787,71 @@
                 return shuffledUrls[currentIndex++];
             };
 
-            fetch('api/user/guilds')
+            fetch('/api/user/guilds')
             .then(response => response.json())
             .then(data => {
-                const fetchedGuilds = data.fetchedGuilds;
-                const guildsContainer = document.getElementById('guilds');
+            const fetchedGuilds = data.guilds;
+            const guildsContainer = document.getElementById('guilds');
 
-                fetchedGuilds.forEach(entry => {
-                    const guild = entry.guild;
-                    const guildCard = document.createElement('div');
-                    guildCard.classList.add('guild-card');
+            fetchedGuilds.forEach(entry => {
+            const guild = entry;
+            const guildCard = document.createElement('div');
+            guildCard.classList.add('guild-card');
 
-                    const banner = getRandomBannerUrl()
-                    const bannerElement = document.createElement('img');
-                    bannerElement.src = guild.banner ? guild.banner : banner;
-                    bannerElement.classList.add('banner');
-                    guildCard.appendChild(bannerElement);
+            const banner = getRandomBannerUrl();
+            const bannerElement = document.createElement('img');
+            bannerElement.src = guild.banner ? guild.banner : banner;
+            bannerElement.classList.add('banner');
+            guildCard.appendChild(bannerElement);
 
-                    const guildInfo = document.createElement('div');
-                    guildInfo.classList.add('guild-info');
+            const guildInfo = document.createElement('div');
+            guildInfo.classList.add('guild-info');
 
-                    const guildIcon = document.createElement('img');
-                    guildIcon.classList.add('guild-icon');
-                    guildIcon.src = guild.icon ? guild.icon : 'https://cdn.discordapp.com/embed/avatars/0.png';
-                    guildInfo.appendChild(guildIcon);
-                    
-                    const guildName = document.createElement('div');
-                    guildName.classList.add('guild-name');
-                    guildName.textContent = guild.name;
-                    guildInfo.appendChild(guildName);
-                    function calculateMaxWidth() {
-                    const screenWidth = window.innerWidth;
-                    const availableWidth = screenWidth * 0.8;
-                    return availableWidth + 'px';
-                    }
-                    guildName.style.maxWidth = calculateMaxWidth();
-                    window.addEventListener('resize', function() {
-                    guildName.style.maxWidth = calculateMaxWidth();
-                    });
+            const guildIcon = document.createElement('img');
+            guildIcon.classList.add('guild-icon');
+            guildIcon.src = guild.icon ? guild.icon : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            guildInfo.appendChild(guildIcon);
+            
+            const guildName = document.createElement('div');
+            guildName.classList.add('guild-name');
+            guildName.textContent = guild.name;
+            guildInfo.appendChild(guildName);
 
-                    const actionsContainer = document.createElement('div');
-                    actionsContainer.classList.add('guild-actions');
-
-                    const manageLink = document.createElement('a');
-                    manageLink.classList.add('manage-link');
-                    manageLink.href = `/guild/settings/${guild.id}`;
-                    manageLink.textContent = 'Manage Guild';
-                    actionsContainer.appendChild(manageLink);
-
-                    guildInfo.appendChild(actionsContainer);
-                    guildCard.appendChild(guildInfo);
-                    guildsContainer.appendChild(guildCard);
-                });
-
-                loadingOverlay.style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error fetching guilds:', error);
-                const errorMessage = document.createElement('p');
-                errorMessage.textContent = 'Failed to fetch guilds. Please try again later.';
-                document.body.appendChild(errorMessage);
-
-                loadingOverlay.style.display = 'none';
+            function calculateMaxWidth() {
+                const screenWidth = window.innerWidth;
+                const availableWidth = screenWidth * 0.8;
+                return availableWidth + 'px';
+            }
+            guildName.style.maxWidth = calculateMaxWidth();
+            window.addEventListener('resize', function() {
+                guildName.style.maxWidth = calculateMaxWidth();
             });
-            })
+
+            const actionsContainer = document.createElement('div');
+            actionsContainer.classList.add('guild-actions');
+
+            const manageLink = document.createElement('a');
+            manageLink.classList.add('manage-link');
+            manageLink.href = `/guild/settings/${guild.id}`;
+            manageLink.textContent = 'Manage Guild';
+            actionsContainer.appendChild(manageLink);
+
+            guildInfo.appendChild(actionsContainer);
+            guildCard.appendChild(guildInfo);
+            guildsContainer.appendChild(guildCard);
+            });
+
+            loadingOverlay.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error fetching guilds:', error);
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'Failed to fetch guilds. Please try again later.';
+            document.body.appendChild(errorMessage);
+
+            loadingOverlay.style.display = 'none';
+        });
+        })
         </script>
     </body>
 </html>

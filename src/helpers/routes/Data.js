@@ -1,4 +1,3 @@
-const Guilds = require("../../classes/Fetch.js");
 const express = require("express");
 const router = express.Router();
 
@@ -121,15 +120,42 @@ module.exports = (d) => {
         }
     });
 
+    async function filterGuilds(userId) {
+        try {
+            const allowedGuilds = [];
+    
+            const guilds = [...global.fetchedGuilds.values()];
+            for (const guildEntry of guilds) {
+                    const guildId = guildEntry.guild.id;
+                    const guild = await d.client.guilds.fetch(guildId);
+                    
+                    if (guild.members.cache.has(userId)) {
+        
+                    const member = await guild.members.fetch(userId);
+
+                    if (member.permissions.has('MANAGE_GUILD') || member.permissions.has('ADMINISTRATOR')) {
+                        allowedGuilds.push(guildEntry.guild);
+                    }
+                }
+            }
+    
+            return allowedGuilds;
+    
+        } catch (error) {
+            console.error('Error checking manage guild permission:', error);
+            return [];
+        }
+    }
+    
     router.get('/user/guilds', ensureAuthenticated, async (req, res) => {
         try {
-            const userGuilds = await Guilds.fetch(d.client, req.user.id);
-            res.json(userGuilds);
+            const guilds = await filterGuilds(req.user.id);
+            res.json({guilds : guilds});
         } catch (error) {
-            console.log(error)
+            console.error(error);
             res.status(500).json({ error: "Couldn't fetch guilds" });
         }
-    });
+    });    
     
     async function getDashboardAdmins(user) {
         if (user === (await d.client.application.fetch()).owner.id) return true;
