@@ -1,18 +1,15 @@
-fetchedGuilds = new Map();
-ownerData = {};
-
+global.fetchedGuilds = new Map();
+global.memberCount = 0;
 class Guilds {
-    static async fetch(client, user = client.user.id, logging = true) {
+    static async fetch(client, logging = true) {
         const guilds = client.guilds.cache;
 
         for (const guild of guilds.values()) {
             try {
-                const member = await guild.members.fetch(user).catch(() => null);
+                const fetched = await client.guilds.fetch(guild.id);
+                const owner = await fetched.fetchOwner();
 
-                if (member && member.permissions.has("MANAGE_GUILD")) {
-                    const fetched = await client.guilds.fetch(guild.id);
-                    const owner = await fetched.fetchOwner();
-
+                if (owner) {
                     fetchedGuilds.set(fetched.id, {
                         guild: {
                             id: guild.id,
@@ -20,24 +17,23 @@ class Guilds {
                             name: guild.name,
                             icon: guild.iconURL() ?? "https://cdn.discordapp.com/embed/avatars/0.png",
                             banner: guild.bannerURL(),
-                            members: fetched.memberCount
+                            members: fetched.memberCount,
                         },
-                    });
-                    
-                    ownerData =  {
-                        user: {
-                            id: owner.user.id,
-                            username: owner.user.username,
-                            avatar: owner.user.avatarURL() ?? owner.user.defaultAvatarURL()
+                        owner: {
+                            user: {
+                                id: owner.user.id,
+                                username: owner.user.username,
+                                avatar: owner.user.avatarURL() ?? owner.user.defaultAvatarURL()
+                            }
                         }
-                    }
+                    });
+
+                    memberCount += fetched.memberCount;
                 }
-            } catch (error) {
-                if (logging) console.error(`Failed to fetch guild ${guild.id}: ${error.message}`);
+            } catch {
+                if (logging) console.error(`Failed to fetch guild ${guild.id}`);
             }
         }
-
-        return { fetchedGuilds: Array.from(fetchedGuilds.values())};
     }
 }
 

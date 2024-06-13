@@ -53,13 +53,12 @@ module.exports = (dashboard) => {
                         guilds: [...global.fetchedGuilds.values()],
                         memberCount: global.memberCount
                     },
-                    owner: global.ownerData,
                     auth: req?.isAuthenticated() || false,
                     navbar: dashboard.navbar,
                     shards: shards || []
                 }
             };
-
+            
             console.log(data.global.guild_data.guilds)
 
             try {
