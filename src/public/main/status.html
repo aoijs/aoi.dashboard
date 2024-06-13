@@ -545,7 +545,6 @@
 
         <div class="content">
             <h1>Status</h1>
-            <p>Status: <span id="status"></span></p>
             <p>Ping: <span id="ping"></span></p>
             <p>Uptime: <span id="uptime"></span></p>
         </div>
@@ -612,12 +611,22 @@
                 moon.style.display = "block";
             }
 
-            fetch('/api/status')
+            function formatUptime(ms) {
+            let seconds = Math.floor(ms / 1000);
+            let minutes = Math.floor(seconds / 60);
+            let hours = Math.floor(minutes / 60);
+
+            seconds = seconds % 60;
+            minutes = minutes % 60;
+
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            fetch('/api/client')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('status').textContent = data.status;
-                document.getElementById('uptime').textContent = data.uptime;
-                document.getElementById('ping').textContent = data.ping;
+                document.getElementById('uptime').textContent = formatUptime(data.client.uptime);
+                document.getElementById('ping').textContent = data.client.ws + ' ms';
             }).catch (error => {
                 console.error('Error fetching status:', error)
             });
