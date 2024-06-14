@@ -149,12 +149,29 @@
                 align-self: flex-end !important;
                 vertical-align: middle !important;
                 text-decoration: none;
+                position: relative !important;
+            }
+            
+            .navbar a::after{
+                bottom: 0;
+                margin: -1px;
+                content: "";
+                height: 1px;
+                left: 50%;
+                position: absolute;
+                background: var(--text);
+                transition: width 0.3s ease 0s, left 0.3s ease 0s;
+                width: 0;
             }
 
-            .navbar a:hover,
-            .navbar a:active {
-                border-bottom: 1px solid var(--text);
+            .navbar a:hover, .navbar a:active{
                 color: var(--text);
+            }
+
+            .navbar a:hover::after,
+            .navbar a:active::after {
+                width: 100%; 
+                left: 0;
             }
 
             .icons-container {
@@ -498,7 +515,7 @@
                     </div>
                 </a>
                 <% } else { %>
-                <a href="/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
+                <a href="/auth/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
                     <i class="material-icons" style="margin-right: 15px">login</i>
                     <span>Login</span>
                 </a>
@@ -535,7 +552,7 @@
                     <span class="hide">Logout</span>
                 </a>
                 <% } else { %>
-                <a href="/login" class="icon discord-login">
+                <a href="/auth/login" class="icon discord-login">
                     <i class="material-icons" style="margin-right: 5px">login</i>
                     <span>Login</span>
                 </a>
@@ -554,6 +571,11 @@
                 <p id="ping">Loading...</p>
             </section>
         </div>
+        <footer>
+            <center>
+            <img src="https://github.com/aoijs/website/blob/master/assets/images/aoijs-logo.png?raw=true" style="user-select: none;width: 8%;"draggable="false">
+            </center>
+        </footer>
         <script>
             const sun = document.querySelector(".sun-icon");
             const moon = document.querySelector(".moon-icon");
