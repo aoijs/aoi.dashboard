@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title><%= client.user.username %> | Dashboard</title>
+        <link rel="icon" type="favicon" href="<%= client.user.avatarURL() || `https://cdn.discordapp.com/embed/avatars/${client.user.id % 5}.png` %>" alt="Avatar" class="avatar" draggable="false" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -110,10 +111,27 @@
 
             body {
                 margin: 0;
+                cursor: none;
                 font-family: "DM Sans", sans-serif;
                 background: var(--background);
                 background-size: cover;
                 color: var(--text);
+            }
+            .custom-cursor {
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 15px solid var(--text);
+                transform-origin: center;
+                pointer-events: none;
+                transition: transform 0.1s ease-out, border-color 0.1s ease-out;
+                z-index: 10000;
+            }
+
+            a:hover{
+                cursor: none !important;
             }
 
             body.no-scroll {
@@ -554,6 +572,7 @@
     </head>
     <body data-theme="light">
         <div class="dim-overlay" onclick="toggleNavbar()">
+            <div class="custom-cursor" id="cursor"></div>
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>
                 <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"><%= x.title %></a>

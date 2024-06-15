@@ -117,7 +117,7 @@ module.exports = (dashboard) => {
             saveUninitialized: true
         })
     );
-    
+
     router.use(passport.initialize());
     router.use(passport.session());
     router.use("/auth", require("../helpers/routes/Auth.js"));

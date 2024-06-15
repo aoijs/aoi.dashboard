@@ -114,12 +114,29 @@
 
             body {
                 margin: 0;
+                cursor: none;
                 font-family: "DM Sans", sans-serif;
                 background: var(--background);
                 background-size: cover;
                 color: var(--text);
             }
+            .custom-cursor {
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 15px solid var(--text);
+                transform-origin: center;
+                pointer-events: none;
+                transition: transform 0.1s ease-out, border-color 0.1s ease-out;
+                z-index: 10000;
+            }
 
+            a:hover{
+                cursor: none !important;
+            }
+            
             body.no-scroll {
                 overflow: hidden;
             }
@@ -589,6 +606,7 @@
     </head>
     <body data-theme="light" onload="myFunction()">
         <div class="loading-overlay" id="loading-overlay">Loading...</div>
+        <div class="custom-cursor" id="cursor"></div>
         <div class="dim-overlay" onclick="toggleNavbar()">
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>
@@ -656,8 +674,8 @@
             <center>
                 <h1>Server List</h1>
             </center>
-        <div class="container" draggable="false">
-            <div id="guilds" class="guilds">
+        <div class="container">
+            <div id="guilds" class="guilds" draggable="false">
                 <!-- fufu guilds -->
                 <!-- horror -->
                 <!-- XD -->
@@ -880,6 +898,12 @@
             loadingOverlay.style.display = 'none';
         });
         })
+
+        document.addEventListener('mousemove', function(e) {
+            var cursor = document.getElementById('cursor');
+            cursor.style.left = e.pageX + 'px';
+            cursor.style.top = e.pageY + 'px';
+        });
         </script>
     </body>
 </html>
