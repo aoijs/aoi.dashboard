@@ -102,7 +102,7 @@
             }
 
             [data-theme="Memory Lane"] {
-                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%);
+                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%) no-repeat center center fixed;
                 --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
                 --mobile-navbar-background: var(--background);
                 --navbar-background: transparent;
@@ -114,10 +114,27 @@
 
             body {
                 margin: 0;
+                cursor: none;
                 font-family: "DM Sans", sans-serif;
                 background: var(--background);
                 background-size: cover;
                 color: var(--text);
+            }
+            .custom-cursor {
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 15px solid var(--text);
+                transform-origin: center;
+                pointer-events: none;
+                transition: transform 0.1s ease-out, border-color 0.1s ease-out;
+                z-index: 10000;
+            }
+
+            a:hover{
+                cursor: none !important;
             }
 
             body.no-scroll {
@@ -149,12 +166,29 @@
                 align-self: flex-end !important;
                 vertical-align: middle !important;
                 text-decoration: none;
+                position: relative !important;
+            }
+            
+            .navbar a::after{
+                bottom: 0;
+                margin: -1px;
+                content: "";
+                height: 1px;
+                left: 50%;
+                position: absolute;
+                background: var(--text);
+                transition: width 0.3s ease 0s, left 0.3s ease 0s;
+                width: 0;
             }
 
-            .navbar a:hover,
-            .navbar a:active {
-                border-bottom: 1px solid var(--text);
+            .navbar a:hover, .navbar a:active{
                 color: var(--text);
+            }
+
+            .navbar a:hover::after,
+            .navbar a:active::after {
+                width: 100%; 
+                left: 0;
             }
 
             .icons-container {
@@ -445,7 +479,6 @@
             }
 
             #navbar-data {
-                cursor: pointer;
                 text-wrap: nowrap;
             }
 
@@ -480,6 +513,7 @@
         }, 5000);
     </script>
     <body data-theme="light">
+        <div class="custom-cursor" id="cursor"></div>
         <div class="dim-overlay" onclick="toggleNavbar()">
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>
@@ -498,7 +532,7 @@
                     </div>
                 </a>
                 <% } else { %>
-                <a href="/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
+                <a href="/auth/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
                     <i class="material-icons" style="margin-right: 15px">login</i>
                     <span>Login</span>
                 </a>
@@ -535,7 +569,7 @@
                     <span class="hide">Logout</span>
                 </a>
                 <% } else { %>
-                <a href="/login" class="icon discord-login">
+                <a href="/auth/login" class="icon discord-login">
                     <i class="material-icons" style="margin-right: 5px">login</i>
                     <span>Login</span>
                 </a>
@@ -545,9 +579,20 @@
 
         <div class="content">
             <h1>Status</h1>
-            <p>Ping: <span id="ping"></span></p>
-            <p>Uptime: <span id="uptime"></span></p>
+            <section class="metric">
+                <h2>Uptime</h2>
+                <p id="uptime">Loading...</p>
+            </section>
+            <section class="metric">
+                <h2>Ping</h2>
+                <p id="ping">Loading...</p>
+            </section>
         </div>
+        <footer>
+            <center>
+            <img src="https://github.com/aoijs/website/blob/master/assets/images/aoijs-logo.png?raw=true" style="user-select: none;width: 8%;"draggable="false">
+            </center>
+        </footer>
         <script>
             const sun = document.querySelector(".sun-icon");
             const moon = document.querySelector(".moon-icon");
@@ -631,6 +676,11 @@
                 console.error('Error fetching status:', error)
             });
 
+            document.addEventListener('mousemove', function(e) {
+            var cursor = document.getElementById('cursor');
+            cursor.style.left = e.pageX + 'px';
+            cursor.style.top = e.pageY + 'px';
+            });
         </script>
     </body>
 </html>

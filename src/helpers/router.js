@@ -14,9 +14,9 @@ module.exports = (dashboard) => {
     const router = express.Router();
     const render = (filePath, auth = false, admin = false) => {
         return async (req, res) => {
-            if (auth && !req.isAuthenticated()) return res.redirect("/login");
+            if (auth && !req.isAuthenticated()) return res.redirect("/auth/login");
 
-            if (admin && !req.isAuthenticated()) return res.redirect("/login");
+            if (admin && !req.isAuthenticated()) return res.redirect("/auth/login");
 
             const isAllowed = await getDashboardAdmins(req.user?.id)
 
@@ -75,7 +75,7 @@ module.exports = (dashboard) => {
         if (req.isAuthenticated()) {
             return next();
         }
-        res.redirect("/login");
+        res.redirect("/auth/login");
     };
 
     async function getDashboardAdmins(user) {
@@ -117,14 +117,13 @@ module.exports = (dashboard) => {
             saveUninitialized: true
         })
     );
-    
+
     router.use(passport.initialize());
     router.use(passport.session());
     router.use("/auth", require("../helpers/routes/Auth.js"));
     router.use("/api", routes(dashboard));
 
     router.get("/", render("../public/main/index.html"));
-    router.get("/login", render("../public/auth/login.html"));
     router.get("/commands", render("../public/main/commands.html"));
     router.get("/dash", render("../public/main/dash.html", true));
     router.get("/status", render("../public/main/status.html"));

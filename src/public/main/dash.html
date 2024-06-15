@@ -102,7 +102,7 @@
             }
 
             [data-theme="Memory Lane"] {
-                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%);
+                --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%) no-repeat center center fixed;
                 --background-muted: rgba(var(--background), 0.5) no-repeat center center fixed;
                 --mobile-navbar-background: var(--background);
                 --navbar-background: transparent;
@@ -114,12 +114,29 @@
 
             body {
                 margin: 0;
+                cursor: none;
                 font-family: "DM Sans", sans-serif;
                 background: var(--background);
                 background-size: cover;
                 color: var(--text);
             }
+            .custom-cursor {
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 15px solid var(--text);
+                transform-origin: center;
+                pointer-events: none;
+                transition: transform 0.1s ease-out, border-color 0.1s ease-out;
+                z-index: 10000;
+            }
 
+            a:hover{
+                cursor: none !important;
+            }
+            
             body.no-scroll {
                 overflow: hidden;
             }
@@ -149,12 +166,29 @@
                 align-self: flex-end !important;
                 vertical-align: middle !important;
                 text-decoration: none;
+                position: relative !important;
+            }
+            
+            .navbar a::after{
+                bottom: 0;
+                margin: -1px;
+                content: "";
+                height: 1px;
+                left: 50%;
+                position: absolute;
+                background: var(--text);
+                transition: width 0.3s ease 0s, left 0.3s ease 0s;
+                width: 0;
             }
 
-            .navbar a:hover,
-            .navbar a:active {
-                border-bottom: 1px solid var(--text);
+            .navbar a:hover, .navbar a:active{
                 color: var(--text);
+            }
+
+            .navbar a:hover::after,
+            .navbar a:active::after {
+                width: 100%; 
+                left: 0;
             }
 
             .icons-container {
@@ -440,7 +474,6 @@
             }
 
             #navbar-data {
-                cursor: pointer;
                 text-wrap: nowrap;
             }
 
@@ -498,9 +531,9 @@
             width: 100%;
             max-width: 550px;
             height: 250px;
-            border-radius: 5px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             background-color: #2c2f33;
             display: flex;
             flex-direction: column;
@@ -509,6 +542,11 @@
 			font-family: "DM Sans", sans-serif;
             user-select: none !important;
         }
+
+        .guild-card:hover{
+            box-shadow: 0 0 10px var(--text);
+        }
+
         .guild-card img.banner {
             position: absolute;
             top: 0;
@@ -522,11 +560,9 @@
             position: relative;
             z-index: 1;
             padding: 20px;
-            background: rgba(96, 79, 79, 0.5);
+            background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(96, 79, 79, 0.3);
             display: flex;
             align-items: center;
         }
@@ -549,11 +585,13 @@
             background-size: 200% 200%;
         }
         .manage-link {
-            color: #fff;
+            color: var(--text);
             text-decoration: none;
+            font-weight: bold;
             padding: 10px 15px;
             border-radius: 5px;
-			background-color: rgba(255, 255, 255, 0.1);
+			background-color: rgba(137, 43, 226, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             transition: background-color 0.5s;
             margin-left: 10px;
             white-space: nowrap;
@@ -561,11 +599,12 @@
             text-overflow: ellipsis;
             }
         .manage-link:hover {
-            background: rgb(23,158,255);
+            background: var(--background);
         }
         </style>
     </head>
     <body data-theme="light" onload="myFunction()">
+        <div class="custom-cursor" id="cursor"></div>
         <div class="loading-overlay" id="loading-overlay">Loading...</div>
         <div class="dim-overlay" onclick="toggleNavbar()">
             <div id="navbar-links" class="navbar-mobile">
@@ -585,7 +624,7 @@
                     </div>
                 </a>
                 <% } else { %>
-                <a href="/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
+                <a href="/auth/login" style="margin-top: 35px; display: flex; align-items: center" class="mlink icon">
                     <i class="material-icons" style="margin-right: 15px">login</i>
                     <span>Login</span>
                 </a>
@@ -622,7 +661,7 @@
                     <span class="hide">Logout</span>
                 </a>
                 <% } else { %>
-                <a href="/login" class="icon discord-login">
+                <a href="/auth/login" class="icon discord-login">
                     <i class="material-icons" style="margin-right: 5px">login</i>
                     <span>Login</span>
                 </a>
@@ -634,14 +673,20 @@
             <center>
                 <h1>Server List</h1>
             </center>
-        <div class="container" draggable="false">
-            <div id="guilds" class="guilds">
+        <div class="container">
+            <div id="guilds" class="guilds" draggable="false">
                 <!-- fufu guilds -->
                 <!-- horror -->
                 <!-- XD -->
             </div>
         </div>
+        
         </div>
+        <footer>
+            <center>
+            <img src="https://github.com/aoijs/website/blob/master/assets/images/aoijs-logo.png?raw=true" style="user-select: none;width: 8%;"draggable="false">
+            </center>
+        </footer>
 
         <script>
             const sun = document.querySelector(".sun-icon");
@@ -852,6 +897,12 @@
             loadingOverlay.style.display = 'none';
         });
         })
+
+        document.addEventListener('mousemove', function(e) {
+            var cursor = document.getElementById('cursor');
+            cursor.style.left = e.pageX + 'px';
+            cursor.style.top = e.pageY + 'px';
+        });
         </script>
     </body>
 </html>
