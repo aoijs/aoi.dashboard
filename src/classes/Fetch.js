@@ -15,9 +15,9 @@ class Guilds {
                             id: guild.id,
                             shardId: guild?.shardId ?? 0,
                             name: guild.name,
-                            icon: guild.iconURL() ?? "https://cdn.discordapp.com/embed/avatars/0.png",
-                            banner: guild.bannerURL(),
-                            members: fetched.memberCount,
+                            icon: guild.iconURL() ?? createGuildIcon(guild.name), //`https://cdn.discordapp.com/embed/avatars/${Math.floor(Math.random() * 5) + 1}.png`,
+                            banner: guild.bannerURL({ size: 4096, forceStatic: true }) ?? guild.iconURL(),
+                            members: fetched.memberCount
                         },
                         owner: {
                             user: {
@@ -35,6 +35,13 @@ class Guilds {
             }
         }
     }
+}
+
+function createGuildIcon(name) {
+    const splittedName = name.split(" ");
+    const initialsOfGuild = splittedName.map(x => x[0].toUpperCase()).join("");
+
+    return `https://via.placeholder.com/150/2f3136/FFFFFF/?text=${initialsOfGuild}`
 }
 
 module.exports = Guilds;

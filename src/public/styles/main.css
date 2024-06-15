@@ -1,0 +1,107 @@
+:root {
+    --light-background: rgb(255, 255, 255);
+    --light-text: #333;
+    --dark-background: rgba(0, 0, 0);
+    --dark-text: #dcddde;
+    --link-text: #8097e1;
+
+    /* Primary Colors */
+    --blurple-dark: #454FBF;
+    --legacy-blurple-dark: #4E5D94;
+    --legacy-blurple-light: #7289DA;
+    --not-quite-black: #23272A;
+
+    /* Blurple Twilight */
+    --bg-gradient-blurple-twilight-1: hsl(var(--bg-gradient-blurple-twilight-1-hsl) / 1);
+    --bg-gradient-blurple-twilight-1-hsl: 234 calc(1 * 79.6%) 53.9%;
+    --bg-gradient-blurple-twilight-2: hsl(var(--bg-gradient-blurple-twilight-2-hsl) / 1);
+    --bg-gradient-blurple-twilight-2-hsl: 245 calc(1 * 63.7%) 31.4%;
+
+    /* Crimson Moon */
+    --bg-gradient-crimson-moon-1: hsl(var(--bg-gradient-crimson-moon-1-hsl) / 1);
+    --bg-gradient-crimson-moon-1-hsl: 0 88.6% 31%;
+    --bg-gradient-crimson-moon-2: hsl(var(--bg-gradient-crimson-moon-2-hsl) / 1);
+    --bg-gradient-crimson-moon-2-hsl: 0 0% 0%;
+
+    /* Memory Lane */
+    --bg-gradient-memory-lane-1: hsl(var(--bg-gradient-memory-lane-1-hsl) / 1);
+    --bg-gradient-memory-lane-1-hsl: 227 58.4% 65.1%;
+    --bg-gradient-memory-lane-2: hsl(var(--bg-gradient-memory-lane-2-hsl) / 1);
+    --bg-gradient-memory-lane-2-hsl: 227 31% 44.3%;
+
+    /* Primary */
+    --primary-color: hsl(var(--primary-color-hsl) / 1);
+    --primary-color-hsl: 228 5.2% 38%;
+}
+/* fafa are you cute? :>*/
+[data-theme="light"] {
+    --background: var(--light-background);
+    --background-muted: rgba(var(--background), 0.9);
+    --mobile-navbar-background: var(--navbar-background);
+    --navbar-background: rgb(255, 255, 255);
+    --background-gray: rgb(235, 235, 235, 0.5);
+    --text: var(--light-text);
+    --text-inversed: var(--dark-text);
+    --link-color: hsl(0, 0%, 50%);
+    --border: hsl(0, 0%, 75%);
+}
+
+[data-theme="Midnight"] {
+    --background: var(--dark-background);
+    --background-muted: rgba(var(--background), 0.9);
+    --mobile-navbar-background: var(--navbar-background);
+    --navbar-background: hsl(0, 0%, 5%);
+    --background-gray: rgb(32, 32, 32, 0.6);
+    --text: hsl(0, 0%, 100%);
+    --text-inversed: var(--dark-text);
+    --link-color: hsl(0, 0%, 80%);
+    --border: hsl(0, 0%, 12%);
+}
+
+[data-theme="dark"] {
+    --background: hsl(0, 0%, 5%) no-repeat center center fixed;
+    --background-muted: rgba(var(--background), 0.9) no-repeat center center fixed;
+    --mobile-navbar-background: var(--navbar-background);
+    --navbar-background: hsl(0, 0%, 5%);
+    --background-gray: rgb(32, 32, 32, 0.6);
+    --text: hsl(0, 0%, 100%);
+    --text-inversed: var(--light-text);
+    --link-color: hsl(0, 0%, 50%);
+    --border: hsl(0, 0%, 12%);
+}
+
+[data-theme="Blurple Twilight"] {
+    --background: linear-gradient(47.61deg, var(--bg-gradient-blurple-twilight-1) 11.18%, var(--bg-gradient-blurple-twilight-2) 64.54%) no-repeat center center fixed;
+    --background-muted: rgba(var(--background), 0.9) no-repeat center center fixed;
+    --mobile-navbar-background: var(--background);
+    --navbar-background: transparent;
+    --background-gray: rgb(32, 32, 32, 0.6);
+    --text: hsl(0, 0%, 100%);
+    --text-inversed: var(--light-text);
+    --link-color: rgba(255, 255, 255, 0.8);
+    --border: rgba(128, 132, 142, 0.239);
+}
+
+[data-theme="Crimson Moon"] {
+    --background: linear-gradient(305deg, var(--bg-gradient-crimson-moon-1) 16.17%, var(--bg-gradient-crimson-moon-2) 72%) no-repeat center center fixed;
+    --background-muted: rgba(var(--background), 0.9) no-repeat center center fixed;
+    --mobile-navbar-background: var(--background);/*are you cute?*/
+    --navbar-background: transparent;
+    --background-gray: rgb(0, 0, 0, 0.6);
+    --text: hsl(0, 0%, 100%);
+    --text-inversed: var(--light-text);
+    --link-color: hsl(0, 0%, 75%);
+    --border: #80848e3d;
+}
+
+[data-theme="Memory Lane"] {
+    --background: linear-gradient(180deg, var(--bg-gradient-memory-lane-1) 4%, var(--bg-gradient-memory-lane-2) 96%);
+    --background-muted: rgba(var(--background), 0.9) no-repeat center center fixed;
+    --mobile-navbar-background: var(--background);
+    --navbar-background: transparent;
+    --background-gray: rgba(190, 190, 190, 0.4);
+    --text: hsl(0, 0%, 100%);
+    --text-inversed: var(--light-text);
+    --link-color: rgba(255, 255, 255, 0.6);
+    --border: rgba(255, 255, 255, 0.6);
+}

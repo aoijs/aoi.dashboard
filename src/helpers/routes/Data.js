@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const { PermissionsBitField } = require("discord.js");
 const ensureAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) return next();
     res.redirect("/auth/login");
@@ -123,40 +123,39 @@ module.exports = (d) => {
     async function filterGuilds(userId) {
         try {
             const allowedGuilds = [];
-    
-            const guilds = [...global.fetchedGuilds.values()];
-            for (const guildEntry of guilds) {
-                    const guildId = guildEntry.guild.id;
-                    const guild = await d.client.guilds.fetch(guildId);
-                    
-                    if (guild.members.cache.has(userId)) {
-        
-                    const member = await guild.members.fetch(userId);
 
-                    if (member.permissions.has('MANAGE_GUILD') || member.permissions.has('ADMINISTRATOR')) {
-                        allowedGuilds.push(guildEntry.guild);
-                    }
+            const guilds = [...global.fetchedGuilds.values()];
+            console.log(guilds);
+            for (const guildEntry of guilds) {
+                const guildId = guildEntry.guild.id;
+                const guild = await d.client.guilds.fetch(guildId);
+                
+                if (guild.members.cache.has(userId)) {
+                    /*const member = await guild.members.fetch(userId);
+
+                    if (member.permissions.has(PermissionsBitField.Flags.ViewChannel)) {*/
+                        allowedGuilds.push(guildEntry.guild); //Gotta change perms after final
+                    //}
                 }
             }
-    
+
             return allowedGuilds;
-    
         } catch (error) {
-            console.error('Error checking manage guild permission:', error);
+            console.error("Error checking manage guild permission:", error);
             return [];
         }
     }
-    
-    router.get('/user/guilds', ensureAuthenticated, async (req, res) => {
+
+    router.get("/user/guilds", ensureAuthenticated, async (req, res) => {
         try {
             const guilds = await filterGuilds(req.user.id);
-            res.json({guilds : guilds});
+            res.json({ guilds: guilds });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: "Couldn't fetch guilds" });
         }
-    });    
-    
+    });
+
     async function getDashboardAdmins(user) {
         if (user === (await d.client.application.fetch()).owner.id) return true;
         if (!user) {

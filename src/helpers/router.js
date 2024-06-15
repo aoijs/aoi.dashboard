@@ -129,6 +129,14 @@ module.exports = (dashboard) => {
     router.get("/status", render("../public/main/status.html"));
     router.get("/admin", render("../public/admin/admin.html", true, true));
 
+    // admin modify endpoints
+    router.get("/admin/modify/main", render("../public/admin/modify/index.html", true, true));
+
+    // serve css
+    router.get("/styles", (req, res) => {
+        res.sendFile(path.join(__dirname, `../public/styles/main.css`));
+    });
+
     //todo: custom routes per user config
 
     return router;
