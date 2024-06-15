@@ -508,7 +508,6 @@
             }
 
             #navbar-data {
-                cursor: pointer;
                 text-wrap: nowrap;
             }
 
@@ -571,8 +570,8 @@
         </style>
     </head>
     <body data-theme="light">
+        <div class="custom-cursor" id="cursor"></div>
         <div class="dim-overlay" onclick="toggleNavbar()">
-            <div class="custom-cursor" id="cursor"></div>
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>
                 <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"><%= x.title %></a>
@@ -745,6 +744,11 @@
                     }
                 });
             };
+            document.addEventListener('mousemove', function(e) {
+            var cursor = document.getElementById('cursor');
+            cursor.style.left = e.pageX + 'px';
+            cursor.style.top = e.pageY + 'px';
+            });
         </script>
     </body>
 </html>

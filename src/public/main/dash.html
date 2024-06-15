@@ -474,7 +474,6 @@
             }
 
             #navbar-data {
-                cursor: pointer;
                 text-wrap: nowrap;
             }
 
@@ -605,8 +604,8 @@
         </style>
     </head>
     <body data-theme="light" onload="myFunction()">
-        <div class="loading-overlay" id="loading-overlay">Loading...</div>
         <div class="custom-cursor" id="cursor"></div>
+        <div class="loading-overlay" id="loading-overlay">Loading...</div>
         <div class="dim-overlay" onclick="toggleNavbar()">
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>

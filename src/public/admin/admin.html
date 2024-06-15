@@ -452,7 +452,6 @@
                 display: table;
             }
             #navbar-data {
-                cursor: pointer;
                 text-wrap: nowrap;
             }
             .rounded-icon {
@@ -539,6 +538,9 @@
             }
             .button-container button {
                 width: calc(50% - 10px);
+            }
+            .button-container button:hover {
+                cursor: none;
             }
             .button-container .full-width {
                 width: 100%;
@@ -828,8 +830,8 @@
         </style>
     </head>
     <body data-theme="light">
+        <div class="custom-cursor" id="cursor"></div>
         <div class="dim-overlay" onclick="toggleNavbar()">
-            <div class="custom-cursor" id="cursor"></div>
             <div id="navbar-links" class="navbar-mobile">
                 <% global.navbar.forEach(x => { %> <% if (x.to) { %>
                 <a href="<%= x.to %>" class="mlink <%= x.active ? 'active' : '' %>"><%= x.title %></a>
@@ -1359,6 +1361,11 @@
                         toastr.success(`Removed '${userId}' as dashboard admin.`);
                     });
             }
+            document.addEventListener('mousemove', function(e) {
+            var cursor = document.getElementById('cursor');
+            cursor.style.left = e.pageX + 'px';
+            cursor.style.top = e.pageY + 'px';
+            });
         </script>
     </body>
 </html>
